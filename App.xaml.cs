@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace VetManagement
+namespace vet_management
 {
     /// <summary>
     /// Interaction logic for App.xaml
