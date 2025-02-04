@@ -11,15 +11,13 @@ namespace VetManagement.Data
     public class UserRepository : IRepository<User>
     {
         private readonly AppDbContext _context = new AppDbContext();
-
+        
         public async Task<List<User>> GetAll() => await _context.Users.ToListAsync();
 
         public async Task<User> GetById(int id) => await _context.Users.FindAsync(id);
 
-        public async Task<User> GetByUsername(string username)
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-        }
+        public async Task<User> GetByUsername(string username) => await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        
 
         public async Task Add(User user)
         {

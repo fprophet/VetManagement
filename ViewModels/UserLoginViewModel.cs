@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using VetManagement.Data;
@@ -36,7 +37,6 @@ namespace VetManagement.ViewModels
                 _password = value;
             }
         }
-
         public UserLoginViewModel()
         {
             LoginCommand = new RelayCommand(AuthenticateUser, CanExecute);
@@ -46,23 +46,29 @@ namespace VetManagement.ViewModels
         {
             UserRepository userRepository = new UserRepository();
 
-            var user = await userRepository.GetByUsername(Username);
-
-            if (user != null)
+            try
             {
-                Trace.WriteLine("HERE");
-
-                if (PasswordHelper.VerifyPassword(Password, user.Password))
+                var user = await userRepository.GetByUsername(Username);
+                if (user != null)
                 {
-                    Trace.WriteLine("Good Pass");
-                }
-                else
-                {
-                    Trace.WriteLine("Bad Pass");
-                }
+                    Trace.WriteLine("HERE");
 
+                    if (PasswordHelper.VerifyPassword(Password, user.Password))
+                    {
+                        SessionManager.Instance.LogUser(user.Id, user.Username, user.Role);
+                    }
+                    else
+                    {
+                        Trace.WriteLine("Bad Pass");
+                    }
+
+                }
+            }catch (Exception e)
+            {
+                MessageBox.Show("Could not verify user!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                Logger.LogError("Database", e.Message);
             }
-            return;
 
         }
 
