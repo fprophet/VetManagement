@@ -15,7 +15,7 @@ namespace VetManagement.Data
 
 
 
-        private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlsersver";
+        private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlserver";
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

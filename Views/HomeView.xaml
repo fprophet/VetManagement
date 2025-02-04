@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="VetManagement.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VetManagement.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical" >
+            <Button Content="Go to Dashboard" Width="200" Height="50"  />
+            <Button Content="Utilizatori" Width="200" Height="50" Command="{Binding NavigateUsersCommand}" />
+            <Button Content="Inventar Clinică" Width="200" Height="50" Command="{Binding NavigateInventoryCommand}" />
+            <Button Content="Settings" Width="200" Height="50"  />
+            <Button Content="Log Out" Width="200" Height="50" />
+        </StackPanel>
+    </Grid>
+</UserControl>
+
+

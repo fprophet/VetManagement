@@ -16,7 +16,7 @@ namespace VetManagement.Services
 
         private string _role;
 
-        private int _id;
+        private int _id = -1;
 
         public string Username
         {

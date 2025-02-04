@@ -9,11 +9,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using VetManagement.Data;
 using VetManagement.Services;
+using VetManagement.Views;
 
 namespace VetManagement.ViewModels
 {
     public class UserLoginViewModel : ViewModelBase
     {
+        public ViewModelBase CurrentViewModel { get; }
         public ICommand LoginCommand { get; set; }
 
         private string _username;
@@ -39,6 +41,7 @@ namespace VetManagement.ViewModels
         }
         public UserLoginViewModel()
         {
+
             LoginCommand = new RelayCommand(AuthenticateUser, CanExecute);
         }
 
@@ -56,16 +59,22 @@ namespace VetManagement.ViewModels
                     if (PasswordHelper.VerifyPassword(Password, user.Password))
                     {
                         SessionManager.Instance.LogUser(user.Id, user.Username, user.Role);
+
+                        //var mainMenu = new HomeView();
+
+
+                        //Application.Current.MainWindow.Close();
                     }
                     else
                     {
-                        Trace.WriteLine("Bad Pass");
+                        MessageBox.Show("Nume sau parola greșite!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
                     }
 
                 }
             }catch (Exception e)
             {
-                MessageBox.Show("Could not verify user!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Utilizatorul nu a putut fi verificat!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 Logger.LogError("Database", e.Message);
             }
