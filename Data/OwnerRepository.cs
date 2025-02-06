@@ -8,9 +8,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace VetManagement.Data
 {
-    public class UserRepository : BaseRepository<User>
+    public class OwnerRepository : BaseRepository<Owner>
     {
-        public async Task<User> GetByUsername(string username) => await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+        public async Task<List<Owner>> GetFullInfo()
+        {
+            return await _context.GetDbSet<Owner>().Include(p => p.Patients).ToListAsync();
+
+        }
+
 
     }
 }

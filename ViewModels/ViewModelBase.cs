@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VetManagement.Stores;
 
 namespace VetManagement.ViewModels
 {
@@ -11,6 +12,7 @@ namespace VetManagement.ViewModels
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        protected NavigationStore _navigationStore;
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

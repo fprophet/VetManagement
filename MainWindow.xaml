@@ -6,24 +6,59 @@
         xmlns:viewmodels="clr-namespace:VetManagement.ViewModels" 
         xmlns:views="clr-namespace:VetManagement.Views"
         Title="MainWindow" Height="450" Width="800">
- 
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Home" Command="{Binding NavigateHomeCommand}" />
+            <MenuItem Header="Stăpâni" Command="{Binding NavigateOwnersCommand}" />
+            <MenuItem Header="Inventar" Command="{Binding NavigateUsersCommand}" />
+            <MenuItem Header="Tratamente" Command="{Binding NavigateTreatmentsCommand}" />
+            <MenuItem Header="Utilizatori" Command="{Binding NavigateSettingsCommand}" />
+        </Menu>
+
+        <ContentControl Content="{Binding CurrentViewModel}">
+
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
+                    <views:HomeView/>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewmodels:UsersViewModel}">
+                    <views:Users/>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewmodels:InventoryViewModel}">
+                    <views:InventoryView/>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewmodels:MedViewModel}">
+                    <views:MedView/>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewmodels:TreatmentsViewModel}">
+                    <views:TreatmentsView/>
+                </DataTemplate>
+                
+                <DataTemplate DataType="{x:Type viewmodels:CreateTreatmentViewModel}">
+                    <views:CreateTreatmentView/>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewmodels:OwnersViewModel}">
+                    <views:OwnersView/>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewmodels:CreateOwnerViewModel}">
+                    <views:CreateOwnerView/>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type viewmodels:CreatePatientViewModel}">
+                    <views:CreatePatientView/>
+                </DataTemplate>
+                
+            </ContentControl.Resources>
+        </ContentControl>
+    </DockPanel>
     
-    <ContentControl Content="{Binding CurrentViewModel}">
-
-        <ContentControl.Resources>
-            <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
-                <views:HomeView/>
-            </DataTemplate>
-   
-            <DataTemplate DataType="{x:Type viewmodels:UsersViewModel}">
-                <views:Users/>
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type viewmodels:InventoryViewModel}">
-                <views:InventoryView/>
-            </DataTemplate>
-
-        </ContentControl.Resources>
-    </ContentControl>
+    
     
 </Window>

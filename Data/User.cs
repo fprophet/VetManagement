@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace VetManagement.Data
 {
-    public class User
+    public class User :BaseEntity
     {
         [Key]
         public int Id { get; set; }
 
+        [StringLength(50)]
         [Required]
         public string Username { get; set; }
 
+        [StringLength(100)]
         [Required]
         public string Name { get; set; }
 
@@ -26,7 +28,6 @@ namespace VetManagement.Data
 
         [Required, AllowedValues("admin", "user")]
         public string Role { get; set; }
-
 
     }
 }

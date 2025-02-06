@@ -20,9 +20,7 @@ namespace VetManagement.ViewModels
     {
         private readonly IRepository<User> _userRepository;
 
-        private readonly NavigationStore _navigationStore;
-
-        public ObservableCollection<User> Users { get; private set; }
+        private readonly Action<User> _onUserCreated;
 
         // Add a property for Username
         private string _email;
@@ -38,13 +36,11 @@ namespace VetManagement.ViewModels
         //to display in the dropdown meny
         public ObservableCollection<string> Roles { get; private set; } = new ObservableCollection<string> { "admin", "user" };
 
-
         public SecureString SecurePassword { private get; set; }
 
         public ICommand CreateUserCommand { get; }
         public ICommand LoginCommand { get; }
 
-        public ICommand NavigationCommand { get; }
 
         public string Name
         {
@@ -97,28 +93,13 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public CreateUserViewModel()
+        public CreateUserViewModel(Action<User> onUserCreated)
         {
-            _userRepository = new UserRepository();
-            LoadUsers();
-            Users = new ObservableCollection<User>();
+            _onUserCreated = onUserCreated;
+            _userRepository = new BaseRepository<User>();
             CreateUserCommand = new RelayCommand(CreateUser);
         }
 
-
-        private async void LoadUsers()
-        {
-
-            var users = await _userRepository.GetAll();
-
-            Users.Clear();
-
-            foreach (var user in users)
-            {
-
-                Users.Add(user);
-            }
-        }
 
         private async void CreateUser(object sender)
         {
@@ -132,15 +113,15 @@ namespace VetManagement.ViewModels
             User user = new User { Name = Name, Username = Username, Email = Email, Password = PasswordHelper.HashPassword(Password), Role = Role };
             Trace.WriteLine(user);
 
-            UserRepository userRepository = new UserRepository();
             try
             {
-                Users.Add(user);
-                await userRepository.Add(user);
-                Trace.WriteLine("User Added");
+                await _userRepository.Add(user);
+                _onUserCreated?.Invoke(user);
             }
             catch (Exception ex)
             {
+                MessageBox.Show("Utilizatorul nu a putut fi adăugat!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
                 Trace.WriteLine(ex.ToString());
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,16 +14,16 @@ namespace VetManagement.Commands
     {
         private readonly NavigationService<TViewModel> _navigationService;
 
-        private readonly Func<TViewModel> createViewModel;
-
         public NavigateCommand(NavigationService<TViewModel> navigationService)
         {
             _navigationService = navigationService;
+
         }
 
         public override void Execute(object parameter)
         {
-            _navigationService.Navigate();
+          
+            _navigationService.Navigate((int?)parameter);
         }
     }
 }

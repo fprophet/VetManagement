@@ -12,7 +12,10 @@ namespace VetManagement.Stores
 
         public event Action CurrentViewModelChanged;
 
+        public event Action ItemIdChanged;
+
         private ViewModelBase _currentViewModel;
+
         
         public ViewModelBase CurrentViewModel 
         { 
@@ -24,6 +27,7 @@ namespace VetManagement.Stores
             }    
             
         }
+
         private void OnCurrentViewModelChanged()
 
         {

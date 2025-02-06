@@ -31,7 +31,7 @@
             
         </StackPanel>
 
-        <components:UserCreateForm Grid.Row="1" Grid.Column="1" Visibility="{Binding isVisibleForm, Converter={StaticResource BoolToVisibilityConverter}}" />
+        <components:UserCreateForm Grid.Row="1" Grid.Column="1" DataContext="{Binding CreateUserViewModel}" Visibility="{Binding isVisibleForm, Converter={StaticResource BoolToVisibilityConverter}}" />
     </Grid>
     
 </UserControl>

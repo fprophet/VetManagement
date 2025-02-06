@@ -1,0 +1,101 @@
+﻿<UserControl x:Class="VetManagement.Views.CreateTreatmentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:VetManagement.ViewModels" d:DataContext="{d:DesignInstance Type=vm:CreateTreatmentViewModel}"
+             mc:Ignorable="d"
+             d:DesignHeight="500" d:DesignWidth="400">
+    
+
+
+    <Grid Margin="20" Width="500">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Owner Name -->
+        <TextBlock Text="Owner Name" FontWeight="Bold" />
+        <TextBox Grid.Row="1" Text="{Binding OwnerName, UpdateSourceTrigger=PropertyChanged}" Height="30" Padding="5" BorderBrush="#4A90E2" BorderThickness="1"/>
+
+        <!-- Owner Address -->
+        <TextBlock Grid.Row="2" Text="Owner Address" FontWeight="Bold" Margin="0,10,0,0"/>
+        <TextBox Grid.Row="3" Text="{Binding OwnerAddress, UpdateSourceTrigger=PropertyChanged}" Height="30" Padding="5" BorderBrush="#4A90E2" BorderThickness="1"/>
+
+        <!-- Species -->
+        <TextBlock Grid.Row="4" Text="Species" FontWeight="Bold" Margin="0,10,0,0"/>
+        <TextBox Grid.Row="5" Text="{Binding Species, UpdateSourceTrigger=PropertyChanged}" Height="30" Padding="5" BorderBrush="#4A90E2" BorderThickness="1"/>
+
+        <!-- Race & Sex in a Horizontal StackPanel -->
+        <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="0,10,0,0">
+            <StackPanel Width="150">
+                <TextBlock Text="Race" FontWeight="Bold"/>
+                <TextBox Height="30" Text="{Binding Race, UpdateSourceTrigger=PropertyChanged}" Padding="5" BorderBrush="#4A90E2" BorderThickness="1"/>
+            </StackPanel>
+            <StackPanel Width="150" Margin="10,0,0,0">
+                <TextBlock Text="Sex" FontWeight="Bold"/>
+                <ComboBox Height="30" Text="{Binding Sex, UpdateSourceTrigger=PropertyChanged}" BorderBrush="#4A90E2" BorderThickness="1">
+                    <ComboBoxItem Content="Male"/>
+                    <ComboBoxItem Content="Female"/>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Medications Section -->
+        <StackPanel Grid.Row="7" Margin="0,20,0,0">
+            <!--<ItemsControl x:Name="MedList" ItemsSource="{Binding MedList}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <ComboBox x:Name="MedId" Width="250" SelectedItem="{Binding SelectedMed,  UpdateSourceTrigger=PropertyChanged}"  
+                                ItemsSource="{Binding DataContext.Meds, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" DisplayMemberPath="Name"  />
+                            <TextBox Width="100" Height="30"  
+                                 BorderBrush="#4A90E2" BorderThickness="1" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            --><!-- Add Med Button --><!--
+            <Button Content="Add Med" Grid.Row="8" Background="#4A90E2" Foreground="White" FontWeight="Bold"
+            Height="40" Margin="0,10,0,0" Command="{Binding AddMedInputCommand}" />-->
+
+            <StackPanel Orientation="Horizontal" Name="MedsPanel" Margin="0,10">
+
+                <StackPanel  Orientation="Vertical" Margin="10,0,0,0">
+                    <TextBlock Text="Medicament" FontWeight="Bold" Margin="0,5"/>
+                    <ComboBox x:Name="MedId" Width="150"  SelectedItem="{Binding SelectedMed, UpdateSourceTrigger=PropertyChanged}" 
+                    ItemsSource="{Binding MedsCollection}" DisplayMemberPath="Name"  />
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Width="100" Margin="10,0,0,0">
+                    <TextBlock Text="Cantitate" FontWeight="Bold" Margin="0,5"/>
+                    <TextBox Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="80" Height="25"/>
+                </StackPanel>
+
+                
+                <!--<ItemsControl ItemsSource="{Binding MedInputsCollection}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Path=.}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>-->
+
+                <!--<Button HorizontalAlignment="Left" VerticalAlignment="Center" 
+                    Content="Adăugați medicament" Width="100" Height="30" Command="{Binding AddMedInputCommand}"/>-->
+
+            </StackPanel>
+            <Button Content="Adaugați tratament" Background="#4A90E2" Foreground="White" FontWeight="Bold"
+                    Height="30" Width="250" HorizontalAlignment="Center"  Command="{Binding CreateTreatmentCommand}" />
+        </StackPanel>
+ 
+    </Grid>
+</UserControl>

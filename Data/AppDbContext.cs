@@ -9,9 +9,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace VetManagement.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext: DbContext 
     {
+
+        public DbSet<T> GetDbSet<T>() where T : class
+        {
+            return Set<T>();  // Return the DbSet<T> for any entity
+        }
+
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Med> Meds { get; set; }
+
+        public DbSet<Patient> Patients { get; set; }
+
+        public DbSet<Treatment> Treatments { get; set; }
+
+        public DbSet<Owner> Owners { get; set; }
 
 
 
@@ -25,6 +39,39 @@ namespace VetManagement.Data
             }catch( Exception e) {
                 MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Treatment>()
+                .HasOne(t => t.Patient)
+                .WithMany(p => p.Treatments)
+                .HasForeignKey(t => t.PatientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Treatment>()
+                .HasOne(t => t.Owner)
+                .WithMany(p => p.Treatments)
+                .HasForeignKey(t => t.OwnerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Owner>()
+               .HasMany(p => p.Patients)
+               .WithOne(t => t.Owner)
+               .HasForeignKey(t => t.OwnerId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Treatment>()
+                .Property(t => t.Medication)
+                .HasColumnType("mediumtext");
+
+            modelBuilder.Entity<Treatment>()
+                .Property(t => t.Details)
+                .HasColumnType("mediumtext");
+
+            modelBuilder.Entity<Patient>()
+                .Property(t => t.Details)
+                .HasColumnType("mediumtext");
         }
 
     }

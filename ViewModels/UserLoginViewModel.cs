@@ -47,31 +47,31 @@ namespace VetManagement.ViewModels
 
         private async void AuthenticateUser(object parameter)
         {
-            UserRepository userRepository = new UserRepository();
+            BaseRepository<User> userRepository = new BaseRepository<User>();
 
             try
             {
-                var user = await userRepository.GetByUsername(Username);
-                if (user != null)
-                {
-                    Trace.WriteLine("HERE");
+                //var user = await userRepository.GetByUsername(Username);
+                //if (user != null)
+                //{
+                //    Trace.WriteLine("HERE");
 
-                    if (PasswordHelper.VerifyPassword(Password, user.Password))
-                    {
-                        SessionManager.Instance.LogUser(user.Id, user.Username, user.Role);
+                //    if (PasswordHelper.VerifyPassword(Password, user.Password))
+                //    {
+                //        SessionManager.Instance.LogUser(user.Id, user.Username, user.Role);
 
-                        //var mainMenu = new HomeView();
+                //        //var mainMenu = new HomeView();
 
 
-                        //Application.Current.MainWindow.Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Nume sau parola greșite!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //        //Application.Current.MainWindow.Close();
+                //    }
+                //    else
+                //    {
+                //        MessageBox.Show("Nume sau parola greșite!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    }
+                //    }
 
-                }
+                //}
             }catch (Exception e)
             {
                 MessageBox.Show("Utilizatorul nu a putut fi verificat!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
