@@ -19,28 +19,15 @@ namespace VetManagement.ViewModels
 {
     public class InventoryViewModel : ViewModelBase
     {
+        private string _pageTitle = "Inventar";
 
         private readonly NavigationStore _navigationStore;
 
         private readonly BaseRepository<Med> _medRepository;
 
-        private bool _isVisibleForm = false;
-
-        public bool isVisibleForm
-        {
-            get => _isVisibleForm;
-            set
-            {
-                _isVisibleForm = value;
-                OnPropertyChanged(nameof(isVisibleForm));
-            }
-        }
-
         public CreateMedViewModel CreateMedViewModel { get;  }
 
         public ICommand NavigateHomeCommand { get; }
-
-        public ICommand ToggleFormVisibilityCommand { get; }
 
         public ICommand NavigateViewMedCommand { get; }
 
@@ -53,13 +40,13 @@ namespace VetManagement.ViewModels
         { 
             _navigationStore = navigationStore;
             _medRepository = new BaseRepository<Med>();
+            _navigationStore.PageTitle = _pageTitle;
 
             CreateMedViewModel = new CreateMedViewModel(UpdateMedList);
 
-            ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
             DeleteMedCommand = new RelayCommand(DeleteMed);
-            NavigateViewMedCommand = new NavigateCommand<MedViewModel>(new NavigationService<MedViewModel>(_navigationStore, (id) => new MedViewModel(_navigationStore, id)));
-
+            NavigateViewMedCommand = new NavigateCommand<MedViewModel>
+                (new NavigationService<MedViewModel>(_navigationStore, (id) => new MedViewModel(_navigationStore, id)));
 
             LoadMeds();
 
@@ -68,12 +55,19 @@ namespace VetManagement.ViewModels
         private void UpdateMedList(Med med)
         { 
             Meds.Add(med);
+
+            var sorted = Meds.OrderByDescending(m => m.DateAdded);
+
+            Meds.Clear();
+
+            foreach( var itm in sorted)
+            {
+                Meds.Add(itm);
+            }
+
         }
 
-        private void ToggleFormVisibility(object parameter)
-        {
-            isVisibleForm = !isVisibleForm;
-        }
+
 
         private async void  DeleteMed(object parameter)
         {
@@ -109,9 +103,11 @@ namespace VetManagement.ViewModels
             {
                 var meds = await _medRepository.GetAll();
 
+                var sorted = meds.OrderByDescending(m => m.DateAdded);
+
                 Meds.Clear();
 
-                foreach (var med in meds)
+                foreach (var med in sorted)
                 {
                     Meds.Add(med);
                 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.Services;
 using VetManagement.Stores;
@@ -100,14 +101,25 @@ namespace VetManagement.ViewModels
 
         public ICommand CreatePatientCommand { get; set; }
 
+        public ICommand NavigateOwnersCommand { get; set; }
+
         public CreatePatientViewModel( NavigationStore navigationStore, int? id )
         {
             _navigationStore = navigationStore;
 
+            NavigateOwnersCommand = NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
+                (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
+
             CreatePatientCommand = new RelayCommand(CreatePatient);
 
-            PassedId = (int)id;
-
+              if (id.HasValue)
+            {
+                PassedId = id.Value;
+            }
+            else
+            {
+                PassedId = -1;
+            }
         }
 
         private async void CreatePatient(object parameter)
@@ -140,7 +152,7 @@ namespace VetManagement.ViewModels
 
         public Patient RetrievePatient()
         {
-            return new Patient() { Name = Name, Species = Species, Race = Race, Sex = Sex , Age = Age , Color = Color, Details = Details };
+            return new Patient() { Name = Name, Species = Species, Race = Race, Sex = Sex , Age = Age , Color = Color, Details = Details , DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
         }
     }
 }

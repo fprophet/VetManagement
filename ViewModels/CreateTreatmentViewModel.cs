@@ -17,94 +17,47 @@ namespace VetManagement.ViewModels
     {
         private readonly NavigationStore _navigationStore;
 
-        //first item empty to dispaly the first set of inputs
-        public ObservableCollection<string> MedList { get; set; } = new ObservableCollection<string>() {""};
-        public ObservableCollection<int> QuantityList { get; set; } = new ObservableCollection<int>() { 0 };
+        private readonly int PassedId;
 
-        public ObservableCollection<Med> MedsCollection { get; set; } = new ObservableCollection<Med>();
+        public ObservableCollection<Med> Meds { get; set; } = new ObservableCollection<Med>();
 
-        private int _dateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        public ObservableCollection<Patient> Patients { get; set; } = new ObservableCollection<Patient>();
 
-        public ICommand AdMedToListCommand { get; }
+        public ObservableCollection<MedInputPair> MedInputPair { get; set; } = new ObservableCollection<MedInputPair>();
 
         public ICommand CreateTreatmentCommand { get; }
 
-        private string _ownerName;
+        public ICommand AddInputPairCommand { get; }
+
+        public ICommand RemoveInputPairCommand { get; }
+
+        public ICommand ToggleFormVisibilityCommand { get; }
+
+
+        private int _dateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         private Action<Treatment> _onTreatmnetCreateChanged;
-        public string OwnerName
+
+
+        private bool _isVisibleForm = false;
+        public bool isVisibleForm
         {
-            get => _ownerName;
+            get => _isVisibleForm;
             set
             {
-                _ownerName = value;
-                OnPropertyChanged(nameof(OwnerName));
+                _isVisibleForm = value;
+                OnPropertyChanged(nameof(isVisibleForm));
             }
         }
 
-        private string _ownerAddress;
-        public string OwnerAddress
+        private Patient _patient;
+        public Patient Patient
         {
-            get => _ownerAddress;
+            get => _patient;
             set
             {
-                _ownerAddress = value;
-                OnPropertyChanged(nameof(OwnerAddress));
-            }
-        }
-
-        private string _species;
-        public string Species
-        {
-            get => _species;
-            set
-            {
-                _species = value;
-                OnPropertyChanged(nameof(Species));
-            }
-        }
-
-        private string _race;
-        public string Race
-        {
-            get => _race;
-            set
-            {
-                _race = value;
-                OnPropertyChanged(nameof(Race));
-            }
-        }
-
-        private string _sex;
-        public string Sex
-        {
-            get => _sex;
-            set
-            {
-                _sex = value;
-                OnPropertyChanged(nameof(Sex));
-            }
-        }
-
-        private Med _selectedMed;
-        public Med SelectedMed
-        {
-            get => _selectedMed;
-            set
-            {
-                _selectedMed = value;
-                OnPropertyChanged(nameof(Med));
-            }
-        }
-
-        private float _quantity;
-        public float Quantity
-        {
-            get => _quantity;
-            set
-            {
-                _quantity = value;
-                OnPropertyChanged(nameof(Quantity));
+                _patient = value;
+                OnPropertyChanged(nameof(Patient));
             }
         }
 
@@ -118,17 +71,71 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public CreateTreatmentViewModel(Action<Treatment> onTreatmentCreateChanged) 
+        private string _details;
+        public string Details
+        {
+            get => _details;
+            set
+            {
+                _details = value;
+                OnPropertyChanged(nameof(Details));
+            }
+        }
+
+
+        public CreateTreatmentViewModel(Action<Treatment> onTreatmentCreateChanged, int? id) 
         {
 
             _onTreatmnetCreateChanged = onTreatmentCreateChanged;
 
-            AdMedToListCommand = new RelayCommand(AddMedToList);
+            AddInputPairCommand = new RelayCommand(AddInputPair);
+
+            RemoveInputPairCommand = new RelayCommand(RemoveInputPair);
 
             CreateTreatmentCommand = new RelayCommand(CreateTreatment);
 
+            ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
+
+
+            if (id.HasValue)
+            {
+                PassedId = id.Value;
+            }
+            else
+            {
+                PassedId = -1; // Example default value
+            }
 
             LoadMeds();
+            LoadOwnerPatients();
+
+
+        }
+
+        private async void LoadOwnerPatients()
+        {
+
+            if( PassedId <= 0)
+            {
+                Boxes.ErrorBox("Lista de animale nu a putut fi redată!\n Id not found!");
+                return;
+            }
+
+            try
+            {
+                PatientRepository patientRepository = new PatientRepository();
+                var patients = await patientRepository.GetForOwner((int)PassedId);
+
+                Patients.Clear();
+                foreach (var patient in patients)
+                {
+                    Patients.Add(patient);
+                }
+            }
+            catch (Exception ex)
+            {
+                Boxes.ErrorBox("Lista de animale nu a putut fi redată!\n" + ex.Message);
+            }
         }
 
         private async void LoadMeds()
@@ -139,63 +146,107 @@ namespace VetManagement.ViewModels
 
                 var meds = await medRepository.GetAll();
 
-                MedsCollection.Clear();
-
+                Meds.Clear();
+                
                 foreach (var med in meds)
                 {
-                    MedsCollection.Add(med);
+                    Meds.Add(med);
                 }
 
-            }catch(Exception e)
+                MedInputPair.Add(new Data.MedInputPair { Med = Meds[0], Quantity = 0, Rank = 0 });
+
+                //Trace.WriteLine("AICI");
+                //Trace.WriteLine(Meds.Count);
+            }
+            catch(Exception e)
             {
-                Boxes.ErrorBox("Erare in lista de medicamente\n" + e.Message);
+                Boxes.ErrorBox("Eroare în lista de medicamente\n" + e.Message);
+            }
+        }
+
+        public void AddInputPair(object parameter)
+        {
+            int count = MedInputPair.Count();
+            MedInputPair.Add(new MedInputPair { Med = Meds[0], Quantity = 0, Rank = count });
+        }
+
+        public void RemoveInputPair(object parameter)
+        { 
+            try 
+            {
+                MedInputPair.Remove(MedInputPair[(int)parameter]);
+
+                for ( int i = 0; i < MedInputPair.Count(); i++)
+                {
+                    MedInputPair[i].Rank = i;
+                }
+            }
+            catch(Exception e)
+            {
+                Boxes.ErrorBox("Medicamentul nu poate fi șters din listă!\n" + e.Message);
             }
 
         }
 
-        public void AddMedToList(object parameter)
+        private void ToggleFormVisibility(object sender)
         {
-            MedList.Add("Some dummy string");
+            isVisibleForm = !isVisibleForm;
         }
 
         public async void CreateTreatment(object Sender)
         {
-            //var obj = { Sender };
 
-            BaseRepository<Patient> patientRepository = new BaseRepository<Patient>();
+            BaseRepository<TreatmentMed> tretmentMedRepository = new BaseRepository<TreatmentMed>();
             BaseRepository<Treatment> treatmentRepository = new BaseRepository<Treatment>();
             BaseRepository<Med> medRepository = new BaseRepository<Med>();
 
+            if( Patient == null)
+            {
+                Boxes.ErrorBox("Selectați un animal înainte de a creea tratamentul!");
+                return;
+            }
 
             try
             {
 
-                if (SelectedMed == null || SelectedMed.Quantity < Quantity)
+                foreach( var pair in MedInputPair)
                 {
-                    Boxes.ErrorBox("Cantitatea de medicament introdusa este mai mică decât cea din stoc!");
-                    return;
+                    //Trace.WriteLine("Medicament: " + pair.Med.Name);
+                    //Trace.WriteLine("Cantitate: " + pair.Quantity);
+                    //Trace.WriteLine("Rank: " + pair.Rank);
+                    if (pair.Med.Quantity < pair.Quantity)
+                    {
+                        Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + pair.Med.Name + " este mai mică decât cea din stoc!");
+                        return;
+                    }
+
                 }
 
-                var patient = new Patient() { Species = Species, Sex = Sex, Race = Race, DateAdded = DateAdded };
-                
-                patient = await patientRepository.Add(patient);
+              
+                var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = PassedId, Details = Details, DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
 
-                //var treatment = new Treatment() { PatientId = patient.Id, DateUpdated = DateAdded, Quantity = Quantity };
+                treatment = await treatmentRepository.Add(treatment);
+                if (treatment != null)
+                {
+                    //loop again in order to avoid meds quantity update if creating a treatment object fails
+                    foreach (var pair in MedInputPair)
+                    {
+                        pair.Med.Quantity = pair.Med.Quantity - pair.Quantity;
 
-                //treatment = await treatmentRepository.Add(treatment);
-                //if (treatment != null)
-                //{
+                        await medRepository.Update(pair.Med);
 
-                //    SelectedMed.Quantity = SelectedMed.Quantity - Quantity;
+                        var tm = await tretmentMedRepository.Add(new TreatmentMed() { MedId = pair.Med.Id, TreatmentId = treatment.Id, Quantity = pair.Quantity });
 
-                //    await medRepository.Update(SelectedMed);
+                        //for display purpose
+                        tm.Med = pair.Med;
+                        treatment.TreatmentMeds.Add(tm);
+                    }
+                    treatment.Patient = Patient;
 
-                //    treatment.Patient = patient;
 
-
-                //    _onTreatmnetCreateChanged?.Invoke(treatment);
-                //    Boxes.InfoBox("Tratamentul a fost adăugat!");
-                //}
+                    _onTreatmnetCreateChanged?.Invoke(treatment);
+                    Boxes.InfoBox("Tratamentul a fost adăugat!");
+                }
             }
             catch (Exception e)
             {

@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="VetManagement.Views.OwnerTreatmentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VetManagement.Views"
+             xmlns:components="clr-namespace:VetManagement.Components" xmlns:services="clr-namespace:VetManagement.Services"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="10,10,0,-143">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="5">
+            <Button Content="🡨 Back" Padding="10,5" Background="#2196F3" Foreground="White"
+                FontWeight="Bold" BorderThickness="0" Cursor="Hand"
+                Command="{Binding NavigateOwnersCommand}" />
+
+            <Button Content="➕ Add New Item" Padding="10,5" Background="#4CAF50" Foreground="White"
+                FontWeight="Bold" BorderThickness="0" Cursor="Hand"
+                HorizontalAlignment="Right"
+                Command="{Binding CreateTreatmentViewModel.ToggleFormVisibilityCommand}" />
+        </StackPanel>
+
+        <local:CreateTreatmentView Grid.Row="1" HorizontalAlignment="Left" 
+                                   DataContext="{Binding CreateTreatmentViewModel}" 
+                                   Visibility="{Binding isVisibleForm, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Treatments}" Style="{StaticResource StylishDataGrid}" AutoGenerateColumns="False" >
+            <DataGrid.Columns>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data"  Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume"  Binding="{Binding Patient.Name}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Specie"  Binding="{Binding Patient.Species}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Rasa" Binding="{Binding Patient.Race}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Sex" Binding="{Binding Patient.Sex}" Width="100"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Vârsta"  Binding="{Binding Patient.Age}" Width="100"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Greutate (Kg)"  Binding="{Binding Patient.Weight}" Width="130"/>
+
+                <DataGridTemplateColumn Header="Medicamente" Width="400">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                                <DataGrid ItemsSource="{Binding TreatmentMeds}" BorderThickness="0" AutoGenerateColumns="False"
+                                             HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Nume" Binding="{Binding Med.Name}" Width="100"/>
+                                        <DataGridTextColumn Header="Cantitate" Binding="{Binding Quantity}" Width="100"/>
+                                        <DataGridTextColumn Header="Tip Dozaj" Binding="{Binding Med.QuantityType}" Width="100"/>
+                                        <DataGridTextColumn Header="Serie Lot" Binding="{Binding Med.LotID}" Width="100"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Detalii" Binding="{Binding Details}"   Width="250"/>
+
+                <!--<DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Actions"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Delete" Padding="5,2" Background="Red"
+                                Foreground="White" BorderThickness="0" Cursor="Hand"
+                                Command="{Binding DataContext.DeleteMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
+
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

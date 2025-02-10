@@ -20,10 +20,21 @@
             <Setter Property="Width" Value="200"/>
         </Style>
     </UserControl.Resources>
-    <StackPanel>
-        <components:CreatePatientForm/>
-        <Button Content="Create Patient" HorizontalAlignment="Center" VerticalAlignment="Center"
-             Command="{ Binding CreatePatientCommand}" Style="{StaticResource CreateOwnerButtonStyle}" VerticalContentAlignment="Center" 
-             Grid.Row="5"/>
-    </StackPanel>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Button Content="🡨 Back" Padding="10,5" Background="#2196F3" Foreground="White" Grid.Row="0"
+            FontWeight="Bold" BorderThickness="0" Cursor="Hand" Width="100" HorizontalAlignment="Left" Margin="10"
+            Command="{Binding NavigateOwnersCommand}" />
+        <StackPanel Grid.Row="1">
+            <components:CreatePatientForm/>
+            <Button Content="Create Patient" HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Command="{ Binding CreatePatientCommand}" Style="{StaticResource CreateOwnerButtonStyle}" VerticalContentAlignment="Center" 
+                 Grid.Row="5"/>
+        </StackPanel>
+    </Grid>
+
 </UserControl>

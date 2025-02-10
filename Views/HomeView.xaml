@@ -10,7 +10,7 @@
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical" >
             <Button Content="Inventar Clinică" Width="200" Height="50" Command="{Binding NavigateInventoryCommand}" />
             <Button Content="Stapâni" Width="200" Height="50" Command="{Binding NavigateOwnersCommand}" />
-            <Button Content="Tratament Nou" Width="200" Height="50" Command="{Binding NavigateCreateTreatmentCommand}"/>
+            <Button Content="Tratamente" Width="200" Height="50" Command="{Binding NavigateTreatmentsCommand}"/>
             <Button Content="Utilizatori" Width="200" Height="50" Command="{Binding NavigateUsersCommand}" />
             <Button Content="Log Out" Width="200" Height="50" />
         </StackPanel>

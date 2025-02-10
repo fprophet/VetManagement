@@ -27,6 +27,8 @@ namespace VetManagement.Data
 
         public DbSet<Owner> Owners { get; set; }
 
+        public DbSet<TreatmentMed> TreatmentMed { get; set; }
+
 
 
         private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlserver";
@@ -43,6 +45,7 @@ namespace VetManagement.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<Treatment>()
                 .HasOne(t => t.Patient)
                 .WithMany(p => p.Treatments)
@@ -55,15 +58,26 @@ namespace VetManagement.Data
                 .HasForeignKey(t => t.OwnerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            //treatment - meds many to many 
+            modelBuilder.Entity<TreatmentMed>()
+                .HasKey(tm => new { tm.TreatmentId, tm.MedId });
+
+            modelBuilder.Entity<TreatmentMed>()
+                .HasOne(tm => tm.Treatment)
+                .WithMany(t => t.TreatmentMeds)
+                .HasForeignKey(tm => tm.TreatmentId);
+
+            modelBuilder.Entity<TreatmentMed>()
+                .HasOne(tm => tm.Med)
+                .WithMany(m => m.TreatmentMeds)
+                .HasForeignKey(tm => tm.MedId);
+            
             modelBuilder.Entity<Owner>()
                .HasMany(p => p.Patients)
                .WithOne(t => t.Owner)
                .HasForeignKey(t => t.OwnerId)
                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Treatment>()
-                .Property(t => t.Medication)
-                .HasColumnType("mediumtext");
 
             modelBuilder.Entity<Treatment>()
                 .Property(t => t.Details)

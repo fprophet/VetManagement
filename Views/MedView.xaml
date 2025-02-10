@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VetManagement.Views" xmlns:services="clr-namespace:VetManagement.Services" xmlns:components="clr-namespace:VetManagement.Components"
+             xmlns:local="clr-namespace:VetManagement.Views" xmlns:services="clr-namespace:VetManagement.Services"
+             xmlns:components="clr-namespace:VetManagement.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
         <UserControl.Resources>
@@ -15,39 +16,63 @@
         <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Top Bar -->
-                <!-- Hidden Form -->
                 <RowDefinition Height="*"/>
-                <!-- Table -->
             </Grid.RowDefinitions>
 
             <!-- 🡨 Back Button + Add New Item -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="5">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="5">
                 <Button Content="🡨 Back" Padding="10,5" Background="#2196F3" Foreground="White"
-                FontWeight="Bold" BorderThickness="0" Cursor="Hand"
-                Command="{Binding NavigateInventoryCommand}" />
-                <TextBlock  Text="{Binding DataContext.Name}"/>
+                    FontWeight="Bold" BorderThickness="0" Cursor="Hand" Width="100" HorizontalAlignment="Left"
+                    Command="{Binding NavigateInventoryCommand}" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Stoc curent: " FontSize="23" />
+                        <TextBlock Text="{Binding CurrentMed.Quantity}" FontSize="23"/>
+                    </StackPanel> 
+                    <StackPanel Orientation="Horizontal" Margin="10,0">
+                        <TextBlock Text="Serie Lot: " FontSize="23"/>
+                        <TextBlock Text="{Binding CurrentMed.LotID}" FontSize="23"/>
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
 
-            <!-- 📋 Hidden Form (Appears When Editing or Adding) -->
-
-
-            <!-- 📋 Inventory Table -->
-            <DataGrid Grid.Row="1" ItemsSource="{Binding Meds}" AutoGenerateColumns="False"
-              HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False"
-              Background="White" BorderThickness="1" BorderBrush="#DDD">
+            <DataGrid Grid.Row="1" ItemsSource="{Binding Treatments}" AutoGenerateColumns="False" Style="{StaticResource StylishDataGrid}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Data" Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
-                    <DataGridTextColumn Header="Serie Lot" Binding="{Binding LotID}" Width="*"/>
-                    <DataGridTextColumn Header="Quantity" Binding="{Binding Valability}" Width="100"/>
-                    <DataGridTextColumn Header="Nume Proprietar" Binding="{Binding OwnerName}" Width="120"/>
-                    <DataGridTextColumn Header="Adresa" Binding="{Binding OwnerAddress}" Width="150"/>
-                    <DataGridTextColumn Header="Specie" Binding="{Binding Species}" Width="150"/>
-                    <DataGridTextColumn Header="Rasa" Binding="{Binding Race}" Width="*"/>
-                    <DataGridTextColumn Header="Sex" Binding="{Binding Sex}" Width="*"/>
-                    <DataGridTextColumn Header="Doze Folosite" Binding="{Binding MedCount}" Width="*"/>
+                    <DataGridTextColumn Header="Data" Binding="{Binding Treatment.DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
+                    <!--<DataGridTextColumn Header="Serie Lot" 
+                                        Binding="{Binding DataContext.CurrentMed.LotID, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="100"/>-->
+                    <DataGridTextColumn Header="Valability" Binding="{Binding DataContext.CurrentMed.Valability, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="100"/>
+                    <DataGridTextColumn Header="Nume Proprietar" Binding="{Binding Treatment.Owner.Name}" Width="120"/>
+                    <DataGridTextColumn Header="Adresa" Binding="{Binding Treatment.Owner.Address}" Width="150"/>
+                    <DataGridTextColumn Header="Specie" Binding="{Binding Treatment.Patient.Species}" Width="100"/>
+                    <DataGridTextColumn Header="Rasa" Binding="{Binding Treatment.Patient.Race}" Width="100"/>
+                    <DataGridTextColumn Header="Sex" Binding="{Binding Treatment.Patient.Sex}" Width="70"/>
+                    
+                    <DataGridTextColumn Width="150">
+                        <DataGridTextColumn.Header>
+                            <TextBlock >
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} folosite">
+                                        <Binding Path="DataContext.CurrentMed.QuantityType" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataGridTextColumn.Header>
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="Quantity" />
+                        </DataGridTextColumn.Binding>
+                    </DataGridTextColumn>
 
-                    <!-- 🖊 Edit Button Column -->
+                    <DataGridTemplateColumn Header="Detalii"    Width="500">
+                       
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Treatment.Details}" TextWrapping="Wrap"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
                     <DataGridTemplateColumn Width="Auto">
                         <DataGridTemplateColumn.Header>
                             <TextBlock Text="Actions"/>
@@ -58,10 +83,8 @@
                                 Foreground="White" BorderThickness="0" Cursor="Hand"
                                 Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                 CommandParameter="{Binding}" />
-
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-
                     </DataGridTemplateColumn>
 
                     <DataGridTemplateColumn Width="Auto">
@@ -71,13 +94,13 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="View" Padding="5,2" Background="Green"
-                        Foreground="White" BorderThickness="0" Cursor="Hand"
-                        Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
+                                    Foreground="White" BorderThickness="0" Cursor="Hand"
+                                    Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-
                     </DataGridTemplateColumn>
+                    
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

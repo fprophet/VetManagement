@@ -18,9 +18,15 @@ namespace VetManagement.ViewModels
     public class OwnersViewModel : ViewModelBase
     {
 
+        private string _pageTitle = "Pagină proprietari";
+
         public ICommand NavigateCreateOwnerCommand { get; set; }
+
         public ICommand DeleteOwnerCommand { get; set; }
+
         public ICommand NavigateCreatePatientCommand { get; set; }
+
+        public ICommand NavigateCreateTreatmentCommand { get; set; }
 
         private OwnerRepository _ownerRepository;
 
@@ -29,13 +35,16 @@ namespace VetManagement.ViewModels
         public OwnersViewModel(NavigationStore navigationStore)
         {
             _ownerRepository = new OwnerRepository();
-
             _navigationStore = navigationStore;
+            _navigationStore.PageTitle = _pageTitle;
 
             NavigateCreateOwnerCommand = new NavigateCommand<CreateOwnerViewModel>
                 (new NavigationService<CreateOwnerViewModel>(_navigationStore, (id) => new CreateOwnerViewModel(_navigationStore)));
             NavigateCreatePatientCommand = new NavigateCommand<CreatePatientViewModel>
                 (new NavigationService<CreatePatientViewModel>(_navigationStore, (id) => new CreatePatientViewModel(_navigationStore,id)));
+            NavigateCreateTreatmentCommand = new NavigateCommand<OwnerTreatmentsViewModel>
+                (new NavigationService<OwnerTreatmentsViewModel>(_navigationStore, (id) => new OwnerTreatmentsViewModel(_navigationStore, id)));
+
             DeleteOwnerCommand = new RelayCommand(DeleteOwner);
 
             LoadOwners();
@@ -45,7 +54,9 @@ namespace VetManagement.ViewModels
         {
             var owners = await _ownerRepository.GetFullInfo();
 
-            foreach ( var owner in owners)
+            var sortedOwners = owners.OrderByDescending(o => o.DateAdded);
+
+            foreach ( var owner in sortedOwners)
             {
                 Owners.Add(owner);
 

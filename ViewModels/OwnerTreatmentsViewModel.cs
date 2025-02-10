@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,30 +13,50 @@ using VetManagement.Stores;
 
 namespace VetManagement.ViewModels
 {
-    public class TreatmentsViewModel : ViewModelBase
+    public  class OwnerTreatmentsViewModel : ViewModelBase
     {
-        public string _pageTitle = "Tratamente";
+
+        private readonly int PassedId;
+
+        private readonly string _pageTitle;
+
 
         public ICommand NavigateOwnersCommand { get; set; }
 
+        public Owner Owner;
+
         private TreatmentRepository _treatmentRepository;
 
-        //public CreateTreatmentViewModel CreateTreatmentViewModel { get; set; }
+        public CreateTreatmentViewModel CreateTreatmentViewModel { get; set; }
 
         public ObservableCollection<Treatment> Treatments { get; private set; } = new ObservableCollection<Treatment>();
 
-        public TreatmentsViewModel(NavigationStore navigationStore)
-        {
+
+        public OwnerTreatmentsViewModel( NavigationStore navigationStore, int? id) 
+        { 
             _navigationStore = navigationStore;
             _treatmentRepository = new TreatmentRepository();
-            _navigationStore.PageTitle = _pageTitle;
-            NavigateOwnersCommand = new NavigateCommand<HomeViewModel>(new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore)));
+
+            NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
+                (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
+
+            if (id.HasValue)
+            {
+                PassedId = id.Value;
+            }
+            else
+            {
+                PassedId = -1;
+            }
+
             LoadTreatments();
-            //CreateTreatmentViewModel = new CreateTreatmentViewModel(OnTreatmentCreated, id);
+            LoadOwner();
+
+            CreateTreatmentViewModel = new CreateTreatmentViewModel(OnTreatmentCreated, id);
 
         }
 
-        private void OnTreatmentCreated(Treatment treatment)
+        private void OnTreatmentCreated( Treatment treatment)
         {
             Treatments.Add(treatment);
             var sortedTreatments = Treatments.OrderByDescending(t => t.DateAdded).ToList();
@@ -49,15 +70,24 @@ namespace VetManagement.ViewModels
         }
 
 
+        private async void LoadOwner()
+        {
+            BaseRepository<Owner> ownerRepository = new BaseRepository<Owner>();
+            Owner = await ownerRepository.GetById(PassedId);
+            _navigationStore.PageTitle = "Tratamentele lui " + Owner.Name; 
+
+
+        }
+
         private async void LoadTreatments()
         {
-            var treatments = await _treatmentRepository.GetFullTreatments();
+            var treatments = await _treatmentRepository.GetFullTreatmentsForOwner(PassedId);
 
             var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
 
             foreach (var treatment in sortedTreatments)
             {
-
+               
                 Treatments.Add(treatment);
             }
 

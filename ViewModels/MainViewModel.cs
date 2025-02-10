@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,25 +18,49 @@ namespace VetManagement.ViewModels
         public ICommand NavigateUsersCommand { get; }
         public ICommand NavigateOwnersCommand { get; }
         public ICommand NavigateTreatmentsCommand { get; }
+        public ICommand NavigateInventoryCommand { get; }
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
+
+        public string PageTitle 
+        { 
+            get => _navigationStore.PageTitle; 
+            
+            set
+            {
+                _navigationStore.PageTitle = value;
+            }
+        } 
 
         public MainViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
+            _navigationStore.PageTitleChanged += OnPageTitleChanged;
 
-            NavigateHomeCommand = new NavigateCommand<HomeViewModel>(new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore))); 
+            NavigateHomeCommand = new NavigateCommand<HomeViewModel>
+                (new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore))); 
 
-            NavigateUsersCommand = new NavigateCommand<InventoryViewModel>(new NavigationService<InventoryViewModel>(_navigationStore, (id) => new InventoryViewModel(_navigationStore)));
+            NavigateUsersCommand = new NavigateCommand<UsersViewModel>
+                (new NavigationService<UsersViewModel>(_navigationStore, (id) => new UsersViewModel(_navigationStore)));
+            
+            NavigateInventoryCommand = new NavigateCommand<InventoryViewModel>
+                (new NavigationService<InventoryViewModel>(_navigationStore, (id) => new InventoryViewModel(_navigationStore)));
 
-            NavigateTreatmentsCommand = new NavigateCommand<TreatmentsViewModel>(new NavigationService<TreatmentsViewModel>(_navigationStore, (id) => new TreatmentsViewModel(_navigationStore)));
+            NavigateTreatmentsCommand = new NavigateCommand<TreatmentsViewModel>
+                (new NavigationService<TreatmentsViewModel>(_navigationStore, (id) => new TreatmentsViewModel(_navigationStore)));
 
-            NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>(new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
+            NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
+                (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
         }
 
         private void OnCurrentViewModelChanged()
         {
             OnPropertyChanged(nameof(CurrentViewModel));
+        }
+
+        private void OnPageTitleChanged()
+        {
+            OnPropertyChanged(nameof(PageTitle));
         }
     }
 }

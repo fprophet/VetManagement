@@ -7,8 +7,27 @@
         xmlns:views="clr-namespace:VetManagement.Views"
         Title="MainWindow" Height="450" Width="800">
 
-    <DockPanel>
-        <Menu DockPanel.Dock="Top">
+    <Window.Resources>
+        <Style TargetType="MenuItem" x:Key="MenuItem">
+            <Setter Property="Background" Value="#FF4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="0,5"/>
+            <Setter Property="BorderBrush" Value="#FF388E3C"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Margin" Value="15, 10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+    
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <Menu DockPanel.Dock="Top" Grid.Row="0">
             <MenuItem Header="Home" Command="{Binding NavigateHomeCommand}" />
             <MenuItem Header="Stăpâni" Command="{Binding NavigateOwnersCommand}" />
             <MenuItem Header="Inventar" Command="{Binding NavigateUsersCommand}" />
@@ -16,49 +35,102 @@
             <MenuItem Header="Utilizatori" Command="{Binding NavigateSettingsCommand}" />
         </Menu>
 
-        <ContentControl Content="{Binding CurrentViewModel}">
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Vertical" Background="#2C3E50" Grid.Column="0" >
+                <ItemsControl>
+                 
 
-            <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
-                    <views:HomeView/>
-                </DataTemplate>
+                    <ItemsControl.Items>
+                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateHomeCommand}" >
+                            <MenuItem.Header>
+                                <TextBlock Text="🏠 Acasă" TextTrimming="None"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateOwnersCommand}" >
+                            <MenuItem.Header>
+                                <TextBlock Text="👤 Stăpâni" TextTrimming="None"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateInventoryCommand}" >
+                            <MenuItem.Header>
+                                <TextBlock Text="📦 Inventar" TextTrimming="None"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateTreatmentsCommand}" >
+                            <MenuItem.Header>
+                                <TextBlock Text="💊 Tratamente" TextTrimming="None"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateUsersCommand}" >
+                            <MenuItem.Header>
+                                <TextBlock Text="🔐 Utilizatori" TextTrimming="None"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </ItemsControl.Items>
+                </ItemsControl>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
 
-                <DataTemplate DataType="{x:Type viewmodels:UsersViewModel}">
-                    <views:Users/>
-                </DataTemplate>
+                <TextBlock Text="{Binding PageTitle}" 
+                    FontSize="24" FontWeight="Bold" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Top" 
+                    Margin="10"/>
+                <DockPanel>
+                    <ContentControl Content="{Binding CurrentViewModel}">
+                        <ContentControl.Resources>
+                            <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
+                                <views:HomeView/>
+                            </DataTemplate>
 
-                <DataTemplate DataType="{x:Type viewmodels:InventoryViewModel}">
-                    <views:InventoryView/>
-                </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:UsersViewModel}">
+                                <views:Users/>
+                            </DataTemplate>
 
-                <DataTemplate DataType="{x:Type viewmodels:MedViewModel}">
-                    <views:MedView/>
-                </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:InventoryViewModel}">
+                                <views:InventoryView/>
+                            </DataTemplate>
 
-                <DataTemplate DataType="{x:Type viewmodels:TreatmentsViewModel}">
-                    <views:TreatmentsView/>
-                </DataTemplate>
-                
-                <DataTemplate DataType="{x:Type viewmodels:CreateTreatmentViewModel}">
-                    <views:CreateTreatmentView/>
-                </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:MedViewModel}">
+                                <views:MedView/>
+                            </DataTemplate>
 
-                <DataTemplate DataType="{x:Type viewmodels:OwnersViewModel}">
-                    <views:OwnersView/>
-                </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:OwnerTreatmentsViewModel}">
+                                <views:OwnerTreatmentsView/>
+                            </DataTemplate>
 
-                <DataTemplate DataType="{x:Type viewmodels:CreateOwnerViewModel}">
-                    <views:CreateOwnerView/>
-                </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:CreateTreatmentViewModel}">
+                                <views:CreateTreatmentView/>
+                            </DataTemplate>
 
-                <DataTemplate DataType="{x:Type viewmodels:CreatePatientViewModel}">
-                    <views:CreatePatientView/>
-                </DataTemplate>
-                
-            </ContentControl.Resources>
-        </ContentControl>
-    </DockPanel>
+                            <DataTemplate DataType="{x:Type viewmodels:OwnersViewModel}">
+                                <views:OwnersView/>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type viewmodels:CreateOwnerViewModel}">
+                                <views:CreateOwnerView/>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type viewmodels:CreatePatientViewModel}">
+                                <views:CreatePatientView/>
+                            </DataTemplate>
+
+                            <DataTemplate DataType="{x:Type viewmodels:TreatmentsViewModel}">
+                                <views:TreatmentsView/>
+                            </DataTemplate>
+                        </ContentControl.Resources>
+                    </ContentControl>
+                </DockPanel>
+
+            </StackPanel>
+        </Grid>
     
-    
-    
+        
+    </Grid>
+
+
 </Window>

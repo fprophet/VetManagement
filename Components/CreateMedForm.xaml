@@ -6,51 +6,58 @@
              xmlns:local="clr-namespace:VetManagement.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="10" 
-            BorderBrush="#DDD" BorderThickness="1" >
+
+    <UserControl.Resources>
+        <Style TargetType="TextBlock" x:Key="InputLabel">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <Style TargetType="TextBox" x:Key="Input">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </UserControl.Resources>
+        <Border  Background="White" CornerRadius="10" Padding="10" 
+             BorderBrush="#DDD" BorderThickness="1" >
             <StackPanel>
-                <TextBlock Text="Item Details" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Name:" Width="100"/>
-                    <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                    <StackPanel Orientation="Vertical" Margin="10,0">
+                        <TextBlock Text="Nume:" Width="100" Style="{StaticResource InputLabel}"/>
+                        <TextBox Style="{StaticResource Input}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="10,0">
+                        <TextBlock Text="Serie Lot:" Width="100" Style="{StaticResource InputLabel}"/>
+                        <TextBox Style="{StaticResource Input}" Text="{Binding LotID, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="10,0">
+                        <TextBlock Text="Valabilitate:" Width="100" Style="{StaticResource InputLabel}"/>
+                        <TextBox Style="{StaticResource Input}" Text="{Binding Valability, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="10,0">
+                        <TextBlock Text="Tip Cantitate:" Width="100" Style="{StaticResource InputLabel}"/>
+                        <TextBox Style="{StaticResource Input}" Text="{Binding QuantityType, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Vertical" Margin="10,0">
+                            <TextBlock Text="Cantitate:" Width="100" Style="{StaticResource InputLabel}"/>
+                            <TextBox Style="{StaticResource Input}"  Text="{Binding Quantity, FallbackValue='1',  UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="10">
+                        <TextBlock Text="Descriere:" Style="{StaticResource InputLabel}"/>
+                    <TextBox  Style="{StaticResource Input}" HorizontalAlignment="Left" Height="50" Width="500" TextWrapping="Wrap"
+                                  Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Type:" Width="100"/>
-                    <TextBox Text="{Binding QuantityType, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Serie Lot:" Width="100"/>
-                    <TextBox Text="{Binding LotID, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Valability:" Width="100"/>
-                    <TextBox Text="{Binding Valability, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Description:" Width="100"/>
-                    <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Quantity:" Width="100"/>
-                    <TextBox  Text="{Binding Quantity, FallbackValue='1',  UpdateSourceTrigger=PropertyChanged}" Width="200"/>
-                    <Button Content="➕"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="left" Margin="10,10,0,0">
-                    <Button Content="💾 Save" Padding="10,5" Background="#4CAF50" Foreground="White"
-                        FontWeight="Bold" BorderThickness="0" Cursor="Hand"
-                        Command="{Binding CreateMedCommand}" />
-
-                    <Button Content="❌ Cancel" Padding="10,5" Background="#F44336" Foreground="White"
-                        FontWeight="Bold" BorderThickness="0" Cursor="Hand" Margin="10,0,0,0"
-                        Command="{Binding HideFormCommand}" />
-                </StackPanel>
-            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="left" Margin="10,10,0,0">
+                <Button Content="💾 Save" Padding="10,5" Background="#4CAF50" Foreground="White"
+                    FontWeight="Bold" BorderThickness="0" Cursor="Hand"
+                    Command="{Binding CreateMedCommand}" />
+            </StackPanel>   
+        </StackPanel>
         </Border>
 </UserControl>

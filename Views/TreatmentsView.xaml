@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VetManagement.Views"
-             xmlns:components="clr-namespace:VetManagement.Components" xmlns:services="clr-namespace:VetManagement.Services"
+             xmlns:local="clr-namespace:VetManagement.Views" xmlns:services="clr-namespace:VetManagement.Services"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -15,86 +14,64 @@
     <Grid Margin="10,10,0,-143">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Top Bar -->
-            <RowDefinition Height="Auto"/>
-            <!-- Hidden Form -->
             <RowDefinition Height="*"/>
-            <!-- Table -->
         </Grid.RowDefinitions>
 
-        <!-- 🡨 Back Button + Add New Item -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="5">
-            <Button Content="🡨 Back" Padding="10,5" Background="#2196F3" Foreground="White"
-                FontWeight="Bold" BorderThickness="0" Cursor="Hand"
-                Command="{Binding NavigateHomeCommand}" />
-
-            <Button Content="➕ Add New Item" Padding="10,5" Background="#4CAF50" Foreground="White"
-                FontWeight="Bold" BorderThickness="0" Cursor="Hand"
-                HorizontalAlignment="Right"
-                Command="{Binding ToggleFormVisibilityCommand}" />
-        </StackPanel>
-
-        <!-- 📋 Hidden Form (Appears When Editing or Adding) -->
-        <local:CreateTreatmentView Grid.Row="1" DataContext="{Binding CreateTreatmentViewModel}" Visibility="{Binding isVisibleForm, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-        <!-- 📋 Inventory Table -->
-        <DataGrid Grid.Row="2" ItemsSource="{Binding Treatments}" AutoGenerateColumns="False"
-              HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False"
-              Background="White" BorderThickness="1" BorderBrush="#DDD">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Treatments}"  Style="{StaticResource StylishDataGrid}">
+            
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Data" Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="*"/>
-                <DataGridTextColumn Header="Nume Proprietar" Binding="{Binding Patient.OwnerName}" Width="100"/>
-                <DataGridTextColumn Header="Adresa" Binding="{Binding Patient.OwnerAddress}" Width="120"/>
-                <DataGridTextColumn Header="Specie"  Binding="{Binding Patient.Species}" Width="150"/>
-                <DataGridTextColumn Header="Rasa" Binding="{Binding Patient.Race}" Width="150"/>
-                <DataGridTextColumn Header="Sex" Binding="{Binding Patient.Sex}" Width="150"/>
-                <DataGridTextColumn Header="Medicament Administrat" Binding="{Binding Name}" Width="*"/>
-                <DataGridTextColumn Header="Cantitate" Binding="{Binding Quantity}" Width="*"/>
 
-                <!-- 🖊 Edit Button Column -->
-                <DataGridTemplateColumn Width="Auto">
-                    <DataGridTemplateColumn.Header>
-                        <TextBlock Text="Actions"/>
-                    </DataGridTemplateColumn.Header>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume Animal"  Binding="{Binding Patient.Name}" Width="130" />
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Specie"  Binding="{Binding Patient.Species}" Width="100"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Rasa" Binding="{Binding Patient.Race}" Width="100"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Sex" Binding="{Binding Patient.Sex}" Width="70"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Vârsta"  Binding="{Binding Patient.Age}" Width="70"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Greutate"  Binding="{Binding Patient.Weight}" Width="100"/>
+
+                <DataGridTemplateColumn Header="Medicamente" Width="403" >
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="✏ Edit" Padding="5,2" Background="#FFC107"
-                                Foreground="White" BorderThickness="0" Cursor="Hand"
-                                Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                CommandParameter="{Binding}" />
+                            <DataGrid  ItemsSource="{Binding TreatmentMeds}" AutoGenerateColumns="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Nume" Binding="{Binding Med.Name}" Width="100"/>
+                                    <DataGridTextColumn Header="Cantitate" Binding="{Binding Quantity}" Width="100"/>
+                                    <DataGridTextColumn Header="Tip Dozaj" Binding="{Binding Med.QuantityType}" Width="100"/>
+                                    <DataGridTextColumn Header="Serie Lot" Binding="{Binding Med.LotID}" Width="100"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
 
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="Auto">
+                <DataGridTextColumn ElementStyle="{StaticResource WrapTextBlock}" Header="Detalii" Binding="{Binding Details}"   Width="250"/>
+
+                <!--<DataGridTemplateColumn Width="Auto">
                     <DataGridTemplateColumn.Header>
                         <TextBlock Text="Actions"/>
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="View" Padding="5,2" Background="Green"
-                        Foreground="White" BorderThickness="0" Cursor="Hand"
-                        Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-
+                            <StackPanel Orientation="Horizontal"  Margin="5" Height="50">
+                                <Button Content="✏ Edit" Padding="5,2" Background="#FFC107"
+                                     Foreground="White" BorderThickness="0" Cursor="Hand"
+                                     Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                     CommandParameter="{Binding}" />
+                                <Button Content="View" Padding="5,2" Background="Green"
+                                    Foreground="White" BorderThickness="0" Cursor="Hand"
+                                    Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
+                                <Button Content="Delete" Padding="5,2" Background="Red"
+                                    Foreground="White" BorderThickness="0" Cursor="Hand"
+                                    Command="{Binding DataContext.DeleteMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                </DataGridTemplateColumn>-->
 
-                <DataGridTemplateColumn Width="Auto">
-                    <DataGridTemplateColumn.Header>
-                        <TextBlock Text="Actions"/>
-                    </DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Delete" Padding="5,2" Background="Red"
-                        Foreground="White" BorderThickness="0" Cursor="Hand"
-                        Command="{Binding DataContext.DeleteMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+               
 
             </DataGrid.Columns>
         </DataGrid>

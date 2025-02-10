@@ -69,7 +69,6 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <Grid>
         <StackPanel Orientation="Vertical" Grid.Column="1"  VerticalAlignment="Top" Margin="10,10,10,70" Width="500">
 
             <!-- Second Section: Animal Info -->
@@ -109,13 +108,17 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="3">
-                    <StackPanel Orientation="Vertical" Width="250">
+                    <StackPanel Orientation="Vertical" Width="167">
                         <TextBlock Text="Varsta" VerticalAlignment="Center" Margin="5"/>
                         <TextBox Text="{Binding Age}" Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" Width="250">
+                    <StackPanel Orientation="Vertical" Width="167">
                         <TextBlock Text="Culoare" VerticalAlignment="Center" Margin="5"/>
                         <TextBox  Text="{Binding Color}" Style="{StaticResource TextBoxStyle}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Width="167">
+                        <TextBlock Text="Greutate" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox  Text="{Binding Weight}" Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -129,5 +132,4 @@
                 Grid.Row="5"/>-->
             </Grid>
         </StackPanel>
-    </Grid>
 </UserControl>

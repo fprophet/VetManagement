@@ -70,52 +70,66 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
+    
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" Margin="10,10,10,70" Width="500">
-            <!-- First Section: Owner's Basic Info -->
-            <TextBlock Text="Detaliile stăpânului" FontSize="18" FontWeight="Bold" Margin="0,10"/>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <Button Content="🡨 Înapoi" Padding="10,5" Background="#2196F3" Foreground="White" Grid.Row="0"
+            FontWeight="Bold" BorderThickness="0" Cursor="Hand" Width="100" HorizontalAlignment="Left" Margin="10"
+            Command="{Binding NavigateOwnersCommand}" />
+        
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+         
+            <StackPanel Orientation="Vertical" Grid.Column="0"  VerticalAlignment="Top" Margin="10,10,10,70" Width="500" >
+                <!-- First Section: Owner's Basic Info -->
+                <TextBlock Text="Detaliile stăpânului" FontSize="18" FontWeight="Bold" Margin="0,10"/>
 
-                <StackPanel Orientation="Vertical" Grid.Row="0">
-                    <TextBlock Text="Nume:" VerticalAlignment="Center" Margin="5"/>
-                    <TextBox Text="{Binding Name}" Name="NameTextBox" Style="{StaticResource TextBoxStyle}" />
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Grid.Row="1">
-                    <TextBlock Text="Adresa:" VerticalAlignment="Center" Margin="5" />
-                    <TextBox Text="{Binding Address}" Name="AddressTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="1"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Grid.Row="2">
-                    <TextBlock Text="Telefon:" VerticalAlignment="Center" Margin="5" />
-                    <TextBox Text="{Binding Phone}" Name="PhoneTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="2"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Grid.Row="3">
-                    <TextBlock Text="Email:" VerticalAlignment="Center" Margin="5" />
-                    <TextBox Text="{Binding Email}" Name="EmailTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="3"/>
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Grid.Row="4">
-                    <TextBlock Text="Detalii:" VerticalAlignment="Center" Margin="5" />
-                    <TextBox Text="{Binding Details}" Name="DetailsTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="4" Height="100"/>
-                </StackPanel>
-                <Button Content="Create Owner" HorizontalAlignment="Center" VerticalAlignment="Center"
-                Style="{StaticResource CreateOwnerButtonStyle}" Command="{ Binding CreateOwnerCommand}" VerticalContentAlignment="Center" 
-                Grid.Row="5"/>
-            </Grid>
-        </StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
+                    <StackPanel Orientation="Vertical" Grid.Row="0">
+                        <TextBlock Text="Nume:" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="{Binding Name}" Name="NameTextBox" Style="{StaticResource TextBoxStyle}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Row="1">
+                        <TextBlock Text="Adresa:" VerticalAlignment="Center" Margin="5" />
+                        <TextBox Text="{Binding Address}" Name="AddressTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="1"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Row="2">
+                        <TextBlock Text="Telefon:" VerticalAlignment="Center" Margin="5" />
+                        <TextBox Text="{Binding Phone}" Name="PhoneTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="2"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Row="3">
+                        <TextBlock Text="Email:" VerticalAlignment="Center" Margin="5" />
+                        <TextBox Text="{Binding Email}" Name="EmailTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="3"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Row="4">
+                        <TextBlock Text="Detalii:" VerticalAlignment="Center" Margin="5" />
+                        <TextBox Text="{Binding Details}" Name="DetailsTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="4" Height="100"/>
+                    </StackPanel>
+                    <Button Content="Creează proprietar" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Style="{StaticResource CreateOwnerButtonStyle}" Command="{ Binding CreateOwnerCommand}" VerticalContentAlignment="Center" 
+                            Grid.Row="5"/>
+                </Grid>
+            </StackPanel>
         <components:CreatePatientForm Grid.Column="1" DataContext="{Binding CreatePatientViewModel}" />
+        </Grid>
+
 
     </Grid>
 </UserControl>

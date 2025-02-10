@@ -34,6 +34,8 @@ namespace VetManagement.Data
 
         public int Age{ get; set; }
 
+        public float Weight { get; set; }
+
         public string Details { get; set; }
 
         public int DateAdded { get; set; }

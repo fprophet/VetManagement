@@ -19,6 +19,7 @@ namespace VetManagement.Services
         {
             _navigationStore = navigationStore;
             _createViewModel = createViewModel;
+
         }
 
         public void NavigateWindow(Window window, bool closeCurrent = false)

@@ -33,6 +33,8 @@ namespace vet_management
 
                 navigationStore.CurrentViewModel = new HomeViewModel(navigationStore);
 
+                navigationStore.PageTitle = "Acasă";
+
                 MainWindow = new MainWindow()
                 {
                     DataContext = new MainViewModel(navigationStore)

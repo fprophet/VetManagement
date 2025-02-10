@@ -30,6 +30,7 @@ namespace VetManagement.Data
         public int DateAdded { get; set; }
 
         public int DateUpdated { get; set; }
+        public List<TreatmentMed> TreatmentMeds { get; set; } = new List<TreatmentMed>();
 
         public DateTime DateAddedFormated => DateTimeOffset.FromUnixTimeSeconds(DateAdded).UtcDateTime;
 

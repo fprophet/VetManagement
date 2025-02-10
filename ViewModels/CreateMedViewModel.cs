@@ -13,6 +13,7 @@ namespace VetManagement.ViewModels
 {
     public class CreateMedViewModel : ViewModelBase
     {
+        private bool _isVisibleForm = false;
 
         private string _name; 
 
@@ -35,6 +36,7 @@ namespace VetManagement.ViewModels
         private readonly Action<Med> _onMedCreated;
 
         public ICommand CreateMedCommand { get; set; }
+        public ICommand ToggleFormVisibilityCommand { get; }
 
         public string Name 
         { 
@@ -116,11 +118,26 @@ namespace VetManagement.ViewModels
             }
         }
 
+        public bool isVisibleForm
+        {
+            get => _isVisibleForm;
+            set
+            {
+                _isVisibleForm = value;
+                OnPropertyChanged(nameof(isVisibleForm));
+            }
+        }
         public CreateMedViewModel(Action<Med> onMedCreated)
         {
             _onMedCreated = onMedCreated;
             CreateMedCommand = new RelayCommand(CreateMed, CanExecuteCreateMed);
-            
+            ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
+
+        }
+
+        private void ToggleFormVisibility(object parameter)
+        {
+            isVisibleForm = !isVisibleForm;
         }
 
         private bool CanExecuteCreateMed(object parameter)

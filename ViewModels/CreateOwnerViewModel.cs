@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.Services;
 using VetManagement.Stores;
@@ -78,10 +79,20 @@ namespace VetManagement.ViewModels
         public CreatePatientViewModel CreatePatientViewModel { get; set; }
 
         public ICommand CreateOwnerCommand { get; set; }
+
+        public ICommand NavigateOwnersCommand { get; set; }
+
+        private string _pageTitle = "Proprietar nou";
+
+
         public CreateOwnerViewModel(NavigationStore navigationStore)
         {
             CreatePatientViewModel = new CreatePatientViewModel(navigationStore,null);
             _navigationStore = navigationStore;
+            _navigationStore.PageTitle = _pageTitle;
+
+            NavigateOwnersCommand = NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
+                (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
 
             CreateOwnerCommand = new RelayCommand(CreateOwner);
 

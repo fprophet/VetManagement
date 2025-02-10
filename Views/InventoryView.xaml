@@ -5,13 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:VetManagement.Views"
              xmlns:components="clr-namespace:VetManagement.Components"
-            xmlns:services="clr-namespace:VetManagement.Services"
+             xmlns:services="clr-namespace:VetManagement.Services" 
+             xmlns:viewmodels="clr-namespace:VetManagement.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:InventoryViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
+
     </UserControl.Resources>
     
     <Grid Margin="10">
@@ -26,32 +28,30 @@
 
         <!-- 🡨 Back Button + Add New Item -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="5">
-            <Button Content="🡨 Back" Padding="10,5" Background="#2196F3" Foreground="White"
-                    FontWeight="Bold" BorderThickness="0" Cursor="Hand"
-                    Command="{Binding NavigateHomeCommand}" />
 
-            <Button Content="➕ Add New Item" Padding="10,5" Background="#4CAF50" Foreground="White"
+            <Button Content="➕ Adaugă un medicament" Padding="10,5" Background="#4CAF50" Foreground="White"
                     FontWeight="Bold" BorderThickness="0" Cursor="Hand"
                     HorizontalAlignment="Right"
-                    Command="{Binding ToggleFormVisibilityCommand}" />
+                    Command="{Binding CreateMedViewModel.ToggleFormVisibilityCommand}" />
         </StackPanel>
 
         <!-- 📋 Hidden Form (Appears When Editing or Adding) -->
-        <components:CreateMedForm Grid.Row="1" DataContext="{Binding CreateMedViewModel}" Visibility="{Binding isVisibleForm, Converter={StaticResource BoolToVisibilityConverter}}"/>
+        <components:CreateMedForm Grid.Row="1" DataContext="{Binding CreateMedViewModel}"
+                                  Margin="0,0,0,20" Visibility="{Binding isVisibleForm, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
 
         <!-- 📋 Inventory Table -->
-        <DataGrid Grid.Row="2" ItemsSource="{Binding Meds}" AutoGenerateColumns="False"
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Meds}" AutoGenerateColumns="False" Style="{StaticResource StylishDataGrid}"
                   HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False"
                   Background="White" BorderThickness="1" BorderBrush="#DDD">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="100"/>
-                <DataGridTextColumn Header="Type" Binding="{Binding QuantityType}" Width="120"/>
-                <DataGridTextColumn Header="Date Added" Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
-                <DataGridTextColumn Header="LotID" Binding="{Binding LotID}" Width="150"/>
-                <DataGridTextColumn Header="Valability" Binding="{Binding Valability}" Width="150"/>
-                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Name" Binding="{Binding Name}" Width="200"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Quantity" Binding="{Binding Quantity}" Width="100"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Type" Binding="{Binding QuantityType}" Width="120"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Date Added" Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="LotID" Binding="{Binding LotID}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valability" Binding="{Binding Valability}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Description" Binding="{Binding Description}" Width="500"/>
 
                 <!-- 🖊 Edit Button Column -->
                 <DataGridTemplateColumn Width="Auto">
@@ -60,38 +60,20 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
                             <Button Content="✏ Edit" Padding="5,2" Background="#FFC107"
                                     Foreground="White" BorderThickness="0" Cursor="Hand"
                                     Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                     CommandParameter="{Binding}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn Width="Auto">
-                    <DataGridTemplateColumn.Header>
-                        <TextBlock Text="Actions"/>
-                    </DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
                             <Button Content="View" Padding="5,2" Background="Green"
-                            Foreground="White" BorderThickness="0" Cursor="Hand"
-                            Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                            CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn Width="Auto">
-                    <DataGridTemplateColumn.Header>
-                        <TextBlock Text="Actions"/>
-                    </DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
+                                    Foreground="White" BorderThickness="0" Cursor="Hand"
+                                    Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
                             <Button Content="Delete" Padding="5,2" Background="Red"
-                            Foreground="White" BorderThickness="0" Cursor="Hand"
-                            Command="{Binding DataContext.DeleteMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                            CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
+                                    Foreground="White" BorderThickness="0" Cursor="Hand"
+                                    Command="{Binding DataContext.DeleteMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
