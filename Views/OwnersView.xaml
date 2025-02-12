@@ -17,44 +17,42 @@
         <Grid>
             <!-- Owner List -->
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Margin="20,0">
-                <Button Content="Crează proprietar nou" HorizontalAlignment="Left"
-                    Style="{StaticResource CreateOwnerButtonStyle}" Command="{Binding NavigateCreateOwnerCommand}"  />
+            <StackPanel Grid.Row="0">
             
-                <TextBlock Text="Filtre" FontSize="20" Margin="0,20,0,5"/>
+                <TextBlock Text="Filtre" FontSize="20" Margin="0,0,0,5"/>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                
-                    <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                        <TextBlock Text="Nume" FontSize="15"/>
-                        <TextBox Text="" FontSize="15"/>
-                    </StackPanel>
+                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                            <TextBlock Text="Nume" FontSize="15"/>
+                            <TextBox Text="{Binding NameFilter}" FontSize="15"/>
+                        </StackPanel>
 
-                    <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                        <TextBlock Text="Animal" FontSize="15"/>
-                        <TextBox Text="" FontSize="15"/>
-                    </StackPanel>
+                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                            <TextBlock Text="Animal" FontSize="15"/>
+                            <TextBox Text="{Binding PatientNameFilter}" FontSize="15"/>
+                        </StackPanel>
 
-                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                        <TextBlock Text="Detalii" FontSize="15"/>
-                        <TextBox Text="" FontSize="15"/>
-                    </StackPanel>
+                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                            <TextBlock Text="Detalii" FontSize="15"/>
+                            <TextBox Text="{Binding DetailsFilter}"  FontSize="15"/>
+                        </StackPanel>
+                </StackPanel>
+                <Button Content="➕ Crează proprietar nou" HorizontalAlignment="Left"
+                    Style="{StaticResource CreateButtonStyle}" Command="{Binding NavigateCreateOwnerWindowCommand}"  />
+        </StackPanel>
 
-                <Button Content="Aplica " HorizontalAlignment="Left" 
-                        Style="{StaticResource CreateOwnerButtonStyle}" Command="{Binding NavigateCreateOwnerCommand}"  />
-            </StackPanel>
-            </StackPanel>
-           
-            <DataGrid Name="OwnerList" ItemsSource="{Binding Owners}" Style="{StaticResource StylishDataGrid}" Grid.Row="1">
+        <StackPanel Grid.Row="1" Margin="0,10,0,0">
+
+            <DataGrid Name="OwnerList" ItemsSource="{Binding FilteredOwners}" Style="{StaticResource StylishDataGrid}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Data Înscriere" Binding="{Binding DateAddedFormated}" Width="150"/>
-                    <DataGridTextColumn Header="Nume" Binding="{Binding Name}" Width="200"/>
-                    <DataGridTextColumn Header="Adresă" Binding="{Binding Address}" Width="200"/>
-                    <DataGridTextColumn Header="Telefon" Binding="{Binding Phone}" Width="100"/>
-                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="250"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data Înscriere" Binding="{Binding DateAddedFormated, Mode=OneWay}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume" Binding="{Binding Name}" Width="200"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Adresă" Binding="{Binding Address}" Width="200"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Telefon" Binding="{Binding Phone}" Width="100"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Email" Binding="{Binding Email}" Width="250"/>
 
                     <DataGridTemplateColumn Header="Animale"  Width="300">
                         <DataGridTemplateColumn.CellTemplate>
@@ -65,24 +63,28 @@
                                             DisplayMemberPath="Name"
                                             Width="200"/>
                                     <Button Content="➕" Background="Green"
-                                            Command="{Binding DataContext.NavigateCreatePatientCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            Command="{Binding DataContext.NavigateCreatePatientWindowCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Detalii" Binding="{Binding Details}" Width="300"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Detalii" Binding="{Binding Details}" Width="300"/>
 
                     <DataGridTemplateColumn Header="Acțiuni" Width="250">
                         <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="Delete" Background="Red"  Padding="10,5" Foreground="White"
-                                                Command="{Binding DataContext.DeleteOwnerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" 
-                                                />
-                                        <Button Content="Listă tratamente" Background="Green" Margin="10,0" Padding="10,5" Foreground="White"
+                                    <Button Content="✏ Edit" Padding="5,2" Background="#FFC107"
+                                            Foreground="White" BorderThickness="0" Cursor="Hand"
+                                            Command="{Binding DataContext.UpdateOwnerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding}" />
+                                    <Button Content="Delete" Background="Red"  Padding="10,5" Foreground="White"
+                                            Command="{Binding DataContext.DeleteOwnerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" 
+                                            />
+                                    <Button Content="Listă tratamente" Background="Green" Margin="10,0" Padding="10,5" Foreground="White"
                                             Command="{Binding DataContext.NavigateCreateTreatmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" 
                                             />
@@ -92,7 +94,11 @@
                         </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <!-- Create Owner Button -->
+            <ProgressBar Height="15" Width="200" IsIndeterminate="True"
+                    Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
+        </StackPanel>
+
+        <!-- Create Owner Button -->
         
         </Grid>
 </UserControl>

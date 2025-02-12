@@ -5,132 +5,129 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:VetManagement.ViewModels" 
         xmlns:views="clr-namespace:VetManagement.Views"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Vet Management" Height="600" Width="1000">
 
     <Window.Resources>
         <Style TargetType="MenuItem" x:Key="MenuItem">
             <Setter Property="Background" Value="#FF4CAF50"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="0,5"/>
+            <Setter Property="Padding" Value="5,2"/>
             <Setter Property="BorderBrush" Value="#FF388E3C"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Margin" Value="15, 10"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="5"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
     </Window.Resources>
-    <Grid>
-    
-        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-        
-        <Menu DockPanel.Dock="Top" Grid.Row="0">
+
+    <DockPanel LastChildFill="True">
+
+        <!-- TOP MENU -->
+        <Menu DockPanel.Dock="Top" Background="#2C3E50" Foreground="White">
             <MenuItem Header="Home" Command="{Binding NavigateHomeCommand}" />
             <MenuItem Header="Stăpâni" Command="{Binding NavigateOwnersCommand}" />
-            <MenuItem Header="Inventar" Command="{Binding NavigateUsersCommand}" />
+            <MenuItem Header="Inventar" Command="{Binding NavigateInventoryCommand}" />
             <MenuItem Header="Tratamente" Command="{Binding NavigateTreatmentsCommand}" />
-            <MenuItem Header="Utilizatori" Command="{Binding NavigateSettingsCommand}" />
+            <MenuItem Header="Utilizatori" Command="{Binding NavigateUsersCommand}" />
         </Menu>
 
-        <Grid Grid.Row="1">
+        <!-- MAIN GRID -->
+        <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="200"/>
+                <!-- Sidebar -->
+                <ColumnDefinition Width="*"/>
+                <!-- Main Content -->
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Vertical" Background="#2C3E50" Grid.Column="0" >
-                <ItemsControl>
-                 
 
+            <!-- SIDE MENU -->
+            <StackPanel Background="#2C3E50" Grid.Column="0">
+                <ItemsControl>
                     <ItemsControl.Items>
-                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateHomeCommand}" >
+                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateHomeCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="🏠 Acasă" TextTrimming="None"/>
+                                <TextBlock Text="🏠 Acasă" />
                             </MenuItem.Header>
                         </MenuItem>
-                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateOwnersCommand}" >
+                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateOwnersCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="👤 Stăpâni" TextTrimming="None"/>
+                                <TextBlock Text="👤 Stăpâni" />
                             </MenuItem.Header>
                         </MenuItem>
-                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateInventoryCommand}" >
+                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateInventoryCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="📦 Inventar" TextTrimming="None"/>
+                                <TextBlock Text="📦 Inventar" />
                             </MenuItem.Header>
                         </MenuItem>
-                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateTreatmentsCommand}" >
+                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateTreatmentsCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="💊 Tratamente" TextTrimming="None"/>
+                                <TextBlock Text="💊 Tratamente" />
                             </MenuItem.Header>
                         </MenuItem>
-                        <MenuItem  Style="{StaticResource MenuItem}" Command="{Binding NavigateUsersCommand}" >
+                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateUsersCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="🔐 Utilizatori" TextTrimming="None"/>
+                                <TextBlock Text="🔐 Utilizatori" />
                             </MenuItem.Header>
                         </MenuItem>
                     </ItemsControl.Items>
                 </ItemsControl>
             </StackPanel>
-            <StackPanel Grid.Column="1">
 
-                <TextBlock Text="{Binding PageTitle}" 
-                    FontSize="24" FontWeight="Bold" 
-                    HorizontalAlignment="Center" 
-                    VerticalAlignment="Top" 
-                    Margin="10"/>
-                <DockPanel>
+            <!-- MAIN CONTENT AREA -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <!-- Page Title -->
+                    <RowDefinition Height="*"/>
+                    <!-- Content -->
+                </Grid.RowDefinitions>
+
+                <!-- PAGE TITLE -->
+                <Border BorderBrush="#3d5382" BorderThickness="0,0,0,2" >
+                    <StackPanel Orientation="Horizontal" Margin="20,10" Grid.Row="0" >
+                        <TextBlock Text="🧾" 
+                            FontSize="34" FontWeight="Bold"
+                            Foreground="#3d5382"
+                            HorizontalAlignment="Stretch" 
+                            VerticalAlignment="Top" />
+                        <TextBlock Text="{Binding PageTitle}" 
+                            Foreground="#3d5382"
+                            FontSize="34" FontWeight="Bold" 
+                            HorizontalAlignment="Stretch" 
+                            VerticalAlignment="Top" 
+                            Grid.Row="0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- SCROLLABLE CONTENT -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="20,20">
                     <ContentControl Content="{Binding CurrentViewModel}">
                         <ContentControl.Resources>
                             <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
                                 <views:HomeView/>
                             </DataTemplate>
-
                             <DataTemplate DataType="{x:Type viewmodels:UsersViewModel}">
                                 <views:Users/>
                             </DataTemplate>
-
                             <DataTemplate DataType="{x:Type viewmodels:InventoryViewModel}">
                                 <views:InventoryView/>
                             </DataTemplate>
-
                             <DataTemplate DataType="{x:Type viewmodels:MedViewModel}">
                                 <views:MedView/>
                             </DataTemplate>
-
                             <DataTemplate DataType="{x:Type viewmodels:OwnerTreatmentsViewModel}">
                                 <views:OwnerTreatmentsView/>
                             </DataTemplate>
-
-                            <DataTemplate DataType="{x:Type viewmodels:CreateTreatmentViewModel}">
-                                <views:CreateTreatmentView/>
-                            </DataTemplate>
-
                             <DataTemplate DataType="{x:Type viewmodels:OwnersViewModel}">
                                 <views:OwnersView/>
                             </DataTemplate>
-
-                            <DataTemplate DataType="{x:Type viewmodels:CreateOwnerViewModel}">
-                                <views:CreateOwnerView/>
-                            </DataTemplate>
-
-                            <DataTemplate DataType="{x:Type viewmodels:CreatePatientViewModel}">
-                                <views:CreatePatientView/>
-                            </DataTemplate>
-
                             <DataTemplate DataType="{x:Type viewmodels:TreatmentsViewModel}">
-                                <views:TreatmentsView/>
+                                <views:TreatmentsView />
                             </DataTemplate>
                         </ContentControl.Resources>
                     </ContentControl>
-                </DockPanel>
-
-            </StackPanel>
+                </ScrollViewer>
+            </Grid>
         </Grid>
-    
-        
-    </Grid>
-
-
+    </DockPanel>
 </Window>

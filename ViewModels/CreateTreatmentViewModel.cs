@@ -15,8 +15,6 @@ namespace VetManagement.ViewModels
 {
     public class CreateTreatmentViewModel : ViewModelBase
     {
-        private readonly NavigationStore _navigationStore;
-
         private readonly int PassedId;
 
         public ObservableCollection<Med> Meds { get; set; } = new ObservableCollection<Med>();
@@ -85,7 +83,6 @@ namespace VetManagement.ViewModels
 
         public CreateTreatmentViewModel(Action<Treatment> onTreatmentCreateChanged, int? id) 
         {
-
             _onTreatmnetCreateChanged = onTreatmentCreateChanged;
 
             AddInputPairCommand = new RelayCommand(AddInputPair);
@@ -106,13 +103,9 @@ namespace VetManagement.ViewModels
                 PassedId = -1; // Example default value
             }
 
-            LoadMeds();
-            LoadOwnerPatients();
-
-
         }
 
-        private async void LoadOwnerPatients()
+        public async Task LoadOwnerPatients()
         {
 
             if( PassedId <= 0)
@@ -138,7 +131,7 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private async void LoadMeds()
+        public async Task LoadMeds()
         {
             try
             {
@@ -221,7 +214,6 @@ namespace VetManagement.ViewModels
                     }
 
                 }
-
               
                 var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = PassedId, Details = Details, DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
 

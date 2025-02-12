@@ -19,13 +19,31 @@ namespace VetManagement.Stores
 
         private ViewModelBase _currentViewModel;
 
+        private int _passedId;
+
         public string PageTitle
         {
             get => _currentViewModel.PageTitle;
             set
             {
-                _currentViewModel.PageTitle = value;
-                OnPageTitleChanged();
+                if (_currentViewModel != null)
+                {
+                    _currentViewModel.PageTitle = value;
+                    PageTitleChanged?.Invoke();
+                }
+            }
+
+        }
+
+        public int PassedId
+        {
+            get => _passedId;
+            set
+            {
+                if (_passedId != null)
+                {
+                    _passedId = value;
+                }
             }
 
         }
@@ -37,8 +55,9 @@ namespace VetManagement.Stores
             {
                 _currentViewModel = value;
                 OnCurrentViewModelChanged();
-            }    
-            
+
+            }
+
         }
 
         private void OnCurrentViewModelChanged()
@@ -50,8 +69,6 @@ namespace VetManagement.Stores
 
         private void OnPageTitleChanged()
         {
-            Trace.WriteLine("Aici:");
-            Trace.WriteLine(_currentViewModel);
             Trace.WriteLine(_currentViewModel.PageTitle);
             PageTitleChanged?.Invoke();
         }

@@ -23,7 +23,6 @@ namespace VetManagement.ViewModels
 
         private readonly string _pageTitle;
 
-        private readonly BaseRepository<Med> _medRepository = new BaseRepository<Med>();
         public ObservableCollection<TreatmentMed> Treatments { get; set; } = new ObservableCollection<TreatmentMed>();
 
         private Med _med;
@@ -57,6 +56,7 @@ namespace VetManagement.ViewModels
 
             NavigateInventoryCommand = new NavigateCommand<InventoryViewModel>
                 (new NavigationService<InventoryViewModel>(navigationStore, (id) => new InventoryViewModel(navigationStore)));
+
             if (id.HasValue)
             {
                 _passedId = id.Value;
@@ -65,13 +65,11 @@ namespace VetManagement.ViewModels
             {
                 _passedId = -1;
             }
-            LoadMed();
-
-            LoadMedTreatments();
+         
 
         }
 
-        private async void LoadMedTreatments()
+        public async Task LoadMedTreatments()
         {
             TreatmentMedRepository treatmentMedRepository = new();
 
@@ -86,13 +84,13 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private async void LoadMed()
+        public async Task LoadMed()
         {
             try 
             {
-                _med =  await _medRepository.GetById(_passedId);
+                _med =  await new BaseRepository<Med>().GetById(_passedId);
                 _navigationStore.PageTitle = "Tratamente cu: " + _med.Name;
-
+                CurrentMed = _med;
             }
             catch (Exception ex)
             {

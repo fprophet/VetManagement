@@ -18,7 +18,18 @@ namespace VetManagement.ViewModels
 
         public ICommand NavigateOwnersCommand { get; set; }
 
-        private TreatmentRepository _treatmentRepository;
+        private bool _isLoading = true;
+
+        public bool isLoading
+        {
+            get => _isLoading;
+
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(isLoading));
+            }
+        }
 
         //public CreateTreatmentViewModel CreateTreatmentViewModel { get; set; }
 
@@ -27,10 +38,8 @@ namespace VetManagement.ViewModels
         public TreatmentsViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
-            _treatmentRepository = new TreatmentRepository();
             _navigationStore.PageTitle = _pageTitle;
             NavigateOwnersCommand = new NavigateCommand<HomeViewModel>(new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore)));
-            LoadTreatments();
             //CreateTreatmentViewModel = new CreateTreatmentViewModel(OnTreatmentCreated, id);
 
         }
@@ -49,9 +58,9 @@ namespace VetManagement.ViewModels
         }
 
 
-        private async void LoadTreatments()
+        public async Task LoadTreatments()
         {
-            var treatments = await _treatmentRepository.GetFullTreatments();
+            var treatments = await new TreatmentRepository().GetFullTreatments();
 
             var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
 
@@ -60,6 +69,7 @@ namespace VetManagement.ViewModels
 
                 Treatments.Add(treatment);
             }
+            isLoading = false;
 
 
         }

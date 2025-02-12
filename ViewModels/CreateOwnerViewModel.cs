@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.Services;
@@ -21,10 +22,11 @@ namespace VetManagement.ViewModels
 
         private string _address;
 
-        private int _phone;
+        private string _phone;
 
         private string _details;
 
+        private Action<Owner> _updateOwnersList;
         public string Name
         {
             get => _name;
@@ -56,7 +58,7 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public int Phone
+        public string Phone
         {
             get => _phone;
             set
@@ -82,14 +84,12 @@ namespace VetManagement.ViewModels
 
         public ICommand NavigateOwnersCommand { get; set; }
 
-        private string _pageTitle = "Proprietar nou";
 
-
-        public CreateOwnerViewModel(NavigationStore navigationStore)
+        public CreateOwnerViewModel(NavigationStore navigationStore, Action<Owner> updateOwnersList)
         {
             CreatePatientViewModel = new CreatePatientViewModel(navigationStore,null);
             _navigationStore = navigationStore;
-            _navigationStore.PageTitle = _pageTitle;
+            _updateOwnersList = updateOwnersList;
 
             NavigateOwnersCommand = NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
@@ -116,6 +116,7 @@ namespace VetManagement.ViewModels
 
                 await patientRepository.Add(patient);
 
+                _updateOwnersList?.Invoke(owner);
                 Boxes.InfoBox("Pacientul a fost adăugat cu succes!");
 
             }

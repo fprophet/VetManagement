@@ -11,25 +11,29 @@
             <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
         </UserControl.Resources>
-    <Grid>
+    <Grid >
 
-        <Grid Margin="10">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <!-- 🡨 Back Button + Add New Item -->
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="5">
-                <Button Content="🡨 Back" Padding="10,5" Background="#2196F3" Foreground="White"
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="20,5">
+                <Button Content="🡨 Înapoi" Padding="10,5" Background="#2196F3" Foreground="White"
                     FontWeight="Bold" BorderThickness="0" Cursor="Hand" Width="100" HorizontalAlignment="Left"
                     Command="{Binding NavigateInventoryCommand}" />
 
                 <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
                         <TextBlock Text="Stoc curent: " FontSize="23" />
                         <TextBlock Text="{Binding CurrentMed.Quantity}" FontSize="23"/>
-                    </StackPanel> 
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10,0">
+                        <TextBlock Text="Tratamente: " FontSize="23" />
+                        <TextBlock Text="{Binding Treatments.Count}" FontSize="23"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="10,0">
                         <TextBlock Text="Serie Lot: " FontSize="23"/>
                         <TextBlock Text="{Binding CurrentMed.LotID}" FontSize="23"/>
@@ -37,17 +41,17 @@
                 </StackPanel>
             </StackPanel>
 
-            <DataGrid Grid.Row="1" ItemsSource="{Binding Treatments}" AutoGenerateColumns="False" Style="{StaticResource StylishDataGrid}">
+            <DataGrid Grid.Row="1" ItemsSource="{Binding Treatments}" AutoGenerateColumns="False" HorizontalAlignment="Stretch" Style="{StaticResource StylishDataGrid}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Data" Binding="{Binding Treatment.DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding Treatment.DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
                     <!--<DataGridTextColumn Header="Serie Lot" 
                                         Binding="{Binding DataContext.CurrentMed.LotID, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="100"/>-->
-                    <DataGridTextColumn Header="Valability" Binding="{Binding DataContext.CurrentMed.Valability, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="100"/>
-                    <DataGridTextColumn Header="Nume Proprietar" Binding="{Binding Treatment.Owner.Name}" Width="120"/>
-                    <DataGridTextColumn Header="Adresa" Binding="{Binding Treatment.Owner.Address}" Width="150"/>
-                    <DataGridTextColumn Header="Specie" Binding="{Binding Treatment.Patient.Species}" Width="100"/>
-                    <DataGridTextColumn Header="Rasa" Binding="{Binding Treatment.Patient.Race}" Width="100"/>
-                    <DataGridTextColumn Header="Sex" Binding="{Binding Treatment.Patient.Sex}" Width="70"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding DataContext.CurrentMed.Valability, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="100"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume Proprietar" Binding="{Binding Treatment.Owner.Name}" Width="200"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Adresa" Binding="{Binding Treatment.Owner.Address}" Width="200"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Specie" Binding="{Binding Treatment.Patient.Species}" Width="100"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Rasa" Binding="{Binding Treatment.Patient.Race}" Width="100"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Sex" Binding="{Binding Treatment.Patient.Sex}" Width="70"/>
                     
                     <DataGridTextColumn Width="150">
                         <DataGridTextColumn.Header>
@@ -64,7 +68,7 @@
                         </DataGridTextColumn.Binding>
                     </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="Detalii"    Width="500">
+                    <DataGridTemplateColumn Header="Detalii" Width="500">
                        
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -73,34 +77,26 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Width="Auto">
+                    <!--<DataGridTemplateColumn Width="Auto">
                         <DataGridTemplateColumn.Header>
                             <TextBlock Text="Actions"/>
                         </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="✏ Edit" Padding="5,2" Background="#FFC107"
-                                Foreground="White" BorderThickness="0" Cursor="Hand"
-                                Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                CommandParameter="{Binding}" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="✏ Edit" Padding="5,2" Background="#FFC107"
+                                        Foreground="White" BorderThickness="0" Cursor="Hand"
+                                        Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}" />
+                                    <Button Content="View" Padding="5,2" Background="Green"
+                                        Foreground="White" BorderThickness="0" Cursor="Hand"
+                                        Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
+                                </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    </DataGridTemplateColumn>-->
 
-                    <DataGridTemplateColumn Width="Auto">
-                        <DataGridTemplateColumn.Header>
-                            <TextBlock Text="Actions"/>
-                        </DataGridTemplateColumn.Header>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="View" Padding="5,2" Background="Green"
-                                    Foreground="White" BorderThickness="0" Cursor="Hand"
-                                    Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

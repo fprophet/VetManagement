@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HandlebarsDotNet;
 using Microsoft.EntityFrameworkCore;
 
 namespace VetManagement.Data
@@ -30,6 +32,7 @@ namespace VetManagement.Data
         public async Task Update(T model)
         {
             _context.GetDbSet<T>().Update(model);
+            _context.Entry(model).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 

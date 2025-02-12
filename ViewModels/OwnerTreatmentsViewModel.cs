@@ -10,6 +10,7 @@ using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.Services;
 using VetManagement.Stores;
+using VetManagement.Views;
 
 namespace VetManagement.ViewModels
 {
@@ -20,12 +21,10 @@ namespace VetManagement.ViewModels
 
         private readonly string _pageTitle;
 
-
         public ICommand NavigateOwnersCommand { get; set; }
+        public ICommand NavigateCreateTreatment { get; set; }
 
         public Owner Owner;
-
-        private TreatmentRepository _treatmentRepository;
 
         public CreateTreatmentViewModel CreateTreatmentViewModel { get; set; }
 
@@ -33,12 +32,7 @@ namespace VetManagement.ViewModels
 
 
         public OwnerTreatmentsViewModel( NavigationStore navigationStore, int? id) 
-        { 
-            _navigationStore = navigationStore;
-            _treatmentRepository = new TreatmentRepository();
-
-            NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
-                (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
+        {
 
             if (id.HasValue)
             {
@@ -49,10 +43,15 @@ namespace VetManagement.ViewModels
                 PassedId = -1;
             }
 
-            LoadTreatments();
-            LoadOwner();
+            _navigationStore = navigationStore;
+            _navigationStore.PassedId = PassedId;
 
-            CreateTreatmentViewModel = new CreateTreatmentViewModel(OnTreatmentCreated, id);
+            NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
+                (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
+
+            NavigateCreateTreatment = new NavigateWindowCommand<CreateTreatmentViewModel>
+                (new NavigationService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(OnTreatmentCreated, id) ), () => new CreateTreatmentWindow());
+          
 
         }
 
@@ -70,24 +69,22 @@ namespace VetManagement.ViewModels
         }
 
 
-        private async void LoadOwner()
+        public async Task LoadOwner()
         {
-            BaseRepository<Owner> ownerRepository = new BaseRepository<Owner>();
-            Owner = await ownerRepository.GetById(PassedId);
+            Owner = await new BaseRepository<Owner>().GetById(PassedId);
             _navigationStore.PageTitle = "Tratamentele lui " + Owner.Name; 
 
 
         }
 
-        private async void LoadTreatments()
+        public async Task LoadTreatments()
         {
-            var treatments = await _treatmentRepository.GetFullTreatmentsForOwner(PassedId);
+            var treatments = await new TreatmentRepository().GetFullTreatmentsForOwner(PassedId);
 
             var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
 
             foreach (var treatment in sortedTreatments)
             {
-               
                 Treatments.Add(treatment);
             }
 

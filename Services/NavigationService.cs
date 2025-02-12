@@ -15,6 +15,12 @@ namespace VetManagement.Services
         private readonly NavigationStore _navigationStore;
         private readonly Func<int?, TViewModel> _createViewModel;
 
+        public int PassedId
+        {
+            get => _navigationStore.PassedId;
+            set { }
+        }
+
         public NavigationService(NavigationStore navigationStore, Func<int?, TViewModel> createViewModel = null)
         {
             _navigationStore = navigationStore;
@@ -22,14 +28,27 @@ namespace VetManagement.Services
 
         }
 
-        public void NavigateWindow(Window window, bool closeCurrent = false)
+        public void NavigateWindow(Func<Window> createWindow, int? passedId)
         {
-            window.Show();
+                if( passedId != null)
+                {
+                    _navigationStore.PassedId = (int)passedId;
+                }
+
+                Window window = createWindow();
+                window.DataContext = _createViewModel(_navigationStore.PassedId);
+                window.Show();
         }
 
         public void Navigate(int? id = null)
         {
-            _navigationStore.CurrentViewModel = _createViewModel(id);
+            var viewModel = _createViewModel(id);
+ 
+            //avoid reloading page. reloading page this way does not trigger the window load event therefore not loading data
+            if (_navigationStore.CurrentViewModel.GetType().Name != viewModel.GetType().Name)
+            {
+                _navigationStore.CurrentViewModel = _createViewModel(id);
+            }
         }
     }
 }

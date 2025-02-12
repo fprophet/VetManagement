@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VetManagement.ViewModels;
 
 namespace VetManagement.Views
 {
@@ -23,6 +25,16 @@ namespace VetManagement.Views
         public OwnersView()
         {
             InitializeComponent();
+            Loaded += OwnersView_Loaded;
+        }
+
+        private async void OwnersView_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            if ( DataContext is OwnersViewModel ownersViewModel)
+            {
+                await ownersViewModel.LoadOwners();
+            }
         }
     }
 }

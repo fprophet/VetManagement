@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using VetManagement.Data;
 using VetManagement.Services;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VetManagement.ViewModels
 {
@@ -23,15 +24,13 @@ namespace VetManagement.ViewModels
 
         private float _quantity;
 
-        private string _valability;
+        private DateTime _valability = DateTime.Today;
 
         private string _lotID;
 
         private int _dateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         private int _dateUpdated = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-        private readonly BaseRepository<Med> _medRepository = new BaseRepository<Med>();
 
         private readonly Action<Med> _onMedCreated;
 
@@ -108,7 +107,7 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public string Valability
+        public DateTime Valability
         {
             get => _valability;
             set
@@ -146,15 +145,19 @@ namespace VetManagement.ViewModels
         }
 
         private async void CreateMed(object parameter)
-        { 
-            Med med = new Med() { Name = Name, QuantityType = QuantityType, Quantity = Quantity, DateAdded = DateAdded, Description = Description, LotID =LotID, Valability = Valability };
-            Trace.WriteLine(med);
+        {
+
+            Trace.WriteLine((long)((DateTimeOffset)Valability).ToUnixTimeSeconds());
+            Med med = new Med() 
+                { Name = Name, QuantityType = QuantityType, Quantity = Quantity, DateAdded = DateAdded, Description = Description, LotID =LotID, Valability = (long)((DateTimeOffset)Valability).ToUnixTimeSeconds() };
             try 
             {
-                await _medRepository.Add(med);
+                await new BaseRepository<Med>().Add(med);
                 _onMedCreated?.Invoke(med);
 
-            }catch (Exception ex)
+                Boxes.InfoBox("Medicamentul a fost adăugat!");
+            }
+            catch (Exception ex)
             {
                 Logger.LogError("Error", ex.ToString());
                 MessageBox.Show("Medicamentul nu a putut fi adăugat!\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);

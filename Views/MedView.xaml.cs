@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VetManagement.ViewModels;
 
 namespace VetManagement.Views
 {
@@ -23,6 +24,17 @@ namespace VetManagement.Views
         public MedView()
         {
             InitializeComponent();
+            Loaded += MedView_Loaded;
         }
+
+        private async void MedView_Loaded(object sender, RoutedEventArgs e)
+        {
+            if( DataContext is MedViewModel medViewModel)
+            {
+                await medViewModel.LoadMed();
+                await medViewModel.LoadMedTreatments();
+            }
+        }
+
     }
 }

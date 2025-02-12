@@ -7,7 +7,6 @@
         <Setter Property="VerticalGridLinesBrush" Value="LightGray"/>
         <Setter Property="GridLinesVisibility" Value="All"/>
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="Margin" Value="20,0"/>
         <Setter Property="HeadersVisibility" Value="Column"/>
         <Setter Property="ColumnHeaderHeight" Value="40"/>
         <Setter Property="SelectionMode" Value="Single"/>
@@ -87,14 +86,49 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
 
-    <Style TargetType="Button" x:Key="CreateOwnerButtonStyle">
+    <Style TargetType="Button" x:Key="CreateButtonStyle">
         <Setter Property="Background" Value="#FF4CAF50"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="14"/>
         <Setter Property="Padding" Value="10,5"/>
         <Setter Property="BorderBrush" Value="#FF388E3C"/>
-        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Margin" Value="0,10"/>
         <Setter Property="Width" Value="200"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
     </Style>
+
+
+    <Style TargetType="Button" x:Key="EditButtonStyle">
+        <Setter Property="Background" Value="#FFC107"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="5,0"/>
+        <Setter Property="Padding" Value="5,0"/>
+    </Style>
+
+    <Style TargetType="Button" x:Key="DeleteButtonStyle">
+        <Setter Property="Background" Value="Red"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="5,0"/>
+        <Setter Property="Padding" Value="5,0"/>
+    </Style>
+
+    <Style TargetType="Button" x:Key="DetailsButtonStyle">
+        <Setter Property="Background" Value="Green"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="5,0"/>
+        <Setter Property="Padding" Value="5,0"/>
+    </Style>
+
 </ResourceDictionary>

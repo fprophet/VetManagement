@@ -23,16 +23,19 @@ namespace VetManagement.Data
 
         public string LotID {  get; set; }
 
-        public string Valability { get; set; } 
+        public long Valability { get; set; } 
 
         public string Description { get; set; }
 
-        public int DateAdded { get; set; }
+        public long DateAdded { get; set; }
 
-        public int DateUpdated { get; set; }
+        public long DateUpdated { get; set; }
+
         public List<TreatmentMed> TreatmentMeds { get; set; } = new List<TreatmentMed>();
 
         public DateTime DateAddedFormated => DateTimeOffset.FromUnixTimeSeconds(DateAdded).UtcDateTime;
+
+        public DateTime ValabilityFormated => DateTimeOffset.FromUnixTimeSeconds(Valability).UtcDateTime;
 
     }
 }

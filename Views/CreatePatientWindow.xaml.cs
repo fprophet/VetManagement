@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace VetManagement.Views
 {
     /// <summary>
-    /// Interaction logic for CreateOwnerView.xaml
+    /// Interaction logic for CreatePatientWindow.xaml
     /// </summary>
-    public partial class CreateOwnerView : UserControl
+    public partial class CreatePatientWindow : Window
     {
-        public CreateOwnerView()
+        public CreatePatientWindow()
         {
             InitializeComponent();
         }

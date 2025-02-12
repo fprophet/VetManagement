@@ -17,8 +17,8 @@ namespace VetManagement.Data
         [Required]
         public string Address { get; set; }
 
-        [Required]
-        public int Phone {  get; set; }
+        [Required, StringLength(15)]
+        public string Phone {  get; set; }
 
         [EmailAddress]
         [StringLength(200)]

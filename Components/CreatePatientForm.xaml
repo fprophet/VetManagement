@@ -69,7 +69,7 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-        <StackPanel Orientation="Vertical" Grid.Column="1"  VerticalAlignment="Top" Margin="10,10,10,70" Width="500">
+        <StackPanel Orientation="Vertical" Grid.Column="1"  VerticalAlignment="Top" Margin="10" Width="500">
 
             <!-- Second Section: Animal Info -->
             <TextBlock Text="Informații animal" FontSize="18" FontWeight="Bold" Margin="0,20"/>

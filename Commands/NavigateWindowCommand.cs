@@ -14,11 +14,9 @@ namespace VetManagement.Commands
     {
         private readonly NavigationService<TViewModel> _navigationService;
 
-        private readonly Func<TViewModel> createViewModel;
+        private readonly Func<Window> _window;
 
-        private readonly Window _window;
-
-        public NavigateWindowCommand(NavigationService<TViewModel> navigationService,Window window)
+        public NavigateWindowCommand(NavigationService<TViewModel> navigationService, Func<Window> window)
         {
             _window = window;
             _navigationService = navigationService;
@@ -27,7 +25,14 @@ namespace VetManagement.Commands
 
         public override void Execute(object parameter)
         {
-            _navigationService.NavigateWindow(_window, false);
+            if (parameter is int id)
+            {
+                _navigationService.NavigateWindow(_window, id);
+            }
+            else {
+                _navigationService.NavigateWindow(_window, null);
+
+            }
         }
     }
 }

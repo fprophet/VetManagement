@@ -11,69 +11,55 @@
         <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
     </UserControl.Resources>
 
-    <Grid Margin="10,10,0,-143">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <DataGrid Grid.Row="2" ItemsSource="{Binding Treatments}"  Style="{StaticResource StylishDataGrid}">
-            
-            <DataGrid.Columns>
+            <!-- Loading Progress Bar -->
+            <ProgressBar Height="15" Width="200" IsIndeterminate="True"
+                         Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
-                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume Animal"  Binding="{Binding Patient.Name}" Width="130" />
-                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Specie"  Binding="{Binding Patient.Species}" Width="100"/>
-                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Rasa" Binding="{Binding Patient.Race}" Width="100"/>
-                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Sex" Binding="{Binding Patient.Sex}" Width="70"/>
-                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Vârsta"  Binding="{Binding Patient.Age}" Width="70"/>
-                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Greutate"  Binding="{Binding Patient.Weight}" Width="100"/>
+            <!-- Main DataGrid -->
+            <DataGrid Grid.Row="1" ItemsSource="{Binding Treatments}"
+                      Style="{StaticResource StylishDataGrid}" 
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      AutoGenerateColumns="False"
+                      Height="Auto" >
 
-                <DataGridTemplateColumn Header="Medicamente" Width="403" >
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <DataGrid  ItemsSource="{Binding TreatmentMeds}" AutoGenerateColumns="False">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nume" Binding="{Binding Med.Name}" Width="100"/>
-                                    <DataGridTextColumn Header="Cantitate" Binding="{Binding Quantity}" Width="100"/>
-                                    <DataGridTextColumn Header="Tip Dozaj" Binding="{Binding Med.QuantityType}" Width="100"/>
-                                    <DataGridTextColumn Header="Serie Lot" Binding="{Binding Med.LotID}" Width="100"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Data" Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
+                    <DataGridTextColumn Header="Nume Animal"  Binding="{Binding Patient.Name}" Width="130" />
+                    <DataGridTextColumn Header="Specie"  Binding="{Binding Patient.Species}" Width="100"/>
+                    <DataGridTextColumn Header="Rasa" Binding="{Binding Patient.Race}" Width="100"/>
+                    <DataGridTextColumn Header="Sex" Binding="{Binding Patient.Sex}" Width="70"/>
+                    <DataGridTextColumn Header="Vârsta"  Binding="{Binding Patient.Age}" Width="70"/>
+                    <DataGridTextColumn Header="Greutate"  Binding="{Binding Patient.Weight}" Width="100"/>
 
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                    <!-- Nested DataGrid for Medicaments -->
+                    <DataGridTemplateColumn Header="Medicamente" Width="403">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="120">
+                                    <DataGrid ItemsSource="{Binding TreatmentMeds}" AutoGenerateColumns="False"
+                                              HeadersVisibility="Column" CanUserAddRows="False">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Nume" Binding="{Binding Med.Name}" Width="100"/>
+                                            <DataGridTextColumn Header="Cantitate" Binding="{Binding Quantity}" Width="100"/>
+                                            <DataGridTextColumn Header="Tip Dozaj" Binding="{Binding Med.QuantityType}" Width="100"/>
+                                            <DataGridTextColumn Header="Serie Lot" Binding="{Binding Med.LotID}" Width="100"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </ScrollViewer>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                <DataGridTextColumn ElementStyle="{StaticResource WrapTextBlock}" Header="Detalii" Binding="{Binding Details}"   Width="250"/>
-
-                <!--<DataGridTemplateColumn Width="Auto">
-                    <DataGridTemplateColumn.Header>
-                        <TextBlock Text="Actions"/>
-                    </DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal"  Margin="5" Height="50">
-                                <Button Content="✏ Edit" Padding="5,2" Background="#FFC107"
-                                     Foreground="White" BorderThickness="0" Cursor="Hand"
-                                     Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                     CommandParameter="{Binding}" />
-                                <Button Content="View" Padding="5,2" Background="Green"
-                                    Foreground="White" BorderThickness="0" Cursor="Hand"
-                                    Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                                <Button Content="Delete" Padding="5,2" Background="Red"
-                                    Foreground="White" BorderThickness="0" Cursor="Hand"
-                                    Command="{Binding DataContext.DeleteMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>-->
-
-               
-
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+                    <DataGridTextColumn Header="Detalii" Binding="{Binding Details}" Width="250"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </ScrollViewer>
 </UserControl>
