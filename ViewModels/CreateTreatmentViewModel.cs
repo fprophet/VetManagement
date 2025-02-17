@@ -32,8 +32,6 @@ namespace VetManagement.ViewModels
         public ICommand ToggleFormVisibilityCommand { get; }
 
 
-        private int _dateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
         private Action<Treatment> _onTreatmnetCreateChanged;
 
 
@@ -56,16 +54,6 @@ namespace VetManagement.ViewModels
             {
                 _patient = value;
                 OnPropertyChanged(nameof(Patient));
-            }
-        }
-
-        public int DateAdded
-        {
-            get => _dateAdded;
-            set
-            {
-                _dateAdded = value;
-                OnPropertyChanged(nameof(DateAdded));
             }
         }
 
@@ -207,7 +195,7 @@ namespace VetManagement.ViewModels
                     //Trace.WriteLine("Medicament: " + pair.Med.Name);
                     //Trace.WriteLine("Cantitate: " + pair.Quantity);
                     //Trace.WriteLine("Rank: " + pair.Rank);
-                    if (pair.Med.Quantity < pair.Quantity)
+                    if ((float)pair.Med.TotalAmount < pair.Quantity)
                     {
                         Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + pair.Med.Name + " este mai mică decât cea din stoc!");
                         return;
@@ -223,11 +211,13 @@ namespace VetManagement.ViewModels
                     //loop again in order to avoid meds quantity update if creating a treatment object fails
                     foreach (var pair in MedInputPair)
                     {
-                        pair.Med.Quantity = pair.Med.Quantity - pair.Quantity;
+                        pair.Med.TotalAmount = pair.Med.TotalAmount - pair.Quantity;
+                        pair.Med.Pieces = pair.Med.TotalAmount/pair.Med.PerPiece;
+
 
                         await medRepository.Update(pair.Med);
 
-                        var tm = await tretmentMedRepository.Add(new TreatmentMed() { MedId = pair.Med.Id, TreatmentId = treatment.Id, Quantity = pair.Quantity });
+                        var tm = await tretmentMedRepository.Add(new TreatmentMed() { MedId = pair.Med.Id, TreatmentId = treatment.Id, Quantity = pair.Quantity, Pieces = pair.Quantity / pair.Med.PerPiece  });
 
                         //for display purpose
                         tm.Med = pair.Med;

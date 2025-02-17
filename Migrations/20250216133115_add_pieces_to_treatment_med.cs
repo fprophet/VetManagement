@@ -5,25 +5,25 @@
 namespace VetManagement.Migrations
 {
     /// <inheritdoc />
-    public partial class patient_weight : Migration
+    public partial class add_pieces_to_treatment_med : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "Weight",
-                table: "Patients",
-                type: "int",
+            migrationBuilder.AddColumn<float>(
+                name: "Pieces",
+                table: "TreatmentMed",
+                type: "float",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0f);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Weight",
-                table: "Patients");
+                name: "Pieces",
+                table: "TreatmentMed");
         }
     }
 }

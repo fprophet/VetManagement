@@ -24,7 +24,7 @@ namespace VetManagement.Data
 
         public int DateUpdated { get; set; }
 
-        public string Details { get; set; }
+        public string? Details { get; set; }
 
         public List<TreatmentMed> TreatmentMeds{ get; set; } = new List<TreatmentMed>();
 

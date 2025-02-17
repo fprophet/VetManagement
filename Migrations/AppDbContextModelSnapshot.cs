@@ -31,21 +31,30 @@ namespace VetManagement.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("LotID")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<float>("Quantity")
+                    b.Property<float>("PerPiece")
                         .HasColumnType("float");
 
-                    b.Property<string>("QuantityType")
+                    b.Property<string>("PieceType")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("PieceType");
+
+                    b.Property<float>("Pieces")
+                        .HasColumnType("float");
+
+                    b.Property<float>("TotalAmount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -75,11 +84,9 @@ namespace VetManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Details")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
@@ -108,7 +115,6 @@ namespace VetManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Color")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
@@ -119,7 +125,6 @@ namespace VetManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Details")
-                        .IsRequired()
                         .HasColumnType("mediumtext");
 
                     b.Property<string>("Name")
@@ -167,7 +172,6 @@ namespace VetManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Details")
-                        .IsRequired()
                         .HasColumnType("mediumtext");
 
                     b.Property<int>("OwnerId")
@@ -195,6 +199,9 @@ namespace VetManagement.Migrations
 
                     b.Property<int>("Id")
                         .HasColumnType("int");
+
+                    b.Property<float>("Pieces")
+                        .HasColumnType("float");
 
                     b.Property<float>("Quantity")
                         .HasColumnType("float");

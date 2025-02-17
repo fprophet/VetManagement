@@ -27,9 +27,9 @@ namespace VetManagement.ViewModels
 
         public ICommand DeleteOwnerCommand { get; set; }
 
-        public ICommand NavigateCreatePatientWindowCommand { get; set; }
+        public ICommand NavigateTreatmentsListCommand { get; set; }
 
-        public ICommand NavigateCreateTreatmentCommand { get; set; }
+        public ICommand NavigatePatientsListCommand { get; set; }
 
         public ICommand UpdateOwnerCommand { get; set; }
 
@@ -100,16 +100,14 @@ namespace VetManagement.ViewModels
             _filteredOwners = new ListCollectionView(Owners);
             _filteredOwners.Filter = FilterOwners;
 
-            //NavigateCreateOwnerCommand = new NavigateCommand<CreateOwnerViewModel>
-            //    (new NavigationService<CreateOwnerViewModel>(_navigationStore, (id) => new CreateOwnerViewModel(_navigationStore)));
             NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerViewModel>
                 (new NavigationService<CreateOwnerViewModel>(_navigationStore, (id) => new CreateOwnerViewModel(_navigationStore, UpdateOwners)), () => new CreateOwnerWindow());
 
-            NavigateCreatePatientWindowCommand = new NavigateWindowCommand<CreatePatientViewModel>
-                (new NavigationService<CreatePatientViewModel>(_navigationStore, (id) => new CreatePatientViewModel(_navigationStore,id)), () => new CreatePatientWindow() );
-
-            NavigateCreateTreatmentCommand = new NavigateCommand<OwnerTreatmentsViewModel>
+            NavigateTreatmentsListCommand = new NavigateCommand<OwnerTreatmentsViewModel>
                 (new NavigationService<OwnerTreatmentsViewModel>(_navigationStore, (id) => new OwnerTreatmentsViewModel(_navigationStore, id)));
+
+            NavigatePatientsListCommand = new NavigateCommand<OwnerPatientsViewModel>
+                (new NavigationService<OwnerPatientsViewModel>(_navigationStore, (id) => new OwnerPatientsViewModel(_navigationStore, id)));
 
             DeleteOwnerCommand = new RelayCommand(DeleteOwner);
             UpdateOwnerCommand = new RelayCommand(UpdateOwner);

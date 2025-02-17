@@ -20,24 +20,44 @@
             </Grid.RowDefinitions>
 
             <!-- 🡨 Back Button + Add New Item -->
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="20,5">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="0,5">
                 <Button Content="🡨 Înapoi" Padding="10,5" Background="#2196F3" Foreground="White"
                     FontWeight="Bold" BorderThickness="0" Cursor="Hand" Width="100" HorizontalAlignment="Left"
                     Command="{Binding NavigateInventoryCommand}" />
 
-                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                    <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-                        <TextBlock Text="Stoc curent: " FontSize="23" />
-                        <TextBlock Text="{Binding CurrentMed.Quantity}" FontSize="23"/>
+                <StackPanel Orientation="Vertical" Margin="0,20,0,0">
+                    <TextBlock Text="{Binding CurrentMed.Name}" FontWeight="Bold" FontSize="18"/>
+
+                    <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                        <TextBlock  FontSize="18" Margin="0,0,20,0">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}Total {0}: {1}">
+                                    <Binding Path="CurrentMed.PieceType" />
+                                    <Binding Path="CurrentMed.Pieces" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+
+                        <TextBlock FontSize="18">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}Total cantitate: {0} {1}">
+                                    <Binding Path="CurrentMed.TotalAmount" />
+                                    <Binding Path="CurrentMed.Unit" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="10,0">
-                        <TextBlock Text="Tratamente: " FontSize="23" />
-                        <TextBlock Text="{Binding Treatments.Count}" FontSize="23"/>
+                    
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Serie Lot: " FontSize="18"/>
+                        <TextBlock Text="{Binding CurrentMed.LotID}" FontSize="18"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="10,0">
-                        <TextBlock Text="Serie Lot: " FontSize="23"/>
-                        <TextBlock Text="{Binding CurrentMed.LotID}" FontSize="23"/>
+                    
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Tratamente: " FontSize="18" />
+                        <TextBlock Text="{Binding Treatments.Count}" FontSize="18"/>
                     </StackPanel>
+                    
                 </StackPanel>
             </StackPanel>
 
@@ -46,25 +66,40 @@
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding Treatment.DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
                     <!--<DataGridTextColumn Header="Serie Lot" 
                                         Binding="{Binding DataContext.CurrentMed.LotID, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="100"/>-->
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding DataContext.CurrentMed.Valability, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="100"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume Proprietar" Binding="{Binding Treatment.Owner.Name}" Width="200"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Adresa" Binding="{Binding Treatment.Owner.Address}" Width="200"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Specie" Binding="{Binding Treatment.Patient.Species}" Width="100"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Rasa" Binding="{Binding Treatment.Patient.Race}" Width="100"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Sex" Binding="{Binding Treatment.Patient.Sex}" Width="70"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Valabilitate" Binding="{Binding DataContext.CurrentMed.ValabilityFormated, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Nume Proprietar" Binding="{Binding Treatment.Owner.Name}" Width="200"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Adresa" Binding="{Binding Treatment.Owner.Address}" Width="200"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Specie" Binding="{Binding Treatment.Patient.Species}" Width="100"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Rasa" Binding="{Binding Treatment.Patient.Race}" Width="100"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Sex" Binding="{Binding Treatment.Patient.Sex}" Width="70"/>
                     
                     <DataGridTextColumn Width="150">
                         <DataGridTextColumn.Header>
                             <TextBlock >
                                 <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0} folosite">
-                                        <Binding Path="DataContext.CurrentMed.QuantityType" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                    <MultiBinding StringFormat="{}cantitate ({0})">
+                                        <Binding Path="DataContext.CurrentMed.Unit" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
                         </DataGridTextColumn.Header>
                         <DataGridTextColumn.Binding>
                             <Binding Path="Quantity" />
+                        </DataGridTextColumn.Binding>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Width="150">
+                        <DataGridTextColumn.Header>
+                            <TextBlock >
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} folosite">
+                                        <Binding Path="DataContext.CurrentMed.PieceType" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataGridTextColumn.Header>
+                        <DataGridTextColumn.Binding>
+                            <Binding Path="Pieces" />
                         </DataGridTextColumn.Binding>
                     </DataGridTextColumn>
 

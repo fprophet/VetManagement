@@ -13,6 +13,8 @@ namespace VetManagement.Data
 
         public float Quantity { get; set; }
 
+        public float Pieces { get; set; }
+
         public Treatment Treatment { get; set; }
 
         public Med Med { get; set; }

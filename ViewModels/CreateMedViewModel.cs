@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
+using Mysqlx.Crud;
 using VetManagement.Data;
 using VetManagement.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -20,10 +24,6 @@ namespace VetManagement.ViewModels
 
         private string _description;
 
-        private string _quantityType;
-
-        private float _quantity;
-
         private DateTime _valability = DateTime.Today;
 
         private string _lotID;
@@ -36,6 +36,22 @@ namespace VetManagement.ViewModels
 
         public ICommand CreateMedCommand { get; set; }
         public ICommand ToggleFormVisibilityCommand { get; }
+
+        public ObservableCollection<object> PieceTypeList { get; set; } =
+            new ObservableCollection<object>  { new { Name = "Flacoane", Value = "flacoane" }, new { Name = "Comprimate", Value = "comprimate" } } ;
+        public ObservableCollection<object> MedTypeList { get; set; } =
+            new ObservableCollection<object>  { new { Name = "Medicament", Value = "medicament" }, new { Name = "Vaccin", Value = "vaccin" } } ;  
+
+        private bool _isVisiblePerPieceInput = true;
+        public bool isVisiblePerPieceInput
+        {
+            get => _isVisiblePerPieceInput;
+            set
+            {
+                _isVisiblePerPieceInput = value;
+                OnPropertyChanged(nameof(isVisiblePerPieceInput));
+            }
+        }
 
         public string Name 
         { 
@@ -53,27 +69,106 @@ namespace VetManagement.ViewModels
             set
             {
                 _description = value;
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(Description));
             }
         }
 
-        public string QuantityType
+        private string _pieceType = "flacoane";
+        public string PieceType
         {
-            get => _quantityType;
+            get => _pieceType;
             set
             {
-                _quantityType = value;
-                OnPropertyChanged(nameof(Name));
+                _pieceType = value;
+                OnPropertyChanged(nameof(PieceType));
+                if( value == "comprimate")
+                {
+                    _perPiece = 1;
+                    isVisiblePerPieceInput = false;
+                    TotalAmountUnit = "comprimate";
+                }
+                else
+                {
+                    _perPiece = 0;
+                    isVisiblePerPieceInput = true;
+                    TotalAmountUnit = "ml";
+                }
+
+                CalculateTotalAmount();
+
             }
         }
 
-        public float Quantity
+        private int _pieces;
+        public int Pieces
         {
-            get => _quantity;
+            get => _pieces;
             set
             {
-                _quantity = value;
-                OnPropertyChanged(nameof(Name));
+                _pieces = value;
+                OnPropertyChanged(nameof(Pieces));
+                CalculateTotalAmount();
+            }
+        }
+
+        private float _perPiece;
+        public float PerPiece
+        {
+            get => _perPiece;
+            set
+            {
+                _perPiece = value;
+                OnPropertyChanged(nameof(_perPiece));
+                CalculateTotalAmount();
+            }
+        }
+
+        private string _perPieceString;
+        public string PerPieceString
+        {
+            get => _perPieceString;
+            set
+            {
+                float parsed;
+                if (float.TryParse(value, out parsed))
+                {
+                    _perPieceString = value;
+                    PerPiece = parsed;
+                    OnPropertyChanged(nameof(PerPieceString));
+                }
+            }
+        }
+
+        private float _totalAmount;
+        public float TotalAmount
+        {
+            get => _totalAmount;
+            set 
+            {
+                _totalAmount = value;
+                OnPropertyChanged(nameof(TotalAmount));
+            }
+        }
+
+        private string _totalAmountUnit = "ml";
+        public string TotalAmountUnit
+        {
+            get => _totalAmountUnit;
+            set
+            {
+                _totalAmountUnit = value;
+                OnPropertyChanged(nameof(TotalAmountUnit));
+            }
+        }
+
+        private string _type = "medicament";
+        public string Type 
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                OnPropertyChanged(nameof(Type));
             }
         }
 
@@ -83,7 +178,7 @@ namespace VetManagement.ViewModels
             set
             {
                 _dateAdded = value;
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(DateAdded));
             }
         }
 
@@ -93,7 +188,7 @@ namespace VetManagement.ViewModels
             set
             {
                 _dateUpdated = value;
-                OnPropertyChanged(nameof(Name));
+                OnPropertyChanged(nameof(DateUpdated));
             }
         } 
         
@@ -134,6 +229,11 @@ namespace VetManagement.ViewModels
 
         }
 
+        private void CalculateTotalAmount()
+        {
+            TotalAmount = Pieces * PerPiece;
+        }
+
         private void ToggleFormVisibility(object parameter)
         {
             isVisibleForm = !isVisibleForm;
@@ -141,15 +241,53 @@ namespace VetManagement.ViewModels
 
         private bool CanExecuteCreateMed(object parameter)
         {
-            return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(QuantityType) && Quantity > 0;
+            return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(PieceType) && Pieces > 0;
         }
+
+        private bool Validate(Med med)
+        {
+            var validationResults = new List<ValidationResult>();
+
+            var context = new ValidationContext(med, serviceProvider: null, items: null);
+
+            bool isValid = Validator.TryValidateObject(med, context, validationResults);
+
+            if (!isValid)
+            {
+                foreach (var error in validationResults)
+                {
+                    Errors.Add(error.MemberNames.First(), new List<string> { error.ErrorMessage });
+                    OnErrorsChanged(error.MemberNames.First());
+                }
+                return false;
+            }
+
+            return true;
+        }
+
 
         private async void CreateMed(object parameter)
         {
-
-            Trace.WriteLine((long)((DateTimeOffset)Valability).ToUnixTimeSeconds());
+            long x = (long)((DateTimeOffset)Valability).ToUnixTimeSeconds();
             Med med = new Med() 
-                { Name = Name, QuantityType = QuantityType, Quantity = Quantity, DateAdded = DateAdded, Description = Description, LotID =LotID, Valability = (long)((DateTimeOffset)Valability).ToUnixTimeSeconds() };
+             { 
+                Name = Name,
+                Type = Type,
+                PieceType = PieceType, 
+                Pieces = Pieces,
+                PerPiece = PerPiece, 
+                TotalAmount = TotalAmount, 
+                DateAdded = DateAdded,
+                Description = Description, 
+                LotID =LotID, 
+                Valability = (long)((DateTimeOffset)Valability).ToUnixTimeSeconds()
+            };
+
+            if ( !Validate(med))
+            {
+                return;
+            }
+
             try 
             {
                 await new BaseRepository<Med>().Add(med);

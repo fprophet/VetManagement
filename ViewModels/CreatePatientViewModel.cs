@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,12 +24,15 @@ namespace VetManagement.ViewModels
 
         private int _age;
 
+        private float _weight;
+
         private string _color;
 
         private string _details;
 
         private readonly int PassedId;
 
+        private Action<Patient> _onPatientCreated;
         public string Name
         {
             get => _name;
@@ -77,6 +81,16 @@ namespace VetManagement.ViewModels
                 _age = value;
                 OnPropertyChanged(nameof(Age));
             }
+        }   
+        
+        public float Weight
+        {
+            get => _weight;
+            set
+            {
+                _weight = value;
+                OnPropertyChanged(nameof(Weight));
+            }
         }
 
         public string Color
@@ -103,9 +117,9 @@ namespace VetManagement.ViewModels
 
         public ICommand NavigateOwnersCommand { get; set; }
 
-        public CreatePatientViewModel( NavigationStore navigationStore, int? id )
+        public CreatePatientViewModel(Action<Patient> OnPatientCreated, int? id)
         {
-            _navigationStore = navigationStore;
+            _onPatientCreated = OnPatientCreated;
 
             NavigateOwnersCommand = NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
@@ -130,8 +144,12 @@ namespace VetManagement.ViewModels
                 return;
             }
 
-
             var patient = RetrievePatient();
+
+            if( patient == null )
+            {
+                return;
+            }
 
             patient.OwnerId = PassedId;
 
@@ -141,18 +159,50 @@ namespace VetManagement.ViewModels
 
                 patient = await patientRepository.Add(patient);
 
+                _onPatientCreated?.Invoke(patient);
+
                 Boxes.InfoBox("Pacientul a fost creat!");
             }
             catch(Exception e)
             {
                 Boxes.ErrorBox("Pacientul nu a putut fi înregistrat!\n" + e.Message);
+                Logger.LogError("Error", e.ToString());
             }
 
         }
 
+        private bool Validate( Patient patient)
+        {
+
+            var validationResults = new List<ValidationResult>();
+
+            var context = new ValidationContext(patient, serviceProvider: null, items: null);
+
+            bool isValid = Validator.TryValidateObject(patient, context, validationResults);
+
+            if (!isValid)
+            {
+                foreach (var error in validationResults)
+                {
+                    Errors.Add(error.MemberNames.First(), new List<string> { error.ErrorMessage });
+                    OnErrorsChanged(error.MemberNames.First());
+                }
+                return false;
+            }
+
+            return true;
+        }
+
         public Patient RetrievePatient()
         {
-            return new Patient() { Name = Name, Species = Species, Race = Race, Sex = Sex , Age = Age , Color = Color, Details = Details , DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
+            Patient patient =  new Patient() { Name = Name, Species = Species, Race = Race, Sex = Sex , Age = Age, Weight = Weight, Color = Color, Details = Details , DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
+
+            if (!Validate(patient))
+            {
+                return null;
+            }
+
+            return patient;
         }
     }
 }

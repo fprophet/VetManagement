@@ -25,6 +25,13 @@
         <StackPanel Grid.Row="0" >
             <TextBlock Text="Filtre" FontSize="20" Margin="0,0,0,5"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+
+                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                    <TextBlock Text="Tipul medicamentului" FontSize="15"/>
+                    <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding MedTypeList}" DisplayMemberPath="Name" 
+                        SelectedValuePath="Value" SelectedValue="{Binding TypeFilter, Mode=TwoWay}" />
+                </StackPanel>
+
                 <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                     <TextBlock Text="Nume" FontSize="15"/>
                     <TextBox Text="{Binding NameFilter}" FontSize="15"/>
@@ -37,12 +44,12 @@
                 
                 <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                     <TextBlock Text="Valabilitate" FontSize="15"/>
-                    <DatePicker Text="{Binding ValabilityFilter}"/>
+                    <DatePicker SelectedDate="{Binding ValabilityFilter, Mode=TwoWay}"  DisplayDateStart="2025-01-01" />
                 </StackPanel>
 
-                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0"> 
                     <TextBlock Text="Data în care a fost adăugat" FontSize="15"/>
-                    <DatePicker Text="{Binding DateAddedFilter}"/>
+                    <DatePicker SelectedDate="{Binding DateAddedFilter, Mode=TwoWay}"  DisplayDateStart="2024-01-01" />
                 </StackPanel>
                
             </StackPanel>
@@ -53,25 +60,40 @@
         <StackPanel Grid.Row="1" Margin="0,10,0,0">
             <DataGrid ItemsSource="{Binding FilteredMeds}" AutoGenerateColumns="False" Style="{StaticResource StylishDataGrid}" BorderThickness="1"  HorizontalAlignment="Stretch">
                 <DataGrid.Columns>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Name" Binding="{Binding Name}" Width="200"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Quantity" Binding="{Binding Quantity}" Width="100"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Type" Binding="{Binding QuantityType}" Width="120"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Date Added" Binding="{Binding DateAddedFormated, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="LotID" Binding="{Binding LotID}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valability" Binding="{Binding ValabilityFormated, Mode=OneWay}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Description" Binding="{Binding Description}" Width="500"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAddedFormated, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding ValabilityFormated, Mode=OneWay}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume" Binding="{Binding Name}" Width="200"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Serie Lot" Binding="{Binding LotID}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="În stoc(bucăți)" Binding="{Binding Pieces}" Width="150"/>
 
-                    <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn Header="Cantitate" Width="150" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}  {1}" Mode="OneWay">
+                                            <Binding Path="TotalAmount"/>
+                                            <Binding Path="Unit"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Cantitate/Bucată" Binding="{Binding UnitPerPiece}" Width="150"/>
+
+                    <DataGridTemplateColumn Width="*">
                         <DataGridTemplateColumn.Header>
                             <TextBlock Text="Actions"/>
                         </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Content="✏ Modifică" Style="{StaticResource EditButtonStyle}"
                                             Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding}" />
-                                    <Button Content="Tratamente" Style="{StaticResource DetailsButtonStyle}"
+                                    <Button Content="Detalii" Style="{StaticResource DetailsButtonStyle}"
                                             Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
                                     <Button Content="Șterge" Style="{StaticResource DeleteButtonStyle}"

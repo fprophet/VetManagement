@@ -10,21 +10,21 @@ namespace VetManagement.Data
     public class Owner : BaseEntity
     {
         [StringLength(100)]
-        [Required]
+        [Required(ErrorMessage = "Numele este obligatoriu!")]
         public string Name { get; set; }
 
         [StringLength(200)]
-        [Required]
+        [Required(ErrorMessage = "Adresa este obligatorie!")]
         public string Address { get; set; }
 
-        [Required, StringLength(15)]
+        [Required(ErrorMessage = "Numărul de telefon este obligatoriu!"), StringLength(15)]
         public string Phone {  get; set; }
 
         [EmailAddress]
         [StringLength(200)]
-        public string Email {  get; set; }
+        public string? Email {  get; set; }
 
-        public string Details { get; set; }
+        public string? Details { get; set; }
 
         public int DateAdded { get; set; }
 

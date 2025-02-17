@@ -46,7 +46,7 @@
 
         <StackPanel Grid.Row="1" Margin="0,10,0,0">
 
-            <DataGrid Name="OwnerList" ItemsSource="{Binding FilteredOwners}" Style="{StaticResource StylishDataGrid}">
+            <DataGrid Name="OwnerList" ItemsSource="{Binding FilteredOwners}" Style="{StaticResource StylishDataGrid}" HorizontalAlignment="Stretch">
                 <DataGrid.Columns>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data Înscriere" Binding="{Binding DateAddedFormated, Mode=OneWay}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume" Binding="{Binding Name}" Width="200"/>
@@ -54,25 +54,9 @@
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Telefon" Binding="{Binding Phone}" Width="100"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Email" Binding="{Binding Email}" Width="250"/>
 
-                    <DataGridTemplateColumn Header="Animale"  Width="300">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <ComboBox ItemsSource="{Binding Patients}"
-                                            SelectedItem="{Binding Id, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                            DisplayMemberPath="Name"
-                                            Width="200"/>
-                                    <Button Content="➕" Background="Green"
-                                            Command="{Binding DataContext.NavigateCreatePatientWindowCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Detalii" Binding="{Binding Details}" Width="300"/>
 
-                    <DataGridTemplateColumn Header="Acțiuni" Width="250">
+                    <DataGridTemplateColumn Header="Acțiuni" Width="400">
                         <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -85,7 +69,11 @@
                                             CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" 
                                             />
                                     <Button Content="Listă tratamente" Background="Green" Margin="10,0" Padding="10,5" Foreground="White"
-                                            Command="{Binding DataContext.NavigateCreateTreatmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            Command="{Binding DataContext.NavigateTreatmentsListCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" 
+                                            />
+                                    <Button Content="Listă animale" Background="Green" Margin="10,0" Padding="10,5" Foreground="White"
+                                            Command="{Binding DataContext.NavigatePatientsListCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                             CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" 
                                             />
                                     </StackPanel>

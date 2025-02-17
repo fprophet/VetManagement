@@ -84,16 +84,20 @@
 
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Vertical" Grid.Row="0">
+            <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,5">
                     <TextBlock Text="Nume" VerticalAlignment="Center" Margin="5"/>
-                    <TextBox Text="{Binding Name}" Style="{StaticResource TextBoxStyle}" Grid.Row="0"/>
+                <TextBox Text="{Binding Name, ValidatesOnDataErrors=True}"
+                         Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                         Style="{StaticResource TextBoxStyle}" Grid.Row="0"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical" Grid.Row="1">
+                <StackPanel Orientation="Vertical" Grid.Row="1" Margin="0,5">
                     <TextBlock Text="Specie" VerticalAlignment="Center" Margin="5"/>
-                    <TextBox Text="{Binding Species}" Name="SpeciesTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="0"/>
+                <TextBox Text="{Binding Species,ValidatesOnDataErrors=True}"
+                         Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                         Name="SpeciesTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="0"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,5">
                     <StackPanel Orientation="Vertical" Width="200">
                         <TextBlock Text="Sex" VerticalAlignment="Center" Margin="5"/>
                         <ComboBox Text="{Binding Sex}" Name="SexComboBox" Style="{StaticResource ComboBoxStyle}">
@@ -103,22 +107,30 @@
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Width="300">
                         <TextBlock Text="Rasa" VerticalAlignment="Center" Margin="5"/>
-                        <TextBox Text="{Binding Race}" Name="RaceTextBox" Style="{StaticResource TextBoxStyle}"/>
+                    <TextBox Text="{Binding Race,ValidatesOnDataErrors=True}"
+                             Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                             Name="RaceTextBox" Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="3">
                     <StackPanel Orientation="Vertical" Width="167">
                         <TextBlock Text="Varsta" VerticalAlignment="Center" Margin="5"/>
-                        <TextBox Text="{Binding Age}" Style="{StaticResource TextBoxStyle}"/>
+                    <TextBox Text="{Binding Age,ValidatesOnDataErrors=True}"
+                             Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                             Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Width="167">
                         <TextBlock Text="Culoare" VerticalAlignment="Center" Margin="5"/>
-                        <TextBox  Text="{Binding Color}" Style="{StaticResource TextBoxStyle}"/>
+                    <TextBox  Text="{Binding Color,ValidatesOnDataErrors=True}"
+                              Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                              Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Width="167">
                         <TextBlock Text="Greutate" VerticalAlignment="Center" Margin="5"/>
-                        <TextBox  Text="{Binding Weight}" Style="{StaticResource TextBoxStyle}"/>
+                    <TextBox  Text="{Binding Weight,ValidatesOnDataErrors=True}"
+                              Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                              Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -127,9 +139,6 @@
                     <TextBox Text="{Binding Details}" Style="{StaticResource TextBoxStyle}" Grid.Row="4" Height="100"/>
                 </StackPanel>
 
-                <!--<Button Content="Add More Animals" HorizontalAlignment="Center" VerticalAlignment="Center"
-                Style="{StaticResource CreateOwnerButtonStyle}" VerticalContentAlignment="Center" 
-                Grid.Row="5"/>-->
             </Grid>
         </StackPanel>
 </UserControl>

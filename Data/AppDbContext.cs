@@ -86,6 +86,7 @@ namespace VetManagement.Data
             modelBuilder.Entity<Patient>()
                 .Property(t => t.Details)
                 .HasColumnType("mediumtext");
+
         }
 
     }

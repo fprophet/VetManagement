@@ -42,7 +42,23 @@ namespace VetManagement.Data
                 OnPropertyChanged(nameof(Quantity));
             }
 
-        }  
+        }
+
+        private string _quantityString;
+        public string QuantityString
+        {
+            get => _quantityString;
+            set
+            {
+                float parsed;
+                if( float.TryParse(value, out parsed))
+                {
+                    _quantityString = value;
+                    Quantity = parsed;
+                    OnPropertyChanged(nameof(QuantityString));
+                }
+            }
+        }
         
         public float Rank
         {
@@ -58,9 +74,7 @@ namespace VetManagement.Data
 
         public float StockQuantity
         {
-            get => Med.Quantity;
-
-            
+            get => Med.TotalAmount;
 
         }
 

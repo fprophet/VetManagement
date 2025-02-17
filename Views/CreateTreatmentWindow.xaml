@@ -3,8 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:VetManagement.Views"
         xmlns:services="clr-namespace:VetManagement.Services"
+        xmlns:behaviors="clr-namespace:VetManagement.Behaviors"
+        xmlns:efcore="clr-namespace:Microsoft.VisualBasic;assembly=Microsoft.VisualBasic.Core"
         mc:Ignorable="d"
         Title="Formular Creare Tratament" Height="450" Width="800">
     <Window.Resources>
@@ -43,15 +46,25 @@
                                      DisplayMemberPath="Name"  
                                      SelectedValue="{Binding Med,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
+                                
                                 <StackPanel HorizontalAlignment="Left" Margin="0,0,10,0">
-                                    <TextBlock Text="Cantitate"/>
-                                    <TextBox Width="100" Height="20"
-                                     Text="{Binding Quantity , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}Dozaj({0}) :">
+                                                <Binding Path="Med.Unit" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBox Width="100" Height="20" 
+                                                Text="{Binding QuantityString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
                                 </StackPanel>
+                                
                                 <TextBlock VerticalAlignment="Center" Margin="10,0">
                                     <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}În stoc: {0}">
-                                            <Binding Path="StockQuantity" />
+                                        <MultiBinding StringFormat="{}În stoc: {0} {1}">
+                                            <Binding Path="Med.TotalAmount" />
+                                            <Binding Path="Med.Unit" />
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>

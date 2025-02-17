@@ -10,8 +10,8 @@ using VetManagement.Data;
 namespace VetManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250206143415_first_update")]
-    partial class first_update
+    [Migration("20250214141458_initial_create")]
+    partial class initial_create
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,11 @@ namespace VetManagement.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("DateAdded")
-                        .HasColumnType("int");
+                    b.Property<long>("DateAdded")
+                        .HasColumnType("bigint");
 
-                    b.Property<int>("DateUpdated")
-                        .HasColumnType("int");
+                    b.Property<long>("DateUpdated")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -45,16 +45,26 @@ namespace VetManagement.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<float>("Quantity")
+                    b.Property<float>("PerPiece")
                         .HasColumnType("float");
 
-                    b.Property<string>("QuantityType")
+                    b.Property<string>("PieceType")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("PieceType");
+
+                    b.Property<float>("Pieces")
+                        .HasColumnType("float");
+
+                    b.Property<float>("TotalAmount")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Valability")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<long>("Valability")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -92,8 +102,10 @@ namespace VetManagement.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<int>("Phone")
-                        .HasColumnType("int");
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("varchar(15)");
 
                     b.HasKey("Id");
 
@@ -106,11 +118,28 @@ namespace VetManagement.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
                     b.Property<int>("DateAdded")
                         .HasColumnType("int");
 
                     b.Property<int>("DateUpdated")
                         .HasColumnType("int");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("mediumtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
@@ -126,8 +155,11 @@ namespace VetManagement.Migrations
 
                     b.Property<string>("Species")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -150,10 +182,6 @@ namespace VetManagement.Migrations
 
                     b.Property<string>("Details")
                         .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Medication")
-                        .IsRequired()
                         .HasColumnType("mediumtext");
 
                     b.Property<int>("OwnerId")
@@ -169,6 +197,27 @@ namespace VetManagement.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("Treatments");
+                });
+
+            modelBuilder.Entity("VetManagement.Data.TreatmentMed", b =>
+                {
+                    b.Property<int>("TreatmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MedId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("float");
+
+                    b.HasKey("TreatmentId", "MedId");
+
+                    b.HasIndex("MedId");
+
+                    b.ToTable("TreatmentMed");
                 });
 
             modelBuilder.Entity("VetManagement.Data.User", b =>
@@ -234,6 +283,30 @@ namespace VetManagement.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("VetManagement.Data.TreatmentMed", b =>
+                {
+                    b.HasOne("VetManagement.Data.Med", "Med")
+                        .WithMany("TreatmentMeds")
+                        .HasForeignKey("MedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VetManagement.Data.Treatment", "Treatment")
+                        .WithMany("TreatmentMeds")
+                        .HasForeignKey("TreatmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Med");
+
+                    b.Navigation("Treatment");
+                });
+
+            modelBuilder.Entity("VetManagement.Data.Med", b =>
+                {
+                    b.Navigation("TreatmentMeds");
+                });
+
             modelBuilder.Entity("VetManagement.Data.Owner", b =>
                 {
                     b.Navigation("Patients");
@@ -244,6 +317,11 @@ namespace VetManagement.Migrations
             modelBuilder.Entity("VetManagement.Data.Patient", b =>
                 {
                     b.Navigation("Treatments");
+                });
+
+            modelBuilder.Entity("VetManagement.Data.Treatment", b =>
+                {
+                    b.Navigation("TreatmentMeds");
                 });
 #pragma warning restore 612, 618
         }

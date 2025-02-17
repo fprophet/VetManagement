@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,31 +10,30 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VetManagement.ViewModels;
 
 namespace VetManagement.Views
 {
     /// <summary>
-    /// Interaction logic for CreateTreatmentWindow.xaml
+    /// Interaction logic for OwnerPatientsView.xaml
     /// </summary>
-    public partial class CreateTreatmentWindow : Window
+    public partial class OwnerPatientsView : UserControl
     {
-        public CreateTreatmentWindow()
+        public OwnerPatientsView()
         {
             InitializeComponent();
-            Loaded += CreateTreatmentView_Loaded;
+            Loaded += OwnerPatientsView_Loaded;
         }
 
-        private async void CreateTreatmentView_Loaded(object sender, RoutedEventArgs e)
+        private async void OwnerPatientsView_Loaded(object sender, RoutedEventArgs e)
         {
-  
-            if (DataContext is CreateTreatmentViewModel createTreatmentViewModel)
+            if( DataContext is OwnerPatientsViewModel ownerPatientsViewModel)
             {
-                await createTreatmentViewModel.LoadOwnerPatients();
-                await createTreatmentViewModel.LoadMeds();
+                await ownerPatientsViewModel.LoadOwner();
+                await ownerPatientsViewModel.LoadPatients();
             }
         }
-
     }
 }

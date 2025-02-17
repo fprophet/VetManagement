@@ -29,8 +29,6 @@ namespace VetManagement.ViewModels
 
         public CreateMedViewModel CreateMedViewModel { get;  }
 
-        public ICommand NavigateHomeCommand { get; }
-
         public ICommand NavigateViewMedCommand { get; }
 
         public ICommand DeleteMedCommand { get; }
@@ -41,11 +39,21 @@ namespace VetManagement.ViewModels
 
         public ObservableCollection<Med> Meds { get; set; } = new ObservableCollection<Med>();
 
+        public ObservableCollection<object> MedTypeList { get; set; } =
+           new ObservableCollection<object> { new { Name = "Medicament", Value = "medicament" }, new { Name = "Vaccin", Value = "vaccin" } };
+
         private ListCollectionView _filteredMeds;
 
-        public ICollectionView FilteredMeds
+        public ListCollectionView FilteredMeds
         {
             get => _filteredMeds;
+            set
+            {
+                _filteredMeds = value;
+                OnPropertyChanged(nameof(FilteredMeds));
+                FilteredMeds.Refresh();
+
+            }
         }
 
         private bool _isLoading = true;
@@ -60,6 +68,18 @@ namespace VetManagement.ViewModels
             }
         }
 
+        private string _typeFilter = "medicament";
+        public string TypeFilter
+        {
+            get => _typeFilter;
+            set
+            {
+                _typeFilter = value;
+                OnPropertyChanged(nameof(TypeFilter));
+                FilteredMeds.Refresh();
+            }
+        }  
+        
         private string _nameFilter;
         public string NameFilter
         {
@@ -72,27 +92,27 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private DateTime _valabilityFilter;// = DateTime.Today;
-        public DateTime ValabilityFilter
+        private DateTime? _valabilityFilter;
+        public DateTime? ValabilityFilter
         {
             get => _valabilityFilter;
             set
             {
                 _valabilityFilter = value;
                 OnPropertyChanged(nameof(ValabilityFilter));
-                //FilteredMeds.Refresh();
+                FilteredMeds.Refresh();
             }
         }
 
-        private DateTime _dateAddedFilter;// = DateTime.Today;
-        public DateTime DateAddedFilter
+        private DateTime? _dateAddedFilter = null;
+        public DateTime? DateAddedFilter
         {
             get => _dateAddedFilter;
             set
             {
                 _dateAddedFilter = value;
                 OnPropertyChanged(nameof(DateAddedFilter));
-                //FilteredMeds.Refresh();
+                FilteredMeds.Refresh();
             }
         }
 
@@ -104,7 +124,7 @@ namespace VetManagement.ViewModels
             {
                 _lotFilter = value;
                 OnPropertyChanged(nameof(LotFilter));
-                //FilteredMeds.Refresh();
+                FilteredMeds.Refresh();
             }
         }
 
@@ -112,9 +132,6 @@ namespace VetManagement.ViewModels
         { 
             _navigationStore = navigationStore;
             _navigationStore.PageTitle = _pageTitle;
-
-            _filteredMeds = new ListCollectionView(Meds);
-            _filteredMeds.Filter = FilterMeds;
 
             DeleteMedCommand = new RelayCommand(DeleteMed);
             EditItemCommand = new RelayCommand(UpdateMed);
@@ -142,12 +159,15 @@ namespace VetManagement.ViewModels
                 bool lotMatch = string.IsNullOrEmpty(LotFilter)
                     || (med.LotID != null && med.LotID.IndexOf(LotFilter, StringComparison.OrdinalIgnoreCase) >= 0);
 
-                //bool valabilityMatch = ValabilityFilter == null || ((DateTimeOffset)med.Valability).ToUnixTimeSeconds()
-                //    .Find(p => p.Name != null && p.Name.IndexOf(PatientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0) != null;
-
-                bool dateAddedMatch = DateAddedFilter == default(DateTime) ||
+                bool dateAddedMatch = DateAddedFilter == null ||
                     DateTimeOffset.FromUnixTimeSeconds(med.DateAdded).UtcDateTime.Date == DateAddedFilter;
-                return nameMatch && lotMatch && dateAddedMatch;
+
+                bool valabilityMatch = ValabilityFilter == null ||
+                    DateTimeOffset.FromUnixTimeSeconds(med.Valability).UtcDateTime.Date == ValabilityFilter;
+
+                bool typeMatch = TypeFilter == null || (med.Type != null && TypeFilter == med.Type);
+
+                return nameMatch && lotMatch && dateAddedMatch && valabilityMatch && typeMatch;
 
             }
         }
@@ -175,11 +195,15 @@ namespace VetManagement.ViewModels
         private async void UpdateMed(object parameter)
         {
             try 
-            {
+            { 
                 if( parameter != null && parameter is Med)
                 {
                     Med med = (Med)parameter;
+
+                    med.TotalAmount = med.Pieces * med.PerPiece;
+
                     await new BaseRepository<Med>().Update(med);
+
                     Boxes.InfoBox("Medicamentul  a fost actualizat!");
 
                 }
@@ -234,6 +258,9 @@ namespace VetManagement.ViewModels
                 {
                     Meds.Add(med);
                 }
+
+                FilteredMeds = new ListCollectionView(Meds);
+                _filteredMeds.Filter = FilterMeds;
             }
             catch (Exception e)
             {

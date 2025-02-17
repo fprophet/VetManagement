@@ -3,10 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VetManagement.Views"
+        xmlns:local="clr-namespace:VetManagement.Views" xmlns:viewmodels="clr-namespace:VetManagement.ViewModels"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:behaviors="clr-namespace:VetManagement.Behaviors" d:DataContext="{d:DesignInstance Type=viewmodels:CreateMedViewModel}"
         mc:Ignorable="d"
-        Title="Formular Creare Medicament" Height="650" Width="800">
+        Title="Formular Creare Medicament" Height="750" Width="800">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <Style TargetType="TextBlock" x:Key="InputLabel">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -16,34 +19,71 @@
             <Setter Property="Padding" Value="5"/>
         </Style>
     </Window.Resources>
-    <Border  Background="White" CornerRadius="10" Padding="10" 
+    <Border Background="White" CornerRadius="10" Padding="10" 
          BorderBrush="#DDD" BorderThickness="2" Width="Auto">
         <StackPanel>
             <TextBlock Text="Formular" Margin="10,5" FontSize="30"/>
             <StackPanel Orientation="Vertical">
+
                 <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Nume:" Width="100" Style="{StaticResource InputLabel}"/>
-                    <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+                    <TextBlock Text="Medicament/Vaccin:"  Style="{StaticResource InputLabel}"/>
+                    <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding MedTypeList}" DisplayMemberPath="Name" 
+                        SelectedValuePath="Value" SelectedValue="{Binding Type, Mode=TwoWay}" />
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Serie Lot:" Width="100" Style="{StaticResource InputLabel}"/>
+                    <TextBlock Text="Nume:" Style="{StaticResource InputLabel}"/>
+                    <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}"
+                             Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                             Text="{Binding Name, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" Width="300"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Margin="10">
+                    <TextBlock Text="Serie Lot:"  Style="{StaticResource InputLabel}"/> 
                     <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}" Text="{Binding LotID, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Valabilitate:" Width="100" Style="{StaticResource InputLabel}"/>
+                    <TextBlock Text="Valabilitate:" Style="{StaticResource InputLabel}"/>
                     <DatePicker HorizontalAlignment="Left" SelectedDate="{Binding Valability,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+                </StackPanel>   
+
+                <StackPanel Orientation="Vertical" Margin="10">
+                    <TextBlock Text="Tipul stocului:"  Style="{StaticResource InputLabel}"/>
+                    <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding PieceTypeList}" DisplayMemberPath="Name" 
+                            SelectedValuePath="Value" SelectedValue="{Binding PieceType, Mode=TwoWay}" />
+
+                    <StackPanel Orientation="Vertical" Margin="20,10,0,0" Visibility="{Binding isVisiblePerPieceInput, Converter={StaticResource BoolToVisibilityConverter}}" >
+                        <TextBlock Text="Cantitate per flacon(ml):"  Style="{StaticResource InputLabel}"/>
+
+                        <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}"  
+                                 Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                                 Text="{Binding PerPieceString, FallbackValue='1',  UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" Width="300"/>
+                    </StackPanel>   
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Tip Cantitate:" Width="100" Style="{StaticResource InputLabel}"/>
-                    <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}" Text="{Binding QuantityType, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
-                </StackPanel>
+                    <TextBlock Style="{StaticResource InputLabel}">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Numar de {0}:">
+                                <Binding Path="PieceType" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}"  Text="{Binding Pieces, FallbackValue='1',  UpdateSourceTrigger=PropertyChanged}" Width="300"/>
 
-                <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Cantitate:" Width="100" Style="{StaticResource InputLabel}"/>
-                    <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}"  Text="{Binding Quantity, FallbackValue='1',  UpdateSourceTrigger=PropertyChanged}" Width="300"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource InputLabel}" Text="Stoc total: "/>
+                        <TextBlock Style="{StaticResource InputLabel}"  FontWeight="Bold">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} {1}">
+                                    <Binding Path="TotalAmount" />
+                                    <Binding Path="TotalAmountUnit" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </StackPanel>
+                    
                 </StackPanel>
             </StackPanel>
 
