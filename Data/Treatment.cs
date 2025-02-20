@@ -24,6 +24,9 @@ namespace VetManagement.Data
 
         public int DateUpdated { get; set; }
 
+        [Required, AllowedValues("pet", "livestock")]
+        public string PatientType { get; set; } = "pet";
+
         public string? Details { get; set; }
 
         public List<TreatmentMed> TreatmentMeds{ get; set; } = new List<TreatmentMed>();

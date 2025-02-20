@@ -1,0 +1,90 @@
+﻿    <Window x:Class="VetManagement.Views.CreateOwnerAndPatientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VetManagement.Views" xmlns:components="clr-namespace:VetManagement.Components"
+        mc:Ignorable="d"
+        Title="Formular Creare Proprietar" Height="650" Width="1200">
+    <Window.Resources>
+        <!-- Define a colorful style for the button -->
+        <Style TargetType="Button" x:Key="CreateOwnerButtonStyle">
+            <Setter Property="Background" Value="#FF4CAF50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="BorderBrush" Value="#FF388E3C"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Width" Value="200"/>
+        </Style>
+
+        <!-- Define a colorful style for TextBoxes -->
+        <Style TargetType="TextBox" x:Key="TextBoxStyle">
+            <Setter Property="Background" Value="#FFFFFFFF"/>
+            <Setter Property="Foreground" Value="#FF333333"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="BorderBrush" Value="#FFBBBBBB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+        <!-- Define a style for ComboBox -->
+        <Style TargetType="ComboBox" x:Key="ComboBoxStyle">
+            <Setter Property="Background" Value="#FFFFFFFF"/>
+            <Setter Property="Foreground" Value="#FF333333"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="BorderBrush" Value="#FFBBBBBB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+
+        <!-- Define a colorful style for ListView -->
+        <Style TargetType="ListView" x:Key="OwnerListStyle">
+            <Setter Property="Background" Value="#FFEEEEEE"/>
+            <Setter Property="Foreground" Value="#FF333333"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="BorderBrush" Value="#FFBBBBBB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+        <!-- Define a colorful style for ListViewItem -->
+        <Style TargetType="ListViewItem" x:Key="OwnerListItemStyle">
+            <Setter Property="Background" Value="#FFFFFFFF"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderBrush" Value="#FFCCCCCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Style.Triggers>
+                <DataTrigger Value="True">
+                    <DataTrigger.Binding>
+                        <Binding Path="IsSelected"/>
+                    </DataTrigger.Binding>
+                    <Setter Property="Background" Value="#FFD8F9E8"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+       
+    </Window.Resources>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Vertical"  Grid.Column="0" VerticalAlignment="Top" Margin="10,10,10,0" >
+                <components:CreateOwnerForm  DataContext="{Binding CreateOwnerViewModel}" />
+                <Button Content="Creează proprietar" HorizontalAlignment="Center" VerticalAlignment="Center"
+                      Style="{StaticResource CreateOwnerButtonStyle}" Command="{ Binding CreateOwnerAndPatientCommand}" VerticalContentAlignment="Center" />
+            </StackPanel>
+            <components:CreatePatientForm Grid.Column="1" DataContext="{Binding CreatePatientViewModel}" />
+        </Grid>
+
+
+</Window>

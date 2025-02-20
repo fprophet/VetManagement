@@ -29,6 +29,72 @@
                     <Setter Property="Background" Value="White"/>
                     <Setter Property="Foreground" Value="Black"/>
                     <Setter Property="BorderBrush" Value="LightGray"/>
+                    <Style.Triggers>
+                        <!-- Highlight Row on Mouse Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#E0F7FA"/>
+                        </Trigger>
+                        <!-- Change Row Background on Selection -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#00796B"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+
+        <!-- Column Header Styling -->
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                    <Setter Property="Background" Value="#00796B"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="10,5"/>
+                    <Setter Property="Height" Value="70"/>
+                    <!-- Default Height -->
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#004D40"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+
+        <!-- ScrollBar Styling -->
+        <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+    </Style>
+
+    <Style TargetType="DataGrid" x:Key="DataGridExpanded">
+        <!-- General DataGrid Appearance -->
+        <Setter Property="HorizontalGridLinesBrush" Value="LightGray"/>
+        <Setter Property="VerticalGridLinesBrush" Value="LightGray"/>
+        <Setter Property="GridLinesVisibility" Value="All"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="HeadersVisibility" Value="Column"/>
+        <Setter Property="ColumnHeaderHeight" Value="70"/>
+        <Setter Property="SelectionMode" Value="Single"/>
+        <Setter Property="CanUserAddRows" Value="False"/>
+        <Setter Property="AutoGenerateColumns" Value="False"/>
+        <Setter Property="CanUserDeleteRows" Value="False"/>
+        <Setter Property="CanUserReorderColumns" Value="False"/>
+        <Setter Property="CanUserResizeColumns" Value="True"/>
+        <Setter Property="CanUserSortColumns" Value="True"/>
+        <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="TextBox.TextWrapping" Value="Wrap"/>
+        <!-- Row Styling -->
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="BorderBrush" Value="LightGray"/>
                     <Setter Property="BorderThickness" Value="1"/>
                     <Style.Triggers>
                         <!-- Highlight Row on Mouse Hover -->
@@ -49,12 +115,13 @@
         <Setter Property="ColumnHeaderStyle">
             <Setter.Value>
                 <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="BorderBrush" Value="LightGray"/>
+                    <Setter Property="BorderThickness" Value="1"/>
                     <Setter Property="Background" Value="#00796B"/>
                     <Setter Property="Foreground" Value="White"/>
                     <Setter Property="FontWeight" Value="Bold"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                    <Setter Property="Padding" Value="10,5"/>
-                    <Setter Property="Height" Value="70"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Height" Value="120"/>
                     <Style.Triggers>
                         <!-- Highlight column header on mouse hover -->
                         <Trigger Property="IsMouseOver" Value="True">
@@ -65,18 +132,16 @@
             </Setter.Value>
         </Setter>
 
-
-
         <!-- ScrollBar Styling -->
         <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
     </Style>
 
-    
+
     <Style TargetType="TextBlock" x:Key="CenterTextBlock">
         <Setter Property="TextAlignment" Value="Center"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
     <Style TargetType="TextBlock" x:Key="WrapTextBlock">
@@ -105,31 +170,31 @@
     <Style TargetType="Button" x:Key="EditButtonStyle">
         <Setter Property="Background" Value="#FFC107"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Height" Value="25"/>
+        <Setter Property="Height" Value="35"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Margin" Value="5,0"/>
-        <Setter Property="Padding" Value="5,0"/>
+        <Setter Property="Margin" Value="10,0"/>
+        <Setter Property="Padding" Value="10,5"/>
     </Style>
 
     <Style TargetType="Button" x:Key="DeleteButtonStyle">
         <Setter Property="Background" Value="Red"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Height" Value="25"/>
+        <Setter Property="Height" Value="35"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Margin" Value="5,0"/>
-        <Setter Property="Padding" Value="5,0"/>
+        <Setter Property="Margin" Value="10,0"/>
+        <Setter Property="Padding" Value="10,5"/>
     </Style>
 
     <Style TargetType="Button" x:Key="DetailsButtonStyle">
         <Setter Property="Background" Value="Green"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Height" Value="25"/>
+        <Setter Property="Height" Value="35"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Margin" Value="5,0"/>
-        <Setter Property="Padding" Value="5,0"/>
+        <Setter Property="Margin" Value="10,0"/>
+        <Setter Property="Padding" Value="10,5"/>
     </Style>
 
     <ControlTemplate x:Key="TextBoxErrorTemplate">
@@ -142,5 +207,27 @@
             <!-- Tooltip for Validation Messages -->
         </StackPanel>
     </ControlTemplate>
+
+    <Style x:Key="SubHeaderTextBlock" TargetType="Border">
+        <Setter Property="BorderBrush" Value="LightGray"/>
+        <Setter Property="BorderThickness" Value="0,1,1,0"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Height" Value="80"/>
+    </Style>
+
+    <Style x:Key="DataBorder" TargetType="Border">
+        <Setter Property="BorderBrush" Value="LightGray"/>
+        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+        <Setter Property="Padding" Value="10"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+    </Style>
+
+    <Style x:Key="HeaderTextBlock" TargetType="Border">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="BorderBrush" Value="LightGray"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="Padding" Value="8"/>
+    </Style>
 
 </ResourceDictionary>

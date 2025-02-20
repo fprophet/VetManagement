@@ -20,6 +20,7 @@ namespace VetManagement.ViewModels
         public ICommand NavigateOwnersCommand { get; }
         public ICommand NavigateTreatmentsCommand { get; }
         public ICommand NavigateInventoryCommand { get; }
+        public ICommand NavigateRegistryCommand { get; }
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
 
         public string PageTitle 
@@ -52,6 +53,9 @@ namespace VetManagement.ViewModels
 
             NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
+
+            NavigateRegistryCommand = new NavigateCommand<RegistryViewModel>
+                (new NavigationService<RegistryViewModel>(_navigationStore, (id) => new RegistryViewModel(_navigationStore)));
         }
 
         private void OnCurrentViewModelChanged()

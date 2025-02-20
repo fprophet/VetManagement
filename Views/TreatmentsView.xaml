@@ -17,49 +17,236 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+          
 
-            <!-- Loading Progress Bar -->
-            <ProgressBar Height="15" Width="200" IsIndeterminate="True"
-                         Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
+            <StackPanel Grid.Row="0">
+
+                <TextBlock Text="Filtre" FontSize="20" Margin="0,0,0,5"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                    <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                        <TextBlock Text="Proprietar" FontSize="15"/>
+                        <TextBox Text="{Binding OwnerNameFilter}" FontSize="15"/>
+                    </StackPanel>
+
+                    <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                        <TextBlock Text="Animal" FontSize="15"/>
+                        <TextBox Text="{Binding PatientNameFilter}" FontSize="15"/>
+                    </StackPanel>
+
+                    <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                        <TextBlock Text="Medicament folosit" FontSize="15"/>
+                        <TextBox Text="{Binding MedNameFilter}"  FontSize="15"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+
 
             <!-- Main DataGrid -->
-            <DataGrid Grid.Row="1" ItemsSource="{Binding Treatments}"
-                      Style="{StaticResource StylishDataGrid}" 
+            <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredTreatments}"
+                      Style="{StaticResource DataGridExpanded}" 
                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       AutoGenerateColumns="False"
                       Height="Auto" >
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Data" Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
-                    <DataGridTextColumn Header="Nume Animal"  Binding="{Binding Patient.Name}" Width="130" />
-                    <DataGridTextColumn Header="Specie"  Binding="{Binding Patient.Species}" Width="100"/>
-                    <DataGridTextColumn Header="Rasa" Binding="{Binding Patient.Race}" Width="100"/>
-                    <DataGridTextColumn Header="Sex" Binding="{Binding Patient.Sex}" Width="70"/>
-                    <DataGridTextColumn Header="Vârsta"  Binding="{Binding Patient.Age}" Width="70"/>
-                    <DataGridTextColumn Header="Greutate"  Binding="{Binding Patient.Weight}" Width="100"/>
 
-                    <!-- Nested DataGrid for Medicaments -->
-                    <DataGridTemplateColumn Header="Medicamente" Width="403">
+                    <DataGridTemplateColumn  Width="150">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="Data" Style="{StaticResource CenterTextBlock}"/>
+                        </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="120">
-                                    <DataGrid ItemsSource="{Binding TreatmentMeds}" AutoGenerateColumns="False"
-                                              HeadersVisibility="Column" CanUserAddRows="False">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn Header="Nume" Binding="{Binding Med.Name}" Width="100"/>
-                                            <DataGridTextColumn Header="Cantitate" Binding="{Binding Quantity}" Width="100"/>
-                                            <DataGridTextColumn Header="Tip Dozaj" Binding="{Binding Med.QuantityType}" Width="100"/>
-                                            <DataGridTextColumn Header="Serie Lot" Binding="{Binding Med.LotID}" Width="100"/>
-                                        </DataGrid.Columns>
-                                    </DataGrid>
-                                </ScrollViewer>
+                                <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding DateAddedFormated,StringFormat='yyyy-MM-dd HH:mm:ss'}" Style="{StaticResource CenterTextBlock}"/>
+                                </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
+                    <DataGridTemplateColumn  Width="150">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="Proprietar" Style="{StaticResource CenterTextBlock}"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Owner.Name}" Style="{StaticResource CenterTextBlock}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
+                    <DataGridTemplateColumn  Width="150">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="Nume Animal" Style="{StaticResource CenterTextBlock}"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Patient.Name}" Style="{StaticResource CenterTextBlock}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn  Width="150">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="Specie" Style="{StaticResource CenterTextBlock}"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Patient.Species}" Style="{StaticResource CenterTextBlock}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn  Width="100">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="Rasa" Style="{StaticResource CenterTextBlock}"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Patient.Race}" Style="{StaticResource CenterTextBlock}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn  Width="70">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="Sex" Style="{StaticResource CenterTextBlock}"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Patient.Sex}" Style="{StaticResource CenterTextBlock}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn  Width="70">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="Vârsta" Style="{StaticResource CenterTextBlock}"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Patient.Age}" Style="{StaticResource CenterTextBlock}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn  Width="100">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="Greutate" Style="{StaticResource CenterTextBlock}"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Patient.Weight}" Style="{StaticResource CenterTextBlock}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+
+                    <DataGridTemplateColumn  Width="700">
+                        
+                        <DataGridTemplateColumn.Header>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Border Grid.Row="0" Style="{StaticResource HeaderTextBlock}" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="Tratamentul Aplicat"/>
+                                </Border>
+                                <Grid Grid.Row="1" HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="4*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Style="{StaticResource SubHeaderTextBlock}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="Medicament" Style="{StaticResource CenterTextBlock}"/>
+                                    </Border>
+                                    <Border Grid.Column="1" Style="{StaticResource SubHeaderTextBlock}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="Cantitate" HorizontalAlignment="Stretch" Style="{StaticResource CenterTextBlock}"/>
+                                    </Border>
+                                    <Border Grid.Column="2" Style="{StaticResource SubHeaderTextBlock}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="Tip Dozaj" HorizontalAlignment="Stretch" Style="{StaticResource CenterTextBlock}"/>
+                                    </Border>
+                                    <Border Grid.Column="3" Style="{StaticResource SubHeaderTextBlock}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="Serie Lot" HorizontalAlignment="Stretch" Style="{StaticResource CenterTextBlock}"/>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <DataGrid  Width="700" ItemsSource="{Binding TreatmentMeds}" VerticalAlignment="Stretch"
+                                    Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTemplateColumn Width="4*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                                        <TextBlock Text="{Binding Med.Name}"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <DataGridTemplateColumn Width="2*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                                        <TextBlock Text="{Binding Quantity}"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <DataGridTemplateColumn Width="2*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                                        <TextBlock Text="{Binding Med.Unit}"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <DataGridTemplateColumn Width="2*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                                        <TextBlock Text="{Binding Med.LotID}"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+
                     <DataGridTextColumn Header="Detalii" Binding="{Binding Details}" Width="250"/>
                 </DataGrid.Columns>
             </DataGrid>
+
+            <!-- Loading Progress Bar -->
+            <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="1"
+                         Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
+            
         </Grid>
     </ScrollViewer>
 </UserControl>

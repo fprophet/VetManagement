@@ -17,6 +17,8 @@ namespace VetManagement.Data
                 .Include(t => t.Patient) // Eagerly load the related Patient
                 .Include(t => t.TreatmentMeds) // Eagerly load the many-to-many relationship table
                 .ThenInclude(tm => tm.Med) // Load the Med associated with TreatmentMed
+                .Include(t => t.Owner) // Load the Med associated with TreatmentMed
+                .Where(t => t.PatientType == "pet") // Load the Med associated with TreatmentMed
                 .ToListAsync();
         }        
         public async Task<List<Treatment>> GetFullTreatmentsForOwner( int id)

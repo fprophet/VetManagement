@@ -43,8 +43,8 @@
                                 <StackPanel HorizontalAlignment="Left" Margin="0,0,10,0">
                                     <TextBlock Text="Medicament"/>
                                     <ComboBox Width="150" ItemsSource="{Binding DataContext.Meds, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                     DisplayMemberPath="Name"  
-                                     SelectedValue="{Binding Med,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                         DisplayMemberPath="Name"  
+                                         SelectedValue="{Binding Med,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
                                 
                                 <StackPanel HorizontalAlignment="Left" Margin="0,0,10,0">

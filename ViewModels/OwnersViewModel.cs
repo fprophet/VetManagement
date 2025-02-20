@@ -100,8 +100,8 @@ namespace VetManagement.ViewModels
             _filteredOwners = new ListCollectionView(Owners);
             _filteredOwners.Filter = FilterOwners;
 
-            NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerViewModel>
-                (new NavigationService<CreateOwnerViewModel>(_navigationStore, (id) => new CreateOwnerViewModel(_navigationStore, UpdateOwners)), () => new CreateOwnerWindow());
+            NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerAndPatientViewModel>
+                (new NavigationService<CreateOwnerAndPatientViewModel>(_navigationStore, (id) => new CreateOwnerAndPatientViewModel(_navigationStore, UpdateOwners)), () => new CreateOwnerAndPatientWindow());
 
             NavigateTreatmentsListCommand = new NavigateCommand<OwnerTreatmentsViewModel>
                 (new NavigationService<OwnerTreatmentsViewModel>(_navigationStore, (id) => new OwnerTreatmentsViewModel(_navigationStore, id)));

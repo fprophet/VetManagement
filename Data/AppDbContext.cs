@@ -29,6 +29,8 @@ namespace VetManagement.Data
 
         public DbSet<TreatmentMed> TreatmentMed { get; set; }
 
+        public DbSet<RegistryRecord> RegistryRecords { get; set; }
+
 
 
         private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlserver";

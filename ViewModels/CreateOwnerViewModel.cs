@@ -1,35 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using VetManagement.Commands;
+using Org.BouncyCastle.Utilities.Encoders;
+using System.Windows.Controls;
+using System.Windows.Media.Media3D;
 using VetManagement.Data;
 using VetManagement.Services;
-using VetManagement.Stores;
+using System.Windows.Input;
 
 namespace VetManagement.ViewModels
 {
     public class CreateOwnerViewModel : ViewModelBase
     {
-
         private string _name;
-
         private string _email;
-
         private string _address;
-
         private string _phone;
-
         private string _details;
-
-        private Action<Owner> _updateOwnersList;
+        private Action<Owner> _onOwnerCreated;
         public string Name
         {
             get => _name;
@@ -81,30 +73,19 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public CreatePatientViewModel CreatePatientViewModel { get; set; }
-
         public ICommand CreateOwnerCommand { get; set; }
 
-        public ICommand NavigateOwnersCommand { get; set; }
 
-
-        public CreateOwnerViewModel(NavigationStore navigationStore, Action<Owner> updateOwnersList)
+        public CreateOwnerViewModel(Action<Owner> onOwnerCreated)
         {
-            _navigationStore = navigationStore;
-            _updateOwnersList = updateOwnersList;
-
-            CreatePatientViewModel = new CreatePatientViewModel(null,null);
-
-            NavigateOwnersCommand = NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
-                (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
+            _onOwnerCreated = onOwnerCreated;
 
             CreateOwnerCommand = new RelayCommand(CreateOwner);
-
         }
 
-        private bool Validate(Owner owner, Patient patient)
+        private bool Validate(Owner owner)
         {
-            var validationResults = new List<ValidationResult>();
+            var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
 
             var context = new ValidationContext(owner, serviceProvider: null, items: null);
 
@@ -119,50 +100,45 @@ namespace VetManagement.ViewModels
                 }
                 return false;
             }
-
-            if (patient == null)
-            {
-                return false;
-            }
-
             return true;
         }
 
+        public Owner RetrieveOwner()
+        {
+            Owner owner = new Owner() { Name = Name, Address = Address, Phone = Phone, Details = Details, Email = Email, DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
+
+            if (!Validate(owner))
+            {
+                return null;
+            }
+
+            return owner;
+        }
 
         private async void CreateOwner(object parameter)
         {
+            var owner = RetrieveOwner();
+
+            if (owner == null)
+            {
+                return;
+            }
+
             try
             {
-                Patient patient = CreatePatientViewModel.RetrievePatient();
-
-                Owner owner = new Owner() { Name = Name, Address = Address, Phone = Phone, Details = Details, Email = Email, DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
-
-                if( !Validate(owner, patient))
-                {
-                    return;
-                }
-
                 BaseRepository<Owner> ownerRepository = new BaseRepository<Owner>();
-                BaseRepository<Patient> patientRepository = new BaseRepository<Patient>();
 
                 owner = await ownerRepository.Add(owner);
 
-                patient.OwnerId = owner.Id;
+                _onOwnerCreated?.Invoke(owner);
 
-                await patientRepository.Add(patient);
-
-                _updateOwnersList?.Invoke(owner);
-                Boxes.InfoBox("Pacientul a fost adăugat cu succes!");
-
+                Boxes.InfoBox("Pacientul a fost creat!");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Boxes.ErrorBox("Pacientul nu a putut fi înregistrat!\n" + ex.Message);
-                Logger.LogError("Error", ex.ToString());
-
+                Boxes.ErrorBox("Pacientul nu a putut fi înregistrat!\n" + e.Message);
+                Logger.LogError("Error", e.ToString());
             }
-            //Trace.WriteLine("Pacientul:");
-            //Trace.WriteLine(patient.Name);
 
         }
     }

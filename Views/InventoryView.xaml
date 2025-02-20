@@ -47,18 +47,20 @@
                     <DatePicker SelectedDate="{Binding ValabilityFilter, Mode=TwoWay}"  DisplayDateStart="2025-01-01" />
                 </StackPanel>
 
-                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0"> 
+                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                     <TextBlock Text="Data în care a fost adăugat" FontSize="15"/>
                     <DatePicker SelectedDate="{Binding DateAddedFilter, Mode=TwoWay}"  DisplayDateStart="2024-01-01" />
                 </StackPanel>
-               
             </StackPanel>
             <Button Content="➕ Adaugă un medicament" Style="{StaticResource CreateButtonStyle}" Command="{Binding OpenCreateMedWindowCommand}" />
         </StackPanel>
 
     
         <StackPanel Grid.Row="1" Margin="0,10,0,0">
-            <DataGrid ItemsSource="{Binding FilteredMeds}" AutoGenerateColumns="False" Style="{StaticResource StylishDataGrid}" BorderThickness="1"  HorizontalAlignment="Stretch">
+            <DataGrid ItemsSource="{Binding FilteredMeds}"
+                      MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}"
+                      AutoGenerateColumns="False" Style="{StaticResource StylishDataGrid}" BorderThickness="1"  HorizontalAlignment="Stretch">
+                
                 <DataGrid.Columns>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAddedFormated, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding ValabilityFormated, Mode=OneWay}" Width="150"/>
@@ -83,7 +85,7 @@
 
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Cantitate/Bucată" Binding="{Binding UnitPerPiece}" Width="150"/>
 
-                    <DataGridTemplateColumn Width="*">
+                    <DataGridTemplateColumn  Width="*">
                         <DataGridTemplateColumn.Header>
                             <TextBlock Text="Actions"/>
                         </DataGridTemplateColumn.Header>

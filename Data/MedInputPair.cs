@@ -59,7 +59,30 @@ namespace VetManagement.Data
                 }
             }
         }
-        
+
+        private string _administration;
+        public string Administration
+        {
+            get => _administration;
+            set
+            {
+                    _administration = value;
+                    OnPropertyChanged(nameof(Administration));
+            }
+        }
+
+        private string _waitingTime;
+        public string WaitingTime
+        {
+            get => _waitingTime;
+            set
+            {
+                _waitingTime = value;
+                OnPropertyChanged(nameof(WaitingTime));
+            }
+        }
+
+
         public float Rank
         {
             get => _rank;

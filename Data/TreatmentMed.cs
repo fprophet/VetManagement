@@ -9,11 +9,16 @@ namespace VetManagement.Data
     public class TreatmentMed : BaseEntity
     {
         public int MedId { get; set; }
+        
         public int TreatmentId { get; set; }
 
         public float Quantity { get; set; }
 
         public float Pieces { get; set; }
+
+        public string Administration { get; set; }
+        
+        public string WaitingTime { get; set; }
 
         public Treatment Treatment { get; set; }
 

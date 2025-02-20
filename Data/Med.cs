@@ -57,7 +57,8 @@ namespace VetManagement.Data
 
         public DateTime DateAddedFormated => DateTimeOffset.FromUnixTimeSeconds(DateAdded).UtcDateTime;
 
-        public DateTime ValabilityFormated => TimeZoneInfo.ConvertTimeFromUtc(DateTimeOffset.FromUnixTimeSeconds(Valability).UtcDateTime, TimeZoneInfo.Local);
+        public string ValabilityFormated => 
+            TimeZoneInfo.ConvertTimeFromUtc(DateTimeOffset.FromUnixTimeSeconds(Valability).UtcDateTime, TimeZoneInfo.Local).Date.ToString("yyyy-MM-dd");
 
         public string Unit => PieceType == "comprimate" ? "comprimate" : "ml";
         public string UnitPerPiece => PieceType == "comprimate" ? "-" : PerPiece + "ml/flacon";
