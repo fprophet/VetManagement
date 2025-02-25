@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Security;
@@ -34,7 +35,7 @@ namespace VetManagement.ViewModels
         private string _role;
 
         //to display in the dropdown meny
-        public ObservableCollection<string> Roles { get; private set; } = new ObservableCollection<string> { "admin", "user" };
+        public ObservableCollection<string> Roles { get; private set; } = new ObservableCollection<string> { "manager", "user" };
 
         public SecureString SecurePassword { private get; set; }
 
@@ -101,22 +102,43 @@ namespace VetManagement.ViewModels
         }
 
 
+        private bool Validate(User user)
+        {
+            var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+
+            var context = new ValidationContext(user, serviceProvider: null, items: null);
+
+            bool isValid = Validator.TryValidateObject(user, context, validationResults);
+
+            if (!isValid)
+            {
+                foreach (var error in validationResults)
+                {
+                    Errors.Add(error.MemberNames.First(), new List<string> { error.ErrorMessage });
+                    OnErrorsChanged(error.MemberNames.First());
+                }
+                return false;
+            }
+            return true;
+        }
+
         private async void CreateUser(object sender)
         {
-
-            if (string.IsNullOrEmpty(Password))
+            User user = new User { Name = Name, Username = Username, Email = Email, Password = Password, Role = Role };
+            if (!Validate(user))
             {
-                Trace.WriteLine("Empty pass");
                 return;
             }
 
-            User user = new User { Name = Name, Username = Username, Email = Email, Password = PasswordHelper.HashPassword(Password), Role = Role };
-            Trace.WriteLine(user);
+            user.Password = PasswordHelper.HashPassword(Password);
+            Trace.WriteLine("HASHED");
+            Trace.WriteLine(user.Password);
 
             try
             {
                 await _userRepository.Add(user);
                 _onUserCreated?.Invoke(user);
+                Boxes.InfoBox("Utilizatorul a fost creat!");
             }
             catch (Exception ex)
             {

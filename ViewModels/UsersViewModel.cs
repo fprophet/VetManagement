@@ -24,7 +24,7 @@ namespace VetManagement.ViewModels
 
         private readonly NavigationStore _navigationStore;
 
-        public ObservableCollection<User> Users { get; private set; } = new ObservableCollection<User>();
+        public ObservableCollection<User> Users { get; set; }
 
         public ObservableCollection<string> Roles { get; private set; } = new ObservableCollection<string> { "admin", "user" };
 
@@ -34,7 +34,11 @@ namespace VetManagement.ViewModels
 
         public ICommand DeleteUserCommand { get; }
 
+        public ICommand EditUserCommand { get; }
+
         public ICommand ToggleFormVisibilityCommand { get; }
+
+        public ICommand NavigateCreateUserWindow { get; }
 
         public CreateUserViewModel CreateUserViewModel { get; }
 
@@ -52,17 +56,22 @@ namespace VetManagement.ViewModels
 
         public UsersViewModel(NavigationStore navigationStore)
         {
+
+            Users  = new ObservableCollection<User>();
+         
             _navigationStore = navigationStore;
             _userRepository = new BaseRepository<User>();
-
-            CreateUserViewModel = new CreateUserViewModel(OnUserCreated);
-
+            _navigationStore.PageTitle = "Utilizatori înregistrați";
    
-            LoadUsers();
             ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
             DeleteUserCommand = new RelayCommand(DeleteUser);
+            EditUserCommand = new RelayCommand(EditUser);
 
-            NavigateHomeCommand = new NavigateCommand<HomeViewModel>(new NavigationService<HomeViewModel>(_navigationStore,(id) => new HomeViewModel(_navigationStore)));
+            NavigateHomeCommand = new NavigateCommand<HomeViewModel>
+                (new NavigationService<HomeViewModel>(_navigationStore,(id) => new HomeViewModel(_navigationStore)));
+
+            NavigateCreateUserWindow = new NavigateWindowCommand<CreateUserViewModel>
+                (new NavigationService<CreateUserViewModel>(_navigationStore, (id) => new CreateUserViewModel(OnUserCreated)), () => new CreateUserWindow());
 
         }
 
@@ -77,19 +86,35 @@ namespace VetManagement.ViewModels
             Users.Add(newUser);
         }
 
+        private async void EditUser(object parameter)
+        {
+            try
+            {
+                if (parameter is User toUpdate)
+                {
+                    await new BaseRepository<User>().Update(toUpdate);
+                    Boxes.InfoBox("Utilizatorul a fost acutalizat!");
+                }
+            }catch(Exception e)
+            {
+                Boxes.ErrorBox("Utilizatorul nu a putut fi actualizat!\n" + e.Message);
+            }
+           
+        }
+
         private async void DeleteUser(object parameter) 
         {
 
-            if (parameter is User userToDelete)
+            if (parameter is int userId)
             {
-                var result = MessageBox.Show($"Sunteti sigur ca doriți să stergeti utilizatorul {userToDelete.Name}?",
+                var result = MessageBox.Show($"Sunteti sigur ca doriți să ștergeți acest utilizator?",
                                              "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
                     try
                     {
-                        await _userRepository.Delete(userToDelete.Id);
-                        Users.Remove(userToDelete);
+                        await _userRepository.Delete(userId);
+                        Users.Remove(Users.First(u => u.Id == userId));
                     }
                     catch (Exception e)
                     {
@@ -101,9 +126,8 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private async void LoadUsers()
+        public async Task LoadUsers()
         {
-
             try
             {
                 var users = await _userRepository.GetAll();
@@ -114,6 +138,8 @@ namespace VetManagement.ViewModels
                 {
                     Users.Add(user);
                 }
+
+          
             }
             catch (Exception e) 
             {

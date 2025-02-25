@@ -22,7 +22,6 @@ namespace VetManagement.Commands
 
         public override void Execute(object parameter)
         {
-          
             _navigationService.Navigate((int?)parameter);
         }
     }

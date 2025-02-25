@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using K4os.Compression.LZ4.Internal;
 using Microsoft.EntityFrameworkCore;
+using VetManagement.Services;
 
 namespace VetManagement.Data
 {
@@ -33,15 +37,32 @@ namespace VetManagement.Data
 
 
 
-        private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlserver";
+        //private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlserver";
+        private string _dbConnectionString;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+        
+
+            CreateConnectionString();
             //base.OnConfiguring(optionsBuilder);
             try { 
                 optionsBuilder.UseMySQL(_dbConnectionString);
             }catch( Exception e) {
                 MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CreateConnectionString()
+        {
+            try
+            {
+                Dictionary<string, string> settings = AppSettings.GetSettings();
+                _dbConnectionString = $"Server={settings["Server"]};Database={settings["Database"]};Uid={settings["DatabaseUser"]};Password={settings["DatabasePassword"]}";
+            }
+            catch (Exception e)
+            {
+                Boxes.ErrorBox("Could not connect to database!\n" + e.Message);
             }
         }
 

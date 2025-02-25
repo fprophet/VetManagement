@@ -21,8 +21,10 @@ namespace VetManagement.ViewModels
         public ICommand NavigateTreatmentsCommand { get; }
         public ICommand NavigateInventoryCommand { get; }
         public ICommand NavigateRegistryCommand { get; }
+        public ICommand NavigateAppSettingsCommand { get; }
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
 
+        public bool IsRoot { get; } = false;
         public string PageTitle 
         { 
             get => _navigationStore.PageTitle; 
@@ -38,6 +40,15 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
             _navigationStore.PageTitleChanged += OnPageTitleChanged;
+            Trace.WriteLine("IS ROOT");
+            Trace.WriteLine(IsRoot);
+
+            if (SessionManager.Instance.Role == "admin")
+            {
+                IsRoot = true;
+            }
+
+            Trace.WriteLine(IsRoot);
 
             NavigateHomeCommand = new NavigateCommand<HomeViewModel>
                 (new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore))); 
@@ -56,6 +67,9 @@ namespace VetManagement.ViewModels
 
             NavigateRegistryCommand = new NavigateCommand<RegistryViewModel>
                 (new NavigationService<RegistryViewModel>(_navigationStore, (id) => new RegistryViewModel(_navigationStore)));
+
+            NavigateAppSettingsCommand = new NavigateCommand<AppSettingsViewModel>
+                (new NavigationService<AppSettingsViewModel>(_navigationStore, (id) => new AppSettingsViewModel(_navigationStore)));
         }
 
         private void OnCurrentViewModelChanged()

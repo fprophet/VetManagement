@@ -11,7 +11,7 @@ using System.Windows.Documents;
 
 namespace VetManagement.Data
 {
-    public class Med : BaseEntity, IValidatableObject
+    public class Med : BaseEntity
     {
         [Key]
         public int Id { get; set; }
@@ -63,10 +63,6 @@ namespace VetManagement.Data
         public string Unit => PieceType == "comprimate" ? "comprimate" : "ml";
         public string UnitPerPiece => PieceType == "comprimate" ? "-" : PerPiece + "ml/flacon";
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            throw new NotImplementedException();
-        }
 
 
         //public IEnumerable<ValidationResult> Valdiate(ValidationContext validationContext)

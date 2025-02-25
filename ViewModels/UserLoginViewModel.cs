@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.Services;
+using VetManagement.Stores;
 using VetManagement.Views;
 
 namespace VetManagement.ViewModels
@@ -17,6 +19,20 @@ namespace VetManagement.ViewModels
     {
         public ViewModelBase CurrentViewModel { get; }
         public ICommand LoginCommand { get; set; }
+       
+
+        private bool _loginAsRoot = false;
+
+        public bool LoginAsRoot
+        {
+            get => _loginAsRoot;
+            set
+            {
+                _loginAsRoot = value;
+                OnPropertyChanged(nameof(LoginAsRoot));
+            }
+        }
+
 
         private string _username;
 
@@ -42,43 +58,103 @@ namespace VetManagement.ViewModels
         public UserLoginViewModel()
         {
 
-            LoginCommand = new RelayCommand(AuthenticateUser, CanExecute);
+            LoginCommand = new RelayCommand(LogUser, CanExecute);
+        
         }
 
-        private async void AuthenticateUser(object parameter)
-        {
-            BaseRepository<User> userRepository = new BaseRepository<User>();
 
+        private async void LogUser(object parameter)
+        {
+
+            if (_loginAsRoot)
+            {
+                AuthenticateRoot();
+
+            }
+            else 
+            {
+                AuthenticateUser();
+            }
+
+        }
+
+        private void AuthenticateRoot()
+        {
             try
             {
-                //var user = await userRepository.GetByUsername(Username);
-                //if (user != null)
-                //{
-                //    Trace.WriteLine("HERE");
+                Dictionary<string, string> settings = AppSettings.GetSettings();
 
-                //    if (PasswordHelper.VerifyPassword(Password, user.Password))
-                //    {
-                //        SessionManager.Instance.LogUser(user.Id, user.Username, user.Role);
+                bool verifiedPassword = PasswordHelper.VerifyPassword(Password, settings["RootPassword"]);
+                bool verifiedUser = PasswordHelper.VerifyPassword(Username, settings["RootUser"]);
 
-                //        //var mainMenu = new HomeView();
+                if (verifiedPassword && verifiedUser)
+                {
+                    SessionManager.Instance.LogUser(-1, Password, "admin");
 
+                    NavigationStore navigationStore = new NavigationStore();
 
-                //        //Application.Current.MainWindow.Close();
-                //    }
-                //    else
-                //    {
-                //        MessageBox.Show("Nume sau parola greșite!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    navigationStore.CurrentViewModel = new HomeViewModel(navigationStore);
+                    navigationStore.PageTitle = "Acasă";
 
-                //    }
+                    new NavigateWindowCommand<MainViewModel>
+                        (new NavigationService<MainViewModel>(navigationStore, (id) => new MainViewModel(navigationStore)), () => new MainWindow(), true, true);
 
-                //}
-            }catch (Exception e)
+                }
+                else
+                {
+                    Boxes.ErrorBox("Incorrect username/password!");
+
+                }
+            }
+            catch (Exception e)
+            {
+                Boxes.ErrorBox("Utilizatorul nu a putut fi verificat!\n" + e.Message);
+                Logger.LogError("Database", e.Message);
+            }
+        }
+
+        private async  void AuthenticateUser()
+        {
+            UserRepository userRepository = new UserRepository();
+            try
+            {
+                var user = await userRepository.GetByUsername(Username);
+                if (user != null)
+                {
+
+                    if (PasswordHelper.VerifyPassword(Password, user.Password))
+                    {
+                        SessionManager.Instance.LogUser(user.Id, user.Username, user.Role);
+
+                        NavigationStore navigationStore = new NavigationStore();
+
+                        navigationStore.CurrentViewModel = new HomeViewModel(navigationStore);
+                        navigationStore.PageTitle = "Acasă";
+
+                        new NavigateWindowCommand<MainViewModel>
+                            (new NavigationService<MainViewModel>(navigationStore, (id) => new MainViewModel(navigationStore)), () => new MainWindow(), true, true);
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("Nume sau parola greșită!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    }
+
+                    //}
+                }
+                else
+                {
+                    MessageBox.Show("Nume sau parola greșită!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                }
+            }
+            catch (Exception e)
             {
                 MessageBox.Show("Utilizatorul nu a putut fi verificat!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 Logger.LogError("Database", e.Message);
             }
-
         }
 
         private bool CanExecute(object parameter)

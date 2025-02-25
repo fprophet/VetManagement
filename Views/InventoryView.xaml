@@ -6,7 +6,8 @@
              xmlns:views="clr-namespace:VetManagement.Views"
              xmlns:components="clr-namespace:VetManagement.Components"
              xmlns:services="clr-namespace:VetManagement.Services" 
-             xmlns:viewmodels="clr-namespace:VetManagement.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:InventoryViewModel}"
+             xmlns:viewmodels="clr-namespace:VetManagement.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:InventoryViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     

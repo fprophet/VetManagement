@@ -192,9 +192,6 @@ namespace VetManagement.ViewModels
 
                 foreach( var pair in MedInputPair)
                 {
-                    //Trace.WriteLine("Medicament: " + pair.Med.Name);
-                    //Trace.WriteLine("Cantitate: " + pair.Quantity);
-                    //Trace.WriteLine("Rank: " + pair.Rank);
                     if ((float)pair.Med.TotalAmount < pair.Quantity)
                     {
                         Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + pair.Med.Name + " este mai mică decât cea din stoc!");
@@ -217,7 +214,15 @@ namespace VetManagement.ViewModels
 
                         await medRepository.Update(pair.Med);
 
-                        var tm = await tretmentMedRepository.Add(new TreatmentMed() { MedId = pair.Med.Id, TreatmentId = treatment.Id, Quantity = pair.Quantity, Pieces = pair.Quantity / pair.Med.PerPiece  });
+                        var tm = await tretmentMedRepository.Add(new TreatmentMed()
+                        {
+                            MedId = pair.Med.Id,
+                            TreatmentId = treatment.Id,
+                            Quantity = pair.Quantity,
+                            Pieces = pair.Quantity / pair.Med.PerPiece,
+                            Administration = "",
+                            WaitingTime = ""
+                        });
 
                         //for display purpose
                         tm.Med = pair.Med;

@@ -139,16 +139,22 @@ namespace VetManagement.ViewModels
 
         public async Task LoadTreatments()
         {
-            var treatments = await new TreatmentRepository().GetFullTreatments();
-
-            var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
-
-            foreach (var treatment in sortedTreatments)
+            try
             {
+                var treatments = await new TreatmentRepository().GetFullTreatments();
 
-                Treatments.Add(treatment);
+                var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
+
+                foreach (var treatment in sortedTreatments)
+                {
+
+                    Treatments.Add(treatment);
+                }
+                isLoading = false;
+            }catch(Exception e)
+            {
+                Boxes.ErrorBox("Tratamentele nu au putut fi găsite!\n" + e.Message);
             }
-            isLoading = false;
 
 
         }

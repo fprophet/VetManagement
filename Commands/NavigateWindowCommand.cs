@@ -16,10 +16,23 @@ namespace VetManagement.Commands
 
         private readonly Func<Window> _window;
 
-        public NavigateWindowCommand(NavigationService<TViewModel> navigationService, Func<Window> window)
+        public NavigateWindowCommand(NavigationService<TViewModel> navigationService, Func<Window> window, bool directExecution = false, bool closeCurrent = false)
         {
             _window = window;
             _navigationService = navigationService;
+
+            Window currentWindow =
+                Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+
+            if (directExecution)
+            {
+                Execute(null);             
+            }
+
+            if (closeCurrent)
+            {
+                currentWindow.Close();
+            }
         }
 
 

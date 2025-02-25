@@ -132,14 +132,14 @@ namespace VetManagement.ViewModels
         { 
             _navigationStore = navigationStore;
             _navigationStore.PageTitle = _pageTitle;
-
+         
             DeleteMedCommand = new RelayCommand(DeleteMed);
             EditItemCommand = new RelayCommand(UpdateMed);
             NavigateViewMedCommand = new NavigateCommand<MedViewModel>
-                (new NavigationService<MedViewModel>(_navigationStore, (id) => new MedViewModel(_navigationStore, id)));
+                (new NavigationService<MedViewModel>(_navigationStore, (id) => new MedViewModel(_navigationStore,id)));
             
             OpenCreateMedWindowCommand = new NavigateWindowCommand<CreateMedViewModel>
-                (new NavigationService<CreateMedViewModel>(_navigationStore, (id) => new CreateMedViewModel(UpdateMedList)), () => new CreateMedWindow() );
+                (new NavigationService<CreateMedViewModel>(_navigationStore, (id) => new CreateMedViewModel(UpdateMedList)), () => new CreateMedWindow());
         }
 
         private bool FilterMeds(object obj)
