@@ -30,12 +30,12 @@
             <DataGrid ItemsSource="{Binding Patients}" Style="{StaticResource StylishDataGrid}" AutoGenerateColumns="False" HorizontalAlignment="Stretch">
                 <DataGrid.Columns>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data"  Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume"  Binding="{Binding Name}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Specie"  Binding="{Binding Species}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Rasa" Binding="{Binding Race}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume"  Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Specie"  Binding="{Binding Species, Mode=OneWay}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Rasa" Binding="{Binding Race,UpdateSourceTrigger=PropertyChanged}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Sex" Binding="{Binding Sex}" Width="100"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Vârsta"  Binding="{Binding Age}" Width="100"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Greutate (Kg)"  Binding="{Binding Weight}" Width="130"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Vârsta"  Binding="{Binding Age,UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Greutate (Kg)"  Binding="{Binding Weight,UpdateSourceTrigger=PropertyChanged}" Width="130"/>
 
                     <DataGridTextColumn Header="Detalii" Binding="{Binding Details}"   Width="250"/>
 

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VetManagement.Views" xmlns:components="clr-namespace:VetManagement.Components"
         mc:Ignorable="d"
-        Title="Formular Creare Pacient" Height="650" Width="800">
+        Title="Formular Creare Pacient" Height="750" Width="800">
 
     <Window.Resources>
         <Style TargetType="Button" x:Key="CreateOwnerButtonStyle">
@@ -23,7 +23,7 @@
     <Grid>
         <StackPanel Grid.Row="0">
             <components:CreatePatientForm/>
-            <Button Content="Create Patient" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <Button Content="Creează pacient" HorizontalAlignment="Center" VerticalAlignment="Center"
                  Command="{ Binding CreatePatientCommand}" Style="{StaticResource CreateOwnerButtonStyle}" VerticalContentAlignment="Center" 
                  Grid.Row="5"/>
         </StackPanel>

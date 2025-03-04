@@ -25,19 +25,21 @@
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
                     <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                         <TextBlock Text="Proprietar" FontSize="15"/>
-                        <TextBox Text="{Binding OwnerNameFilter}" FontSize="15"/>
+                        <TextBox Text="{Binding OwnerNameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
                     </StackPanel>
 
                     <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                         <TextBlock Text="Animal" FontSize="15"/>
-                        <TextBox Text="{Binding PatientNameFilter}" FontSize="15"/>
+                        <TextBox Text="{Binding PatientNameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
                     </StackPanel>
 
                     <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                         <TextBlock Text="Medicament folosit" FontSize="15"/>
-                        <TextBox Text="{Binding MedNameFilter}"  FontSize="15"/>
+                        <TextBox Text="{Binding MedNameFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="15"/>
                     </StackPanel>
                 </StackPanel>
+                <Button Grid.Row="0" Content="➕ Adaugă în registru" HorizontalAlignment="Left"
+                       Style="{StaticResource CreateButtonStyle}" Command="{Binding  NavigateCreateTreatmentWindowCommand}"  />
             </StackPanel>
 
 
@@ -217,7 +219,7 @@
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                        <TextBlock Text="{Binding Med.Unit}"/>
+                                                        <TextBlock Text="{Binding Med.MeasurmentUnit}"/>
                                                     </Border>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>

@@ -26,17 +26,17 @@
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
                         <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                             <TextBlock Text="Nume" FontSize="15"/>
-                            <TextBox Text="{Binding NameFilter}" FontSize="15"/>
+                            <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
                         </StackPanel>
 
                         <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                             <TextBlock Text="Animal" FontSize="15"/>
-                            <TextBox Text="{Binding PatientNameFilter}" FontSize="15"/>
+                            <TextBox Text="{Binding PatientNameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
                         </StackPanel>
 
                         <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                             <TextBlock Text="Detalii" FontSize="15"/>
-                            <TextBox Text="{Binding DetailsFilter}"  FontSize="15"/>
+                            <TextBox Text="{Binding DetailsFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="15"/>
                         </StackPanel>
                 </StackPanel>
                 <Button Content="➕ Crează proprietar nou" HorizontalAlignment="Left"

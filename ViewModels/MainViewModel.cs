@@ -14,18 +14,19 @@ namespace VetManagement.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly NavigationStore _navigationStore;
+        private new readonly NavigationStore _navigationStore;
         public ICommand NavigateHomeCommand { get; }
         public ICommand NavigateUsersCommand { get; }
         public ICommand NavigateOwnersCommand { get; }
         public ICommand NavigateTreatmentsCommand { get; }
         public ICommand NavigateInventoryCommand { get; }
         public ICommand NavigateRegistryCommand { get; }
+        public ICommand NavigateMedReportsCommand { get; }
         public ICommand NavigateAppSettingsCommand { get; }
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
 
         public bool IsRoot { get; } = false;
-        public string PageTitle 
+        public new string PageTitle 
         { 
             get => _navigationStore.PageTitle; 
             
@@ -70,6 +71,9 @@ namespace VetManagement.ViewModels
 
             NavigateAppSettingsCommand = new NavigateCommand<AppSettingsViewModel>
                 (new NavigationService<AppSettingsViewModel>(_navigationStore, (id) => new AppSettingsViewModel(_navigationStore)));
+
+            NavigateMedReportsCommand = new NavigateCommand<MedReportsViewModel>
+                (new NavigationService<MedReportsViewModel>(_navigationStore, (id) => new MedReportsViewModel()));
         }
 
         private void OnCurrentViewModelChanged()

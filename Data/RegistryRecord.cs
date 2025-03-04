@@ -15,19 +15,7 @@ namespace VetManagement.Data
         [Required]
         public long Date { get; set; }
 
-        [Required]
-        public string Species { get; set; }
-
-        [Required]
-        public string Sex { get; set; }
-
-        [Required]
-        public float Age { get; set; }
-
-        [Required]
-        public string Identifier { get; set; }
-
-        [Required]
+        [Required(ErrorMessage = "Câmpul 'Simptome' este obligatoriu!")]
         public string Symptoms { get; set; }
 
         [Required]
@@ -36,13 +24,13 @@ namespace VetManagement.Data
         [Required]
         public int RecipeDate { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Câmpul 'Durata Tratamentului' este obligatoriu!")]
         public string TreatmentDuration { get; set; }
 
-        [Required, AllowedValues("vindecat","sacrificat","mort")]
+        [Required(ErrorMessage = "Câmpul 'Rezultat' este obligatoriu!"), AllowedValues("vindecat","sacrificat","mort")]
         public string Outcome { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Câmpul 'Numele Medicului' este obligatoriu!")]
         public string MedName { get; set; }
 
         public string Observations { get; set; }

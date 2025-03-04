@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace VetManagement.ViewModels
 
         public ICommand DeletePatientCommand { get; set; }
 
-        public Owner Owner;
+        public Owner? Owner;
 
         public ObservableCollection<Patient> Patients{ get; private set; } = new ObservableCollection<Patient>();
 

@@ -15,11 +15,11 @@ namespace VetManagement.Services
 
         private static readonly string SettingsFile = 
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
-                            Assembly.GetEntryAssembly().GetName().Name, "Settings/Settings.json");
+                            "VetManagement", "Settings/Settings.json");
 
         private static readonly string SettingsDirectory =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                            Assembly.GetEntryAssembly().GetName().Name, "Settings");
+                            "VetManagement", "Settings");
 
         private static readonly string _rootUser = "45QIOaMeCRUOuy8GZJNGgRChVyYYzhEQaOL0kg89D3I=";
         private static readonly string _rootPassword = "K5CgXPDn+gfioZs6tNNtz7PmvbWc4zIc12hIwi4WhD8=";
@@ -90,7 +90,7 @@ namespace VetManagement.Services
             {
                 return settings;
             }
-             settings = JsonSerializer.Deserialize<Dictionary<string, string>>(contents);
+            settings = JsonSerializer.Deserialize<Dictionary<string, string>>(contents) ?? new Dictionary<string, string>();
 
             return settings;
         }

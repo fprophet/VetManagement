@@ -35,22 +35,22 @@
 
                 <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                     <TextBlock Text="Nume" FontSize="15"/>
-                    <TextBox Text="{Binding NameFilter}" FontSize="15"/>
+                    <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
                 </StackPanel>
 
                 <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                     <TextBlock Text="Lot" FontSize="15"/>
-                    <TextBox Text="{Binding LotFilter}"  FontSize="15"/>
+                    <TextBox Text="{Binding LotFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="15"/>
                 </StackPanel>
                 
                 <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                     <TextBlock Text="Valabilitate" FontSize="15"/>
-                    <DatePicker SelectedDate="{Binding ValabilityFilter, Mode=TwoWay}"  DisplayDateStart="2025-01-01" />
+                    <DatePicker SelectedDate="{Binding ValabilityFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  DisplayDateStart="2025-01-01" />
                 </StackPanel>
 
                 <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                     <TextBlock Text="Data în care a fost adăugat" FontSize="15"/>
-                    <DatePicker SelectedDate="{Binding DateAddedFilter, Mode=TwoWay}"  DisplayDateStart="2024-01-01" />
+                    <DatePicker SelectedDate="{Binding DateAddedFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  DisplayDateStart="2024-01-01" />
                 </StackPanel>
             </StackPanel>
             <Button Content="➕ Adaugă un medicament" Style="{StaticResource CreateButtonStyle}" Command="{Binding OpenCreateMedWindowCommand}" />
@@ -65,9 +65,33 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAddedFormated, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding ValabilityFormated, Mode=OneWay}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume" Binding="{Binding Name}" Width="200"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Denumire Produs" Binding="{Binding Name}" Width="200"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Furnizor" Binding="{Binding Provider}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Serie Lot" Binding="{Binding LotID}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="În stoc(bucăți)" Binding="{Binding Pieces}" Width="150"/>
+                    <!--<DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="În stoc(bucăți)" Binding="{Binding Pieces}" Width="150"/>-->
+
+                    <DataGridTemplateColumn Header="Bucăți" Width="170">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Pieces}"  />
+                                    <TextBlock Text=" " />
+                                    <TextBlock Text="{Binding PieceType}" Foreground="Gray" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Text="{Binding Pieces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80" />
+                                    <TextBlock Text=" " />
+                                    <TextBlock Text="{Binding PieceType}" Foreground="Gray" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+
 
                     <DataGridTemplateColumn Header="Cantitate" Width="150" IsReadOnly="True">
                         <DataGridTemplateColumn.CellTemplate>
@@ -76,7 +100,7 @@
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}  {1}" Mode="OneWay">
                                             <Binding Path="TotalAmount"/>
-                                            <Binding Path="Unit"/>
+                                            <Binding Path="MeasurmentUnit"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
@@ -84,7 +108,8 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Cantitate/Bucată" Binding="{Binding UnitPerPiece}" Width="150"/>
+                    <!--<DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Cantitate/Bucată" Binding="{Binding UnitPerPiece, Mode=OneWay}" Width="150"/>-->
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Număr Factură" Binding="{Binding InvoiceNumber, Mode=OneWay}" Width="150"/>
 
                     <DataGridTemplateColumn  Width="*">
                         <DataGridTemplateColumn.Header>

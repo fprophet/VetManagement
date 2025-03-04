@@ -7,32 +7,61 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.DataWrappers;
 using VetManagement.Services;
 using VetManagement.Stores;
+using VetManagement.Views;
 
 namespace VetManagement.ViewModels
 {
     public class CreateTreatmentViewModel : ViewModelBase
     {
-        private readonly int PassedId;
 
-        public ObservableCollection<Med> Meds { get; set; } = new ObservableCollection<Med>();
+        private readonly int _passedId;
+
+        private string _patientType = "pet";
+        public int PassedId
+        {
+            get => _passedId;
+            set { }
+        }
+
+        public ObservableCollection<Med> MedList { get; set; } = new ObservableCollection<Med>();
 
         public ObservableCollection<Patient> Patients { get; set; } = new ObservableCollection<Patient>();
 
-        public ObservableCollection<MedInputPair> MedInputPair { get; set; } = new ObservableCollection<MedInputPair>();
+        public ObservableCollection<Owner> Owners { get; set; } = new ObservableCollection<Owner>();
+
+        public ObservableCollection<MedWrapper> MedWrappers { get; set; } = new ObservableCollection<MedWrapper>();
+
+        private Owner _owner;
+        public Owner Owner
+        {
+            get => _owner;
+            set
+            {
+                _owner = value;
+                OnPropertyChanged(nameof(Owner));
+                OnOwnerChanged();
+            }
+        }
 
         public ICommand CreateTreatmentCommand { get; }
 
-        public ICommand AddInputPairCommand { get; }
-
-        public ICommand RemoveInputPairCommand { get; }
+        public ICommand RemoveMedCommand { get; }
 
         public ICommand ToggleFormVisibilityCommand { get; }
 
+        public ICommand InsertNewMedCommand { get; }
 
-        private Action<Treatment> _onTreatmnetCreateChanged;
+        public ICommand NavigateCreateOwnerWindowCommand { get; }
+
+        public ICommand NavigateCreatePatientWindowCommand { get; }
+
+
+        private Action<Treatment> _onTreatmentCreateChanged;
 
 
         private bool _isVisibleForm = false;
@@ -69,43 +98,106 @@ namespace VetManagement.ViewModels
         }
 
 
-        public CreateTreatmentViewModel(Action<Treatment> onTreatmentCreateChanged, int? id) 
+        public CreateTreatmentViewModel(Action<Treatment> onTreatmentCreateChanged, int? id, string? patientType)
         {
-            _onTreatmnetCreateChanged = onTreatmentCreateChanged;
+            _onTreatmentCreateChanged = onTreatmentCreateChanged;
 
-            AddInputPairCommand = new RelayCommand(AddInputPair);
+            RemoveMedCommand = new RelayCommand(RemoveMed);
 
-            RemoveInputPairCommand = new RelayCommand(RemoveInputPair);
+            CreateTreatmentCommand = new RelayCommand(CreateTreatmentExecute);
 
-            CreateTreatmentCommand = new RelayCommand(CreateTreatment);
+            InsertNewMedCommand = new RelayCommand(InsertNewMed);
 
             ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
 
-
             if (id.HasValue)
             {
-                PassedId = id.Value;
+                _passedId = id.Value;
             }
             else
             {
-                PassedId = -1; // Example default value
+                _passedId = -1; // Example default value
             }
+
+            if( !string.IsNullOrEmpty(patientType))
+            {
+                _patientType = patientType;
+            }
+
+
+            NavigateCreatePatientWindowCommand = new NavigateWindowCommand<CreatePatientViewModel>
+                (new NavigationService<CreatePatientViewModel>(new NavigationStore(), (_passedId) => new CreatePatientViewModel(OnPatientCreated, _passedId)), () => new CreatePatientWindow());
+           
+            NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerViewModel>
+              (new NavigationService<CreateOwnerViewModel>(new NavigationStore(), (_passedId) => new CreateOwnerViewModel(OnOwnerCreated)), () => new CreateOwnerWindow());
+
+        }
+        private void OnPatientCreated(Patient patient)
+        {
+            Patients.Add(patient);
+
+            var sorted = Patients.OrderByDescending(o => o.DateAdded).ToList();
+
+            Patients.Clear();
+
+            foreach (var sortedPatients in sorted)
+            {
+                Patients.Add(sortedPatients);
+            }
+
+            Patient = patient;
 
         }
 
-        public async Task LoadOwnerPatients()
+        private void OnOwnerCreated(Owner owner)
         {
+            Owners.Add(owner);
 
-            if( PassedId <= 0)
+            var sorted = Owners.OrderByDescending(o => o.DateAdded).ToList();
+
+            Owners.Clear();
+
+            foreach (var sortedOwner in sorted)
             {
-                Boxes.ErrorBox("Lista de animale nu a putut fi redată!\n Id not found!");
-                return;
+                Owners.Add(sortedOwner);
             }
 
+            Owner = owner;
+
+        }
+
+        public async void OnOwnerChanged()
+        {
+            await LoadOwnerPatients(Owner.Id);
+          
+        }
+
+        private void InsertNewMed(Object sender)
+        {
+            MedWrappers.Add(new MedWrapper(MedList[0]));
+        }
+
+        public async Task LoadOwner()
+        {
+            try
+            {
+                Owner = await new BaseRepository<Owner>().GetById(_passedId);
+
+            }
+            catch (Exception e)
+            {
+                Boxes.ErrorBox("Proprietarul nu a fost făsit!\n" + e.Message);
+            }
+        }
+
+
+        public async Task LoadOwnerPatients(int id)
+        {
+ 
             try
             {
                 PatientRepository patientRepository = new PatientRepository();
-                var patients = await patientRepository.GetForOwner((int)PassedId);
+                var patients = await patientRepository.GetForOwnerByType(id, _patientType);
 
                 Patients.Clear();
                 foreach (var patient in patients)
@@ -127,46 +219,61 @@ namespace VetManagement.ViewModels
 
                 var meds = await medRepository.GetAll();
 
-                Meds.Clear();
-                
+                MedList.Clear();
+
                 foreach (var med in meds)
                 {
-                    Meds.Add(med);
+                    MedList.Add(med);
                 }
+                MedWrappers.Add(new MedWrapper(MedList[0]));
 
-                MedInputPair.Add(new Data.MedInputPair { Med = Meds[0], Quantity = 0, Rank = 0 });
-
-                //Trace.WriteLine("AICI");
-                //Trace.WriteLine(Meds.Count);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Boxes.ErrorBox("Eroare în lista de medicamente\n" + e.Message);
             }
         }
 
-        public void AddInputPair(object parameter)
+        public async Task LoadOwners()
         {
-            int count = MedInputPair.Count();
-            MedInputPair.Add(new MedInputPair { Med = Meds[0], Quantity = 0, Rank = count });
+            try
+            {
+                BaseRepository<Owner> ownerRepository = new BaseRepository<Owner>();
+
+                var owners = await ownerRepository.GetAll();
+
+                Owners.Clear();
+
+                foreach (var owner in owners)
+                {
+                    Owners.Add(owner);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Boxes.ErrorBox("Eroare în lista de proprietari\n" + e.Message);
+            }
         }
 
-        public void RemoveInputPair(object parameter)
-        { 
-            try 
-            {
-                MedInputPair.Remove(MedInputPair[(int)parameter]);
 
-                for ( int i = 0; i < MedInputPair.Count(); i++)
+        public void RemoveMed(object parameter)
+        {
+            try
+            {
+                var medWrapper = parameter as MedWrapper;
+
+                if (medWrapper != null)
                 {
-                    MedInputPair[i].Rank = i;
+                    MedWrappers.Remove(medWrapper);
+
                 }
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Boxes.ErrorBox("Medicamentul nu poate fi șters din listă!\n" + e.Message);
             }
-
         }
 
         private void ToggleFormVisibility(object sender)
@@ -174,72 +281,98 @@ namespace VetManagement.ViewModels
             isVisibleForm = !isVisibleForm;
         }
 
-        public async void CreateTreatment(object Sender)
+        private bool Validate()
         {
+            if (Owner == null)
+            {
+                Boxes.ErrorBox("Selectați un proprietar înainte de a creea tratamentul!");
+                return false;
+            }
 
-            BaseRepository<TreatmentMed> tretmentMedRepository = new BaseRepository<TreatmentMed>();
-            BaseRepository<Treatment> treatmentRepository = new BaseRepository<Treatment>();
-            BaseRepository<Med> medRepository = new BaseRepository<Med>();
-
-            if( Patient == null)
+            if (Patient == null)
             {
                 Boxes.ErrorBox("Selectați un animal înainte de a creea tratamentul!");
-                return;
+                return false;
+            }
+
+            foreach (var medWrapper in MedWrappers)
+            {
+                if ((decimal)medWrapper.TotalAmount < medWrapper.TreatmentQuantity)
+                {
+                    Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + medWrapper.Name + " este mai mică decât cea din stoc!");
+                    return false;
+                }
+
+                if( medWrapper.TreatmentQuantity <=0)
+                {
+                    Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + medWrapper.Name + " trebuie să fie mai mare decat 0!");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private async void CreateTreatmentExecute(object sender)
+        {
+            await CreateTreatment();
+        }
+
+        public async Task<bool> CreateTreatment()
+        {
+           
+            if(!Validate())
+            {
+                return false;
             }
 
             try
             {
+                BaseRepository<TreatmentMed> tretmentMedRepository = new BaseRepository<TreatmentMed>();
+                BaseRepository<Treatment> treatmentRepository = new BaseRepository<Treatment>();
+                BaseRepository<Med> medRepository = new BaseRepository<Med>();
 
-                foreach( var pair in MedInputPair)
-                {
-                    if ((float)pair.Med.TotalAmount < pair.Quantity)
-                    {
-                        Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + pair.Med.Name + " este mai mică decât cea din stoc!");
-                        return;
-                    }
-
-                }
-              
-                var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = PassedId, Details = Details, DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
+                var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = Owner.Id, Details = Details, DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
 
                 treatment = await treatmentRepository.Add(treatment);
                 if (treatment != null)
                 {
-                    //loop again in order to avoid meds quantity update if creating a treatment object fails
-                    foreach (var pair in MedInputPair)
+                    foreach (var medWrapper in MedWrappers)
                     {
-                        pair.Med.TotalAmount = pair.Med.TotalAmount - pair.Quantity;
-                        pair.Med.Pieces = pair.Med.TotalAmount/pair.Med.PerPiece;
+                        medWrapper.TotalAmount = medWrapper.TotalAmount - medWrapper.TreatmentQuantity;
 
+                        //update the medWrapper.Med directly to avoid triggering propchange event
+                        medWrapper.Med.Pieces = decimal.Round(medWrapper.TotalAmount / medWrapper.PerPiece, 1);
 
-                        await medRepository.Update(pair.Med);
+                        await medRepository.Update(medWrapper.Med);
 
                         var tm = await tretmentMedRepository.Add(new TreatmentMed()
                         {
-                            MedId = pair.Med.Id,
+                            MedId = medWrapper.Id,
                             TreatmentId = treatment.Id,
-                            Quantity = pair.Quantity,
-                            Pieces = pair.Quantity / pair.Med.PerPiece,
+                            Quantity = medWrapper.TreatmentQuantity,
+                            Pieces = 1,//decimal.Round(medWrapper.TreatmentQuantity / medWrapper.PerPiece,2),
                             Administration = "",
-                            WaitingTime = ""
                         });
+                        Trace.WriteLine(medWrapper.TotalAmount);
 
                         //for display purpose
-                        tm.Med = pair.Med;
+                        tm.Med = medWrapper.Med;
                         treatment.TreatmentMeds.Add(tm);
                     }
                     treatment.Patient = Patient;
+                    treatment.Owner = Owner;
 
-
-                    _onTreatmnetCreateChanged?.Invoke(treatment);
+                    _onTreatmentCreateChanged?.Invoke(treatment);
                     Boxes.InfoBox("Tratamentul a fost adăugat!");
                 }
             }
             catch (Exception e)
             {
                 Boxes.ErrorBox(e.ToString());
+                return false;
             }
-            //var treatment = new Treatment() { MedId = MedId,  };
+            return true;
         }
 
     }

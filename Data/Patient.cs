@@ -9,14 +9,17 @@ namespace VetManagement.Data
 {
     public class Patient :BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Tipul animalului este obligatoriu!"), AllowedValues("pet","livestock")]
+        public string Type { get; set; }
+
+        public int? Identifier { get; set; }
 
         [Required(ErrorMessage = "ID-ul stăpânului este obligatoriu!")]
         public int OwnerId{ get; set; }
 
-        [Required(ErrorMessage = "Numele animalului este obligatoriu"),StringLength(50)]
-        public string Name { get; set; }
+        [StringLength(50)]
+        public string? Name { get; set; }
 
         [StringLength(20)]
         public string? Color { get; set; }

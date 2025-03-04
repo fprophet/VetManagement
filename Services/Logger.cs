@@ -11,30 +11,29 @@ namespace VetManagement.Services
 {
     class Logger
     {
-        private static readonly string LogDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Assembly.GetEntryAssembly().GetName().Name, "Logs");
-        
-        public static async void LogError(string logName, string message) {
+        private static readonly string LogDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Assembly.GetEntryAssembly()?.GetName().Name ?? "VetManagement", "Logs");
 
-            string fullPath = LogDirectory  + "/" + logName + ".txt";
+        public static async void LogError(string logName, string message)
+        {
 
-            if (!Directory.Exists(LogDirectory)) 
+            string fullPath = LogDirectory + "/" + logName + ".txt";
+
+            if (!Directory.Exists(LogDirectory))
             {
                 Directory.CreateDirectory(LogDirectory);
             }
 
             if (!File.Exists(fullPath))
             {
-                File.Create(fullPath);
+                File.Create(fullPath).Dispose();
             }
 
             using (StreamWriter writeStream = new StreamWriter(fullPath, true))
             {
                 string fullDateTime = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
-                writeStream.WriteLine("Time:" + fullDateTime);
-                writeStream.WriteLine( message);
-
+                await writeStream.WriteLineAsync("Time:" + fullDateTime);
+                await writeStream.WriteLineAsync(message);
             }
-
         }
     }
 }

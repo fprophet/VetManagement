@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:VetManagement.ViewModels" 
         xmlns:views="clr-namespace:VetManagement.Views"
+        WindowState="Maximized"
         Title="Vet Management" Height="600" Width="1000">
 
     <Window.Resources>
@@ -13,18 +14,46 @@
         <Style TargetType="MenuItem" x:Key="MenuItem">
             <Setter Property="Background" Value="#FF4CAF50"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="5,2"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Padding" Value="10"/>
             <Setter Property="BorderBrush" Value="#FF388E3C"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Margin" Value="5"/>
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        Padding="{TemplateBinding Padding}">
+
+                            <Grid>
+                                <Border Name="HoverBorder" Background="Transparent"/>
+                                <ContentPresenter ContentSource="Header" 
+                                          HorizontalAlignment="Left"/>
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="HoverBorder" Property="Background" Value="#66FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
+
+
+
     </Window.Resources>
 
     <DockPanel LastChildFill="True">
 
-        <!-- TOP MENU -->
         <Menu DockPanel.Dock="Top" Background="#2C3E50" Foreground="White">
             <MenuItem Header="Home" Command="{Binding NavigateHomeCommand}" />
             <MenuItem Header="Stăpâni" Command="{Binding NavigateOwnersCommand}" />
@@ -61,14 +90,19 @@
                                 <TextBlock Text="📦 Inventar" />
                             </MenuItem.Header>
                         </MenuItem>
-                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateTreatmentsCommand}">
+                        <MenuItem MinWidth="400" Style="{StaticResource MenuItem}" Command="{Binding NavigateTreatmentsCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="💊 Tratamente" />
+                                <TextBlock Text="💊 Registru animale mici" HorizontalAlignment="Left" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateRegistryCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="📖 Registru" />
+                                <TextBlock Text="📖 Registru animale mari" />
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateMedReportsCommand}">
+                            <MenuItem.Header>
+                                <TextBlock Text="📝 Raporturi" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateUsersCommand}">
@@ -143,6 +177,9 @@
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:RegistryViewModel}">
                                 <views:RegistryView />
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:MedReportsViewModel}">
+                                <views:MedReportsView />
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:AppSettingsViewModel}" >
                                 <views:AppSettingsView />

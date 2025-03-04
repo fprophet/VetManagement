@@ -9,9 +9,6 @@ namespace VetManagement.Data
 {
     public class Treatment :BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
-
         public int PatientId { get; set; }
 
         public Patient Patient { get; set; }

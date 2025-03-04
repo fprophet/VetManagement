@@ -17,10 +17,37 @@
                 <!-- Loading Progress Bar -->
                 <!--<ProgressBar Height="15" Width="200" IsIndeterminate="True"
                      Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />-->
-                <Button Grid.Row="0" Content="➕ Adaugă în registru" HorizontalAlignment="Left"
-                        Style="{StaticResource CreateButtonStyle}" Command="{Binding  NavigateCreateRegisterRecordWindowCommand}"  />
+       
                 <!-- Main DataGrid -->
-                <DataGrid Grid.Row="1" ItemsSource="{Binding RegistryRecords}"
+
+            <StackPanel Grid.Row="0">
+
+                <TextBlock Text="Filtre" FontSize="20" Margin="0,0,0,5"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                    <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                        <TextBlock Text="Proprietar" FontSize="15"/>
+                        <TextBox Text="{Binding OwnerNameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
+                    </StackPanel>
+
+                    <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                        <TextBlock Text="Animal" FontSize="15"/>
+                        <TextBox Text="{Binding PatientFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
+                    </StackPanel>
+
+                    <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                        <TextBlock Text="Medicament folosit" FontSize="15"/>
+                        <TextBox Text="{Binding MedNameFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="15"/>
+                    </StackPanel>
+
+                    <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                        <TextBlock Text="Număr identificare" FontSize="15"/>
+                        <TextBox Text="{Binding IdentifierFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="15"/>
+                    </StackPanel>
+                </StackPanel>
+                <Button Grid.Row="0" Content="➕ Adaugă în registru" HorizontalAlignment="Left"
+                 Style="{StaticResource CreateButtonStyle}" Command="{Binding  NavigateCreateRegisterRecordWindowCommand}"  />
+            </StackPanel>
+            <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredRegistryRecords}"
                           Style="{StaticResource DataGridExpanded}" 
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                           AutoGenerateColumns="False"
@@ -130,7 +157,7 @@
                                             <TextBlock Style="{StaticResource CenterTextBlock}">
                                                 <TextBlock.Text >
                                                     <MultiBinding StringFormat="{}{0}">
-                                                        <Binding Path="Species" />
+                                                        <Binding Path="Treatment.Patient.Species" />
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
@@ -139,7 +166,7 @@
                                             <TextBlock Style="{StaticResource CenterTextBlock}">
                                                 <TextBlock.Text >
                                                     <MultiBinding StringFormat="{}{0}">
-                                                        <Binding Path="Sex" />
+                                                    <Binding Path="Treatment.Patient.Sex" />
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
@@ -148,7 +175,7 @@
                                             <TextBlock Style="{StaticResource CenterTextBlock}">
                                                 <TextBlock.Text >
                                                     <MultiBinding StringFormat="{}{0}">
-                                                        <Binding Path="Age" />
+                                                    <Binding Path="Treatment.Patient.Age" />
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
@@ -157,7 +184,7 @@
                                             <TextBlock Style="{StaticResource CenterTextBlock}">
                                                 <TextBlock.Text >
                                                     <MultiBinding StringFormat="{}{0}">
-                                                        <Binding Path="Identifier" />
+                                                    <Binding Path="Treatment.Patient.Identifier" />
                                                     </MultiBinding>
                                                 </TextBlock.Text>
                                             </TextBlock>
@@ -236,7 +263,7 @@
                                                                     <TextBlock.Text>
                                                                         <MultiBinding StringFormat="{}{0} {1}">
                                                                             <Binding Path="Quantity"/>
-                                                                            <Binding Path="Med.Unit"/>
+                                                                            <Binding Path="Med.MeasurmentUnit"/>
                                                                         </MultiBinding>
                                                                     </TextBlock.Text>
                                                                 </TextBlock>
@@ -252,7 +279,7 @@
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                            <TextBlock Text="{Binding WaitingTime}"/>
+                                                            <TextBlock Text="{Binding Med.WaitingTime}"/>
                                                         </Border>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>

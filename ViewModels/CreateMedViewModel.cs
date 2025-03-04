@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
@@ -9,8 +10,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
+using K4os.Compression.LZ4.Internal;
+using Mysqlx;
 using Mysqlx.Crud;
 using VetManagement.Data;
+using VetManagement.DataWrappers;
 using VetManagement.Services;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -18,29 +22,48 @@ namespace VetManagement.ViewModels
 {
     public class CreateMedViewModel : ViewModelBase
     {
+
+        private List<string> _customErrors = new();
+
         private bool _isVisibleForm = false;
 
-        private string _name; 
-
-        private string _description;
-
-        private DateTime _valability = DateTime.Today;
-
-        private string _lotID;
-
-        private int _dateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-        private int _dateUpdated = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
         private readonly Action<Med> _onMedCreated;
+        public ObservableCollection<MedWrapper> Meds { get; set; } = new ObservableCollection<MedWrapper>();
 
-        public ICommand CreateMedCommand { get; set; }
-        public ICommand ToggleFormVisibilityCommand { get; }
+        private int _invoiceNumber;
+        public int InvoiceNumber
+        {
+            get => _invoiceNumber;
+            set
+            {
+                _invoiceNumber = value;
+                OnPropertyChanged(nameof(InvoiceNumber));
+            }
+        }
 
-        public ObservableCollection<object> PieceTypeList { get; set; } =
-            new ObservableCollection<object>  { new { Name = "Flacoane", Value = "flacoane" }, new { Name = "Comprimate", Value = "comprimate" } } ;
-        public ObservableCollection<object> MedTypeList { get; set; } =
-            new ObservableCollection<object>  { new { Name = "Medicament", Value = "medicament" }, new { Name = "Vaccin", Value = "vaccin" } } ;  
+        private string _provider;
+
+        public string Provider
+        {
+            get => _provider;
+            set
+            {
+                _provider = value;
+                OnPropertyChanged(nameof(Provider));
+            }
+        }
+
+        private long _invoiceDate = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+
+        public long InvoiceDate
+        {
+            get => _invoiceDate;
+            set
+            {
+                _invoiceDate = value;
+                OnPropertyChanged(nameof(InvoiceDate));
+            }
+        }
 
         private bool _isVisiblePerPieceInput = true;
         public bool isVisiblePerPieceInput
@@ -53,165 +76,6 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public string Name 
-        { 
-            get => _name;
-            set
-            {
-                _name = value;
-                OnPropertyChanged(nameof(Name));  
-            }
-        }
-        
-        public string Description
-        {
-            get => _description;
-            set
-            {
-                _description = value;
-                OnPropertyChanged(nameof(Description));
-            }
-        }
-
-        private string _pieceType = "flacoane";
-        public string PieceType
-        {
-            get => _pieceType;
-            set
-            {
-                _pieceType = value;
-                OnPropertyChanged(nameof(PieceType));
-                if( value == "comprimate")
-                {
-                    _perPiece = 1;
-                    isVisiblePerPieceInput = false;
-                    TotalAmountUnit = "comprimate";
-                }
-                else
-                {
-                    _perPiece = 0;
-                    isVisiblePerPieceInput = true;
-                    TotalAmountUnit = "ml";
-                }
-
-                CalculateTotalAmount();
-
-            }
-        }
-
-        private int _pieces;
-        public int Pieces
-        {
-            get => _pieces;
-            set
-            {
-                _pieces = value;
-                OnPropertyChanged(nameof(Pieces));
-                CalculateTotalAmount();
-            }
-        }
-
-        private float _perPiece;
-        public float PerPiece
-        {
-            get => _perPiece;
-            set
-            {
-                _perPiece = value;
-                OnPropertyChanged(nameof(_perPiece));
-                CalculateTotalAmount();
-            }
-        }
-
-        private string _perPieceString;
-        public string PerPieceString
-        {
-            get => _perPieceString;
-            set
-            {
-                float parsed;
-                if (float.TryParse(value, out parsed))
-                {
-                    _perPieceString = value;
-                    PerPiece = parsed;
-                    OnPropertyChanged(nameof(PerPieceString));
-                }
-            }
-        }
-
-        private float _totalAmount;
-        public float TotalAmount
-        {
-            get => _totalAmount;
-            set 
-            {
-                _totalAmount = value;
-                OnPropertyChanged(nameof(TotalAmount));
-            }
-        }
-
-        private string _totalAmountUnit = "ml";
-        public string TotalAmountUnit
-        {
-            get => _totalAmountUnit;
-            set
-            {
-                _totalAmountUnit = value;
-                OnPropertyChanged(nameof(TotalAmountUnit));
-            }
-        }
-
-        private string _type = "medicament";
-        public string Type 
-        {
-            get => _type;
-            set
-            {
-                _type = value;
-                OnPropertyChanged(nameof(Type));
-            }
-        }
-
-        public int DateAdded
-        {
-            get => _dateAdded;
-            set
-            {
-                _dateAdded = value;
-                OnPropertyChanged(nameof(DateAdded));
-            }
-        }
-
-        public int DateUpdated
-        {
-            get => _dateUpdated;
-            set
-            {
-                _dateUpdated = value;
-                OnPropertyChanged(nameof(DateUpdated));
-            }
-        } 
-        
-        public string LotID
-        {
-            get => _lotID;
-            set
-            {
-                _lotID = value;
-                OnPropertyChanged(nameof(LotID));
-            }
-        }
-
-        public DateTime Valability
-        {
-            get => _valability;
-            set
-            {
-                _valability = value;
-                OnPropertyChanged(nameof(Valability));
-            }
-        }
-
         public bool isVisibleForm
         {
             get => _isVisibleForm;
@@ -221,27 +85,71 @@ namespace VetManagement.ViewModels
                 OnPropertyChanged(nameof(isVisibleForm));
             }
         }
+
+        public ICommand CreateMedCommand { get; set; }
+        public ICommand ToggleFormVisibilityCommand { get; }
+        public ICommand AddMedsCommand { get; }
+        public ICommand InsertNewMedCommand { get; }
+
+        public ObservableCollection<object> PieceTypeList { get; set; } =
+            new ObservableCollection<object>  { new { Name = "Flacoane", Value = "flacoane" }, new { Name = "Comprimate", Value = "comprimate" } } ;
+        public ObservableCollection<object> MedTypeList { get; set; } =
+            new ObservableCollection<object>  { new { Name = "Medicament", Value = "medicament" }, new { Name = "Vaccin", Value = "vaccin" } } ;  
+
         public CreateMedViewModel(Action<Med> onMedCreated)
         {
             _onMedCreated = onMedCreated;
-            CreateMedCommand = new RelayCommand(CreateMed, CanExecuteCreateMed);
-            ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
+            CreateMedCommand = new RelayCommand(CreateMeds);
+            AddMedsCommand = new RelayCommand(AddMeds);
+            InsertNewMedCommand = new RelayCommand(InsertNewMed);
+
+            Meds.Add(new MedWrapper(new Med { Type = "medicament", PieceType = "flacoane", Valability = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds()} ));
+
+            Meds.CollectionChanged += AddEmptyMedToList;
 
         }
 
-        private void CalculateTotalAmount()
+        private void InsertNewMed(object paramete)
         {
-            TotalAmount = Pieces * PerPiece;
+            Meds.Add(new MedWrapper(new Med { Type = "medicament", PieceType = "flacoane", Valability = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds() }));
         }
 
-        private void ToggleFormVisibility(object parameter)
+        private void AddEmptyMedToList(object parameter, NotifyCollectionChangedEventArgs e)
         {
-            isVisibleForm = !isVisibleForm;
+
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                var lastMed = Meds.Last();
+
+                lastMed = new MedWrapper(new Med { Type = "medicament", PieceType = "flacoane", Valability = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds() });
+            }
         }
 
-        private bool CanExecuteCreateMed(object parameter)
+        private void AddMeds(object parameter)
         {
-            return !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(PieceType) && Pieces > 0;
+
+            foreach (MedWrapper med in Meds ) 
+            {
+                Trace.WriteLine(med.Name);
+                Trace.WriteLine(med.Valability);
+                Trace.WriteLine(med.PieceType);
+            }
+
+        }
+  
+        private bool CustomValidation(Med med)
+        {
+            if (med.Pieces <= 0)
+            {
+                _customErrors.Add( "Cantiatea in bucăți trebuie sa fie mai mare decat 0!");
+            }
+
+            if (med.PerPiece <= 0)
+            {
+                _customErrors.Add("Cantiatea per bucată trebuie sa fie mai mare decat 0!");
+            }
+
+            return _customErrors.Count() == 0;
         }
 
         private bool Validate(Med med)
@@ -252,53 +160,74 @@ namespace VetManagement.ViewModels
 
             bool isValid = Validator.TryValidateObject(med, context, validationResults);
 
-            if (!isValid)
+            bool customValidation = CustomValidation(med);
+            if (!isValid || !customValidation)
             {
                 foreach (var error in validationResults)
                 {
                     Errors.Add(error.MemberNames.First(), new List<string> { error.ErrorMessage });
                     OnErrorsChanged(error.MemberNames.First());
                 }
+
                 return false;
             }
+
+        
 
             return true;
         }
 
 
-        private async void CreateMed(object parameter)
+        private async void CreateMeds(object parameter)
         {
-            long x = (long)((DateTimeOffset)Valability).ToUnixTimeSeconds();
-            Med med = new Med() 
-             { 
-                Name = Name,
-                Type = Type,
-                PieceType = PieceType, 
-                Pieces = Pieces,
-                PerPiece = PerPiece, 
-                TotalAmount = TotalAmount, 
-                DateAdded = DateAdded,
-                Description = Description, 
-                LotID =LotID, 
-                Valability = (long)((DateTimeOffset)Valability).ToUnixTimeSeconds()
-            };
 
-            if ( !Validate(med))
+            int index = 1;
+            foreach( MedWrapper medWrapper in Meds)
             {
-                return;
+                if (!Validate(medWrapper.Med))
+                {
+                    string message = "Completați câmpurile necesare pentru medicamentul " + index + "!\n";
+
+                    message += string.Join("\n", Errors.Select(kv => kv.Value.FirstOrDefault())) + "\n"; 
+                    message += string.Join("\n", _customErrors); 
+
+                    Boxes.InfoBox(message);
+                    Errors.Clear();
+                    _customErrors.Clear();
+                    return;
+                }
+                index++;
             }
 
             try 
             {
-                await new BaseRepository<Med>().Add(med);
-                _onMedCreated?.Invoke(med);
+                BaseRepository<Med> medRepository = new BaseRepository<Med>();
+                BaseRepository<Invoice> invoiceRepository = new BaseRepository<Invoice>();
 
-                Boxes.InfoBox("Medicamentul a fost adăugat!");
+                Invoice Invoice = await invoiceRepository.Add(new Invoice() { Number = InvoiceNumber, Date = InvoiceDate, Provider = Provider, ProductCount = Meds.Count() });
+
+                if( Invoice == null)
+                {
+                    Boxes.ErrorBox("Factura nu a putut fi creeată!");
+                    return;
+                }
+
+                foreach (MedWrapper medWrapper in Meds)
+                {
+                    medWrapper.Med.DateAdded = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+                    medWrapper.Med.InvoiceNumber = InvoiceNumber; 
+                    await medRepository.Add(medWrapper.Med);
+                    _onMedCreated?.Invoke(medWrapper.Med);
+                }
+
+                Boxes.InfoBox("Medicamentele au fost adăugate!");
+
             }
+
             catch (Exception ex)
             {
                 Logger.LogError("Error", ex.ToString());
-                MessageBox.Show("Medicamentul nu a putut fi adăugat!\n" + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Boxes.ErrorBox("Medicamentul nu a putut fi adăugat!\n" + ex.Message); 
 
             }
         }

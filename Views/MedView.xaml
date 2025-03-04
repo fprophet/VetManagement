@@ -26,37 +26,48 @@
                     Command="{Binding NavigateInventoryCommand}" />
 
                 <StackPanel Orientation="Vertical" Margin="0,20,0,0">
-                    <TextBlock Text="{Binding CurrentMed.Name}" FontWeight="Bold" FontSize="18"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding CurrentMed.Name}" FontWeight="Bold" FontSize="18"/>
+                        <StackPanel Orientation="Horizontal" Margin="10,0" VerticalAlignment="Bottom">
+                            <TextBlock Text="Serie Lot: " FontSize="15"/>
+                            <TextBlock Text="{Binding CurrentMed.LotID}" FontSize="15"/>
+                        </StackPanel>
+                    </StackPanel>
 
                     <StackPanel Orientation="Vertical" Margin="0,0,20,0">
                         <TextBlock  FontSize="18" Margin="0,0,20,0">
                             <TextBlock.Text>
-                                <MultiBinding StringFormat="{}Total {0}: {1}">
+                                <MultiBinding StringFormat="{}Total {0}: {1} ">
                                     <Binding Path="CurrentMed.PieceType" />
-                                    <Binding Path="CurrentMed.Pieces" />
+                                    <Binding Path="Pieces" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+
+                        <TextBlock  FontSize="18" Margin="0,0,20,0" Visibility="{Binding HasStartedPiece,Converter={StaticResource BoolToVisibilityConverter}}">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}Un {0} început : {1} {2}">
+                                    <Binding Path="CurrentMed.SingularPieceType" />
+                                    <Binding Path="StartedPieceAmount" />
+                                    <Binding Path="CurrentMed.MeasurmentUnit" />
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
 
                         <TextBlock FontSize="18">
                             <TextBlock.Text>
-                                <MultiBinding StringFormat="{}Total cantitate: {0} {1}">
+                                <MultiBinding StringFormat="{}Cantitate totală: {0} {1}">
                                     <Binding Path="CurrentMed.TotalAmount" />
-                                    <Binding Path="CurrentMed.Unit" />
+                                    <Binding Path="CurrentMed.MeasurmentUnit" />
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
                     </StackPanel>
-                    
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Serie Lot: " FontSize="18"/>
-                        <TextBlock Text="{Binding CurrentMed.LotID}" FontSize="18"/>
-                    </StackPanel>
-                    
-                    <StackPanel Orientation="Horizontal">
+              
+                    <!--<StackPanel Orientation="Horizontal">
                         <TextBlock Text="Tratamente: " FontSize="18" />
                         <TextBlock Text="{Binding Treatments.Count}" FontSize="18"/>
-                    </StackPanel>
+                    </StackPanel>-->
                     
                 </StackPanel>
             </StackPanel>
@@ -78,7 +89,7 @@
                             <TextBlock >
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}cantitate ({0})">
-                                        <Binding Path="DataContext.CurrentMed.Unit" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                        <Binding Path="DataContext.CurrentMed.MeasurmentUnit" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
@@ -102,8 +113,8 @@
                             <Binding Path="Pieces" />
                         </DataGridTextColumn.Binding>
                     </DataGridTextColumn>
-
-                    <DataGridTemplateColumn Header="Detalii" Width="500">
+ 
+                    <DataGridTemplateColumn Header="Detalii" Width="400">
                        
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -111,26 +122,6 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-
-                    <!--<DataGridTemplateColumn Width="Auto">
-                        <DataGridTemplateColumn.Header>
-                            <TextBlock Text="Actions"/>
-                        </DataGridTemplateColumn.Header>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Content="✏ Edit" Padding="5,2" Background="#FFC107"
-                                        Foreground="White" BorderThickness="0" Cursor="Hand"
-                                        Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding}" />
-                                    <Button Content="View" Padding="5,2" Background="Green"
-                                        Foreground="White" BorderThickness="0" Cursor="Hand"
-                                        Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>-->
 
                 </DataGrid.Columns>
             </DataGrid>

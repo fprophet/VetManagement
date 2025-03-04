@@ -9,8 +9,6 @@ namespace VetManagement.Data
 {
     public class User :BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
 
         [StringLength(50)]
         [Required]

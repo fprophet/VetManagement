@@ -14,20 +14,20 @@ namespace VetManagement.Data
         public async Task<List<Treatment>> GetFullTreatments()
         {
             return await _context.Treatments
-                .Include(t => t.Patient) // Eagerly load the related Patient
-                .Include(t => t.TreatmentMeds) // Eagerly load the many-to-many relationship table
-                .ThenInclude(tm => tm.Med) // Load the Med associated with TreatmentMed
-                .Include(t => t.Owner) // Load the Med associated with TreatmentMed
-                .Where(t => t.PatientType == "pet") // Load the Med associated with TreatmentMed
+                .Include(t => t.Patient) 
+                .Include(t => t.TreatmentMeds) 
+                .ThenInclude(tm => tm.Med) 
+                .Include(t => t.Owner) 
+                .Where(t => t.Patient.Type == "pet") 
                 .ToListAsync();
         }        
         public async Task<List<Treatment>> GetFullTreatmentsForOwner( int id)
         {
             return await _context.Treatments
-                .Include(t => t.Patient) // Eagerly load the related Patient
-                .Include(t => t.TreatmentMeds) // Eagerly load the many-to-many relationship table
+                .Include(t => t.Patient) 
+                .Include(t => t.TreatmentMeds) 
                 .ThenInclude(tm => tm.Med)
-                .Where(t => t.OwnerId == id)// Load the Med associated with TreatmentMed
+                .Where(t => t.OwnerId == id)
                 .ToListAsync();
         }
 

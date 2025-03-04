@@ -6,10 +6,14 @@
         xmlns:local="clr-namespace:VetManagement.Views" xmlns:viewmodels="clr-namespace:VetManagement.ViewModels"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:behaviors="clr-namespace:VetManagement.Behaviors" d:DataContext="{d:DesignInstance Type=viewmodels:CreateMedViewModel}"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:services="clr-namespace:VetManagement.Services"
         mc:Ignorable="d"
-        Title="Formular Creare Medicament" Height="750" Width="800">
+        Title="Formular Creare Medicament" Height="750" Width="1400">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <services:DateToUnixTimestampConverter x:Key="DateToUnixTimestampConverter"/>
+        <services:PieceTypeToReadOnlyConverter x:Key="PieceTypeToReadOnlyConverter"/>
         <Style TargetType="TextBlock" x:Key="InputLabel">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -18,86 +22,143 @@
             <Setter Property="Height" Value="30"/>
             <Setter Property="Padding" Value="5"/>
         </Style>
+        <services:EmptyToCollapsedConverter x:Key="EmptyToCollapsedConverter"/>
     </Window.Resources>
-    <Border Background="White" CornerRadius="10" Padding="10" 
-         BorderBrush="#DDD" BorderThickness="2" Width="Auto">
-        <StackPanel>
-            <TextBlock Text="Formular" Margin="10,5" FontSize="30"/>
-            <StackPanel Orientation="Vertical">
-
-                <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Medicament/Vaccin:"  Style="{StaticResource InputLabel}"/>
-                    <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding MedTypeList}" DisplayMemberPath="Name" 
-                        SelectedValuePath="Value" SelectedValue="{Binding Type, Mode=TwoWay}" />
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Nume:" Style="{StaticResource InputLabel}"/>
-                    <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}"
-                             Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
-                             Text="{Binding Name, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" Width="300"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Serie Lot:"  Style="{StaticResource InputLabel}"/> 
-                    <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}" Text="{Binding LotID, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Valabilitate:" Style="{StaticResource InputLabel}"/>
-                    <DatePicker HorizontalAlignment="Left" SelectedDate="{Binding Valability,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
-                </StackPanel>   
-
-                <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="Tipul stocului:"  Style="{StaticResource InputLabel}"/>
-                    <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding PieceTypeList}" DisplayMemberPath="Name" 
-                            SelectedValuePath="Value" SelectedValue="{Binding PieceType, Mode=TwoWay}" />
-
-                    <StackPanel Orientation="Vertical" Margin="20,10,0,0" Visibility="{Binding isVisiblePerPieceInput, Converter={StaticResource BoolToVisibilityConverter}}" >
-                        <TextBlock Text="Cantitate per flacon(ml):"  Style="{StaticResource InputLabel}"/>
-
-                        <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}"  
-                                 Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
-                                 Text="{Binding PerPieceString, FallbackValue='1',  UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" Width="300"/>
-                    </StackPanel>   
-                </StackPanel>
-
-                <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Style="{StaticResource InputLabel}">
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="{}Numar de {0}:">
-                                <Binding Path="PieceType" />
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
-                    <TextBox HorizontalAlignment="Left" Style="{StaticResource Input}"  Text="{Binding Pieces, FallbackValue='1',  UpdateSourceTrigger=PropertyChanged}" Width="300"/>
-
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource InputLabel}" Text="Stoc total: "/>
-                        <TextBlock Style="{StaticResource InputLabel}"  FontWeight="Bold">
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{}{0} {1}">
-                                    <Binding Path="TotalAmount" />
-                                    <Binding Path="TotalAmountUnit" />
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
+    <Grid>
+        <StackPanel HorizontalAlignment="Stretch" Margin="50">
+            <StackPanel Orientation="Horizontal" Margin="0,10">
+                    <StackPanel Width="150" Margin="0,0,20,0">
+                        <TextBlock Text="Număr Factură"/>
+                        <TextBox x:Name="InvoiceTextBox" Text="{Binding InvoiceNumber}" FontSize="13" Padding="2" />
                     </StackPanel>
-                    
-                </StackPanel>
+                    <StackPanel Width="150" Margin="0,0,20,0">
+                        <TextBlock Text="Furnizor"/>
+                        <TextBox Text="{Binding Provider}" FontSize="13" Padding="2" />
+                    </StackPanel>
+                    <StackPanel Width="150" Margin="0,0,20,0">
+                        <TextBlock Text="Data"/>
+                    <DatePicker Text="{Binding InvoiceDate,Converter={StaticResource DateToUnixTimestampConverter}}" FontSize="13" Padding="2" />
+                    </StackPanel>
+               
             </StackPanel>
 
-            <StackPanel Orientation="Vertical" Margin="10">
-                <TextBlock Text="Descriere:" Style="{StaticResource InputLabel}"/>
-                <TextBox  Style="{StaticResource Input}" HorizontalAlignment="Left" Height="100" Width="500" TextWrapping="Wrap"
-                              Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="left" Margin="10,10,0,0">
-                <Button Content="💾 Save" Padding="10,5" Background="#4CAF50" Foreground="White"
-                FontWeight="Bold" BorderThickness="0" Cursor="Hand"
-                Command="{Binding CreateMedCommand}" />
+                <DataGrid ItemsSource="{Binding Meds}" AutoGenerateColumns="False" HorizontalAlignment="Left">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Denumire produs" Width="150" Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <DataGridTemplateColumn Width="150">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Tipul produsului"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <ComboBox  
+                                            SelectedValuePath="Value"  
+                                            DisplayMemberPath="Name"
+                                            SelectedValue="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}"
+                                            ItemsSource="{Binding DataContext.MedTypeList, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        
+                        <DataGridTextColumn Header="Furnizor" Width="150" Binding="{Binding Provider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="Serie Lot" Width="100" Binding="{Binding LotID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <DataGridTemplateColumn Header="Valabilitate" Width="150">
+
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Valability, ValidatesOnDataErrors=True,Converter={StaticResource DateToUnixTimestampConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=d}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <DatePicker SelectedDate="{Binding Valability, Converter={StaticResource DateToUnixTimestampConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+
+                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn Header="Timp de asteptare" Width="150" Binding="{Binding WaitingTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        
+                        <DataGridTemplateColumn Width="150">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Tipul stocului"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <ComboBox  
+                                            SelectedValuePath="Value"  
+                                            DisplayMemberPath="Name"
+                                            SelectedValue="{Binding PieceType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            ItemsSource="{Binding DataContext.PieceTypeList, RelativeSource={RelativeSource AncestorType=DataGrid}}">
+                                        </ComboBox>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                            
+                        <DataGridTextColumn Header="Bucăți" Width="150" Binding="{Binding Pieces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <DataGridTextColumn Header="Tip Gramaj" Width="150" Binding="{Binding MeasurmentUnit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <DataGridTemplateColumn Header="Cantitate per bucată">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding PerPieceString}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+
+                            <DataGridTemplateColumn.CellEditingTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding PerPieceString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                        <!--<TextBox.Style>
+                                            <Style TargetType="TextBox">
+                                                <Setter Property="IsReadOnly" Value="True"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding PieceType}" Value="flacoane">
+                                                        <Setter Property="IsReadOnly" Value="False"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>-->
+                                    </TextBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellEditingTemplate>
+                        </DataGridTemplateColumn>
+
+
+                        <DataGridTextColumn IsReadOnly="True">
+                            <DataGridTextColumn.Header>
+                                <TextBlock>
+                                    Stoc Total
+                                </TextBlock>
+                            </DataGridTextColumn.Header>
+
+                            <DataGridTextColumn.Binding>
+                                <MultiBinding StringFormat="{}{0} {1}">
+                                    <Binding Path="TotalAmount" UpdateSourceTrigger="PropertyChanged"/>
+                                    <Binding Path="MeasurmentUnit" UpdateSourceTrigger="PropertyChanged"/>
+                                </MultiBinding>
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="Detalii" Width="200" Binding="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Height="25" Width="100" Padding="5,0"  Background="Green" Foreground="White" Content="➕ Adaugă" 
+                        VerticalAlignment="Bottom" HorizontalAlignment="Left" Command="{Binding InsertNewMedCommand}"/>
             </StackPanel>
+            <Button Content="💾 Salvează listă medicamente" Command="{Binding CreateMedCommand}" 
+                    Height="25" Padding="5,0" Margin="0,20" Background="#4A90E2" Foreground="White"  HorizontalAlignment="Left"/>
         </StackPanel>
-    </Border>
+    </Grid>
 </Window>

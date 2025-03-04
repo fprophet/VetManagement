@@ -13,38 +13,39 @@ namespace VetManagement.Data
 {
     public class Med : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
 
-        [Required(ErrorMessage = "Numele este obligatoriu!")]
+        [Required(ErrorMessage = "Denumirea produsului este obligatorie!")]
         public string Name { get; set; }
 
-        [AllowedValues("medicament", "vaccin")]
+        [Required(ErrorMessage = "Tipul produsului este obligatoriu!"),AllowedValues("medicament", "vaccin")]
         public string Type { get; set; }
 
-        [Column("PieceType"),AllowedValues("comprimate", "flacoane")]
+        [Required(ErrorMessage = "Tipul gramajului este obligatoriu!")]
+        public string MeasurmentUnit { get; set; }
+
+        [Required(ErrorMessage = "Tipul stocului este obligatoriu!"),Column("PieceType"),AllowedValues("comprimate", "flacoane"),]
         public string PieceType { get; set; }
 
         [Required(ErrorMessage = "Cantitatea în bucăți trebuie să fie mai mare ca 0!")]
-        public float Pieces { get; set; }
+        public decimal Pieces { get; set; }
 
         [Required(ErrorMessage = "Cantitatea per bucată trebuie să fie mai mare ca 0!")]
-        public float PerPiece { get; set; }
+        public decimal PerPiece { get; set; }
 
-        private float _totalAmount;
-        public float TotalAmount 
-        { 
-            get => _totalAmount; 
-            set
-            {
-                _totalAmount = value;
-                OnPropertyChanged(nameof(TotalAmount));
-            }
-        }
+        [Required(ErrorMessage = "Numele furnizorului este obligatoriu!")]
+        public string Provider { get; set; }
+
+        [Required(ErrorMessage = "Numărul facturii este obligatoriu!")]
+        public int InvoiceNumber { get; set; }
+
+        public string WaitingTime { get; set; }
+
+        public decimal TotalAmount { get; set; }
 
         public string? LotID { get; set; }
 
-        [Required(ErrorMessage = "Valabilitatea trebuie să fie o data în viitor!")]
+
+        [Required(ErrorMessage = "Valabilitatea trebuie să fie o dată în viitor!")]
         public long Valability { get; set; }
 
         public string? Description { get; set; }
@@ -55,21 +56,20 @@ namespace VetManagement.Data
 
         public List<TreatmentMed> TreatmentMeds { get; set; } = new List<TreatmentMed>();
 
+        public Invoice Invoice { get; set; }
+
         public DateTime DateAddedFormated => DateTimeOffset.FromUnixTimeSeconds(DateAdded).UtcDateTime;
 
         public string ValabilityFormated => 
             TimeZoneInfo.ConvertTimeFromUtc(DateTimeOffset.FromUnixTimeSeconds(Valability).UtcDateTime, TimeZoneInfo.Local).Date.ToString("yyyy-MM-dd");
 
-        public string Unit => PieceType == "comprimate" ? "comprimate" : "ml";
-        public string UnitPerPiece => PieceType == "comprimate" ? "-" : PerPiece + "ml/flacon";
+        public string Unit => PieceType == "comprimate" ? "pastilă" : "ml";
 
+        //public string UnitPerPiece => PieceType == "comprimate" ? "-" : PerPiece + "ml/flacon";
 
+        public string UnitPerPiece => MeasurmentUnit + "/" + SingularPieceType;
 
-        //public IEnumerable<ValidationResult> Valdiate(ValidationContext validationContext)
-        //{
-        //    var errors =  new List<ValidationResult>();
+        public string SingularPieceType => PieceType == "comprimate" ? "comprimat" : "flacon";
 
-        //    if()
-        //}
     }
 }

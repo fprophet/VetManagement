@@ -15,6 +15,7 @@ using Mysqlx;
 using Mysqlx.Crud;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.DataWrappers;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -25,7 +26,7 @@ namespace VetManagement.ViewModels
     {
         private string _pageTitle = "Inventar";
 
-        private readonly NavigationStore _navigationStore;
+        private new readonly NavigationStore _navigationStore;
 
         public CreateMedViewModel CreateMedViewModel { get;  }
 
@@ -37,9 +38,10 @@ namespace VetManagement.ViewModels
 
         public ICommand OpenCreateMedWindowCommand { get; }
 
-        public ObservableCollection<Med> Meds { get; set; } = new ObservableCollection<Med>();
+        public ObservableCollection<MedWrapper> Meds { get; set; } = new ObservableCollection<MedWrapper>();
 
         public ObservableCollection<object> MedTypeList { get; set; } =
+
            new ObservableCollection<object> { new { Name = "Medicament", Value = "medicament" }, new { Name = "Vaccin", Value = "vaccin" } };
 
         private ListCollectionView _filteredMeds;
@@ -151,21 +153,23 @@ namespace VetManagement.ViewModels
             }
             else
             {
-                var med = obj as Med;
+
+
+                var med = obj as MedWrapper;
 
                 bool nameMatch = string.IsNullOrEmpty(NameFilter)
-                    || (med.Name != null && med.Name.IndexOf(NameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+                    || (med?.Name != null && med.Name.IndexOf(NameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
 
                 bool lotMatch = string.IsNullOrEmpty(LotFilter)
-                    || (med.LotID != null && med.LotID.IndexOf(LotFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+                    || (med?.LotID != null && med.LotID.IndexOf(LotFilter, StringComparison.OrdinalIgnoreCase) >= 0);
 
                 bool dateAddedMatch = DateAddedFilter == null ||
-                    DateTimeOffset.FromUnixTimeSeconds(med.DateAdded).UtcDateTime.Date == DateAddedFilter;
+                    DateTimeOffset.FromUnixTimeSeconds(med?.DateAdded ?? 0).UtcDateTime.Date == DateAddedFilter;
 
                 bool valabilityMatch = ValabilityFilter == null ||
-                    DateTimeOffset.FromUnixTimeSeconds(med.Valability).UtcDateTime.Date == ValabilityFilter;
+                    DateTimeOffset.FromUnixTimeSeconds(med?.Valability ?? 0).UtcDateTime.Date == ValabilityFilter;
 
-                bool typeMatch = TypeFilter == null || (med.Type != null && TypeFilter == med.Type);
+                bool typeMatch = TypeFilter == null || (med?.Type != null && TypeFilter == med.Type);
 
                 return nameMatch && lotMatch && dateAddedMatch && valabilityMatch && typeMatch;
 
@@ -175,7 +179,7 @@ namespace VetManagement.ViewModels
         private void UpdateMedList(Med med)
         {
 
-            Meds.Add(med);
+            Meds.Add( new MedWrapper(med));
 
 
             var sorted = Meds.OrderByDescending(m => m.DateAdded).ToList();
@@ -195,7 +199,7 @@ namespace VetManagement.ViewModels
         private async void UpdateMed(object parameter)
         {
             try 
-            { 
+            {
                 if( parameter != null && parameter is Med)
                 {
                     Med med = (Med)parameter;
@@ -256,12 +260,16 @@ namespace VetManagement.ViewModels
 
                 foreach (var med in sorted)
                 {
-                    Meds.Add(med);
+                    Meds.Add( new MedWrapper(med));
                 }
 
                 FilteredMeds = new ListCollectionView(Meds);
+
                 _filteredMeds.Filter = FilterMeds;
+
+              
             }
+           
             catch (Exception e)
             {
                 MessageBox.Show("Lista de medicamente nu a putut fi redată!\n" + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);

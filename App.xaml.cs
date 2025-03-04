@@ -33,7 +33,7 @@ namespace vet_management
 
             }else
             {
-                if (!SessionManager.Instance.isIsLoggedIn())
+                if (SessionManager.Instance.isIsLoggedIn())
                 {
                     MainWindow = new UserLogin()
                     {

@@ -35,6 +35,8 @@ namespace VetManagement.Data
 
         public DbSet<RegistryRecord> RegistryRecords { get; set; }
 
+        public DbSet<Invoice> Invoices { get; set; }
+
 
 
         //private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlserver";
@@ -101,6 +103,10 @@ namespace VetManagement.Data
                .HasForeignKey(t => t.OwnerId)
                .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Med>()
+             .HasOne(m => m.Invoice)
+             .WithMany(i => i.Meds)
+             .HasForeignKey(m => m.InvoiceNumber);
 
             modelBuilder.Entity<Treatment>()
                 .Property(t => t.Details)
@@ -109,6 +115,19 @@ namespace VetManagement.Data
             modelBuilder.Entity<Patient>()
                 .Property(t => t.Details)
                 .HasColumnType("mediumtext");
+
+            modelBuilder.Entity<Patient>()
+                .Property(p => p.Type)
+                .HasColumnType("ENUM('pet','livestock')");
+
+            modelBuilder.Entity<Patient>()
+                .Property(p => p.Sex)
+                .HasColumnType("ENUM('Male','Female')");
+
+            modelBuilder.Entity<Med>()
+                .Property(m => m.Type)
+                .HasColumnType("ENUM('medicament','vaccin')");
+
 
         }
 

@@ -21,28 +21,29 @@ namespace VetManagement.Commands
             _window = window;
             _navigationService = navigationService;
 
-            Window currentWindow =
+            Window? currentWindow =
                 Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
 
             if (directExecution)
             {
-                Execute(null);             
+                Execute(parameter: null!);
             }
 
             if (closeCurrent)
             {
-                currentWindow.Close();
+                currentWindow?.Close();
             }
         }
 
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (parameter is int id)
             {
                 _navigationService.NavigateWindow(_window, id);
             }
-            else {
+            else
+            {
                 _navigationService.NavigateWindow(_window, null);
 
             }

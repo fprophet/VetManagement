@@ -15,7 +15,7 @@ namespace VetManagement.ViewModels
     public class HomeViewModel : ViewModelBase
     {
 
-        public string PageTitle = "Acasă";
+        public new string PageTitle = "Acasă";
         public ViewModelBase CurrentViewModel { get; }
 
         public ICommand NavigateUsersCommand { get; }

@@ -18,7 +18,7 @@ namespace VetManagement.Services
 
         private int _id = -1;
 
-        public string Username
+        public string? Username
         {
             get => _username;
 
@@ -28,7 +28,7 @@ namespace VetManagement.Services
             }
         }
 
-        public string Role
+        public string? Role
         {
             get => _role;
 

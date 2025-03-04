@@ -24,9 +24,7 @@ namespace VetManagement.ViewModels
         public ICommand NavigateOwnersCommand { get; set; }
         public ICommand NavigateCreateTreatment { get; set; }
 
-        public Owner Owner;
-
-        public CreateTreatmentViewModel CreateTreatmentViewModel { get; set; }
+        public Owner? Owner;
 
         public ObservableCollection<Treatment> Treatments { get; private set; } = new ObservableCollection<Treatment>();
 
@@ -49,8 +47,8 @@ namespace VetManagement.ViewModels
             NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
 
-            NavigateCreateTreatment = new NavigateWindowCommand<CreateTreatmentViewModel>
-                (new NavigationService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(OnTreatmentCreated, id) ), () => new CreateTreatmentWindow());
+            NavigateCreateTreatment = new NavigateWindowCommand<CreateOwnerTreatmentViewModel>
+                (new NavigationService<CreateOwnerTreatmentViewModel>(_navigationStore, (id) => new CreateOwnerTreatmentViewModel(OnTreatmentCreated, id) ), () => new CreateOwnerTreatmentWindow());
           
 
         }

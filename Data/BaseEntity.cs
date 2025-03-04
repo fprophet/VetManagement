@@ -14,8 +14,6 @@ namespace VetManagement.Data
         public int Id { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
-
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

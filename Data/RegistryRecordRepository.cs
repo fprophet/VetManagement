@@ -15,6 +15,8 @@ namespace VetManagement.Data
                 .Include(rr => rr.Treatment)
                     .ThenInclude(t => t.Owner)
                 .Include(rr => rr.Treatment)
+                    .ThenInclude(t => t.Patient)
+                .Include(rr => rr.Treatment)
                     .ThenInclude(t => t.TreatmentMeds)
                     .ThenInclude(tm => tm.Med)
                 .ToListAsync();

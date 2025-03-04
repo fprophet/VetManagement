@@ -28,41 +28,36 @@ namespace VetManagement.Behaviors
 
         private void OnPreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
-            string newText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
-
-            // This regular expression allows a number with an optional decimal part
-            if (!Regex.IsMatch(newText, @"^\d*\.?\d*$"))
+            if (sender is TextBox textBox)
             {
-                Trace.WriteLine("Invalid");
-                Trace.WriteLine(newText);
-                e.Handled = true; // Block invalid input
+                string newText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
+                if (!Regex.IsMatch(newText, @"^\d*\.?\d*$"))
+                {
+                 
+                    e.Handled = true; // Block invalid input
+                }
+               
             }
-            Trace.WriteLine("Valid");
-            Trace.WriteLine(newText);
         }
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
+            if (sender is TextBox textBox)
+            {
+                textBox.Text = textBox.Text.Replace(',', '.');
 
-            // Replace comma with dot for consistency
-            textBox.Text = textBox.Text.Replace(',', '.');
-
-            // Move caret to the end to prevent cursor jump
-            textBox.CaretIndex = textBox.Text.Length;
+                textBox.CaretIndex = textBox.Text.Length;
+            }
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
-
-            if (e.Key == Key.OemPeriod) // Decimal point
+            if (sender is TextBox textBox)
             {
-                Trace.WriteLine("Pula");
-                Trace.WriteLine(e.Key);
-                // Prevent the key from being processed
-                e.Handled = false;
+                if (e.Key == Key.OemPeriod) // Decimal point
+                {
+                    e.Handled = false;
+                }
             }
         }
 
@@ -70,8 +65,7 @@ namespace VetManagement.Behaviors
         {
             if (e.DataObject.GetDataPresent(DataFormats.Text))
             {
-                string pasteText = e.DataObject.GetData(DataFormats.Text) as string;
-                if (!Regex.IsMatch(pasteText, @"^\d*\.?\d*$"))
+                if (e.DataObject.GetData(DataFormats.Text) is string pasteText && !Regex.IsMatch(pasteText, @"^\d*\.?\d*$"))
                 {
                     e.CancelCommand();
                 }

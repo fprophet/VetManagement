@@ -11,11 +11,11 @@ namespace VetManagement.Stores
     public class NavigationStore
     {
 
-        public event Action CurrentViewModelChanged;
+        public event Action? CurrentViewModelChanged;
 
-        public event Action ItemIdChanged;
+        public event Action? ItemIdChanged;
 
-        public event Action PageTitleChanged;
+        public event Action? PageTitleChanged;
 
         private ViewModelBase _currentViewModel;
 
@@ -48,10 +48,10 @@ namespace VetManagement.Stores
 
         }
 
-        public ViewModelBase CurrentViewModel 
-        { 
+        public ViewModelBase CurrentViewModel
+        {
             get => _currentViewModel;
-            set 
+            set
             {
                 _currentViewModel = value;
                 OnCurrentViewModelChanged();
@@ -64,7 +64,7 @@ namespace VetManagement.Stores
 
         {
             CurrentViewModelChanged?.Invoke();
-            
+
         }
 
         private void OnPageTitleChanged()

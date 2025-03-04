@@ -72,7 +72,10 @@
         <StackPanel Orientation="Vertical" Grid.Column="1"  VerticalAlignment="Top" Margin="10" Width="500">
 
             <!-- Second Section: Animal Info -->
-            <TextBlock Text="Informații animal" FontSize="18" FontWeight="Bold" Margin="0,20"/>
+        <StackPanel Orientation="Horizontal" Margin="0,20">
+                <TextBlock Text="Informații animal" FontSize="18" FontWeight="Bold" />
+                <TextBlock VerticalAlignment="Center" Text=" - câmpurile cu * sunt obligatorii" FontSize="13"/>
+            </StackPanel>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -84,57 +87,74 @@
 
                 </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,5">
-                    <TextBlock Text="Nume" VerticalAlignment="Center" Margin="5"/>
-                <TextBox Text="{Binding Name, ValidatesOnDataErrors=True}"
-                         Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
-                         Style="{StaticResource TextBoxStyle}" Grid.Row="0"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Row="0" Margin="0,5">
+                    <StackPanel HorizontalAlignment="Stretch" Width="250">
+                        <TextBlock Text="Tipul animalului: *" VerticalAlignment="Center" Margin="5"/>
+                        <ComboBox ItemsSource="{Binding TypeList}"
+                                  SelectedValue="{Binding Type,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True}" 
+                                  DisplayMemberPath="Name" SelectedValuePath="Value"
+                                  Style="{StaticResource ComboBoxStyle}"/>
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Stretch" Width="250">
+                        <TextBlock Text="Număr identificare: " VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="{Binding Identifier,ValidatesOnDataErrors=True}"
+                            Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                             Style="{StaticResource TextBoxStyle}" Grid.Row="0"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel Orientation="Vertical" Grid.Row="1" Margin="0,5">
-                    <TextBlock Text="Specie" VerticalAlignment="Center" Margin="5"/>
-                <TextBox Text="{Binding Species,ValidatesOnDataErrors=True}"
-                         Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
-                         Name="SpeciesTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="0"/>
+                    <TextBlock Text="Nume:" VerticalAlignment="Center" Margin="5"/>
+                    <TextBox Text="{Binding Name, ValidatesOnDataErrors=True}"
+                             Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                             Style="{StaticResource TextBoxStyle}" Grid.Row="0"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,5">
+                
+                <StackPanel Orientation="Vertical" Grid.Row="2" Margin="0,5">
+                    <TextBlock Text="Specie *" VerticalAlignment="Center" Margin="5"/>
+                    <TextBox Text="{Binding Species,ValidatesOnDataErrors=True}"
+                             Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
+                             Name="SpeciesTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="0,5">
                     <StackPanel Orientation="Vertical" Width="200">
-                        <TextBlock Text="Sex" VerticalAlignment="Center" Margin="5"/>
+                        <TextBlock Text="Sex: *" VerticalAlignment="Center" Margin="5"/>
                         <ComboBox Text="{Binding Sex}" Name="SexComboBox" Style="{StaticResource ComboBoxStyle}">
                             <ComboBoxItem Content="Male"/>
                             <ComboBoxItem Content="Female"/>
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Width="300">
-                        <TextBlock Text="Rasa" VerticalAlignment="Center" Margin="5"/>
-                    <TextBox Text="{Binding Race,ValidatesOnDataErrors=True}"
+                        <TextBlock Text="Rasa: *" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="{Binding Race,ValidatesOnDataErrors=True}"
                              Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
                              Name="RaceTextBox" Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Grid.Row="3">
+                <StackPanel Orientation="Horizontal" Grid.Row="4">
                     <StackPanel Orientation="Vertical" Width="167">
-                        <TextBlock Text="Varsta" VerticalAlignment="Center" Margin="5"/>
+                        <TextBlock Text="Varsta: *" VerticalAlignment="Center" Margin="5"/>
                     <TextBox Text="{Binding Age,ValidatesOnDataErrors=True}"
                              Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
                              Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Width="167">
-                        <TextBlock Text="Culoare" VerticalAlignment="Center" Margin="5"/>
+                        <TextBlock Text="Culoare:" VerticalAlignment="Center" Margin="5"/>
                     <TextBox  Text="{Binding Color,ValidatesOnDataErrors=True}"
                               Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
                               Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Width="167">
-                        <TextBlock Text="Greutate" VerticalAlignment="Center" Margin="5"/>
+                        <TextBlock Text="Greutate: *" VerticalAlignment="Center" Margin="5"/>
                     <TextBox  Text="{Binding Weight,ValidatesOnDataErrors=True}"
                               Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
                               Style="{StaticResource TextBoxStyle}"/>
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical" Grid.Row="4">
+                <StackPanel Orientation="Vertical" Grid.Row="5">
                     <TextBlock Text="Detalii:" VerticalAlignment="Center" Margin="5" />
                     <TextBox Text="{Binding Details}" Style="{StaticResource TextBoxStyle}" Grid.Row="4" Height="100"/>
                 </StackPanel>

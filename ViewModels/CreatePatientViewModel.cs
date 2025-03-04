@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.Services;
@@ -16,6 +19,10 @@ namespace VetManagement.ViewModels
     {
         private string _name;
 
+        private string _type = "pet";
+
+        private int? _identifier;
+
         private string _species;
 
         private string _sex;
@@ -26,13 +33,39 @@ namespace VetManagement.ViewModels
 
         private float _weight;
 
-        private string _color;
+        private string _color = String.Empty;
 
         private string _details;
 
         private readonly int PassedId;
 
         private Action<Patient> _onPatientCreated;
+
+        public ObservableCollection<object> TypeList { get; set; } = 
+            new ObservableCollection<object>() { new { Name = "Animal de companie", Value = "pet" }, new { Name = "Animal mare", Value = "livestock" } };
+
+        private List<string> _customErrors = new();
+
+        public string Type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                OnErrorsChanged(nameof(Type));
+            }
+        }
+
+        public int? Identifier
+        {
+            get => _identifier;
+            set
+            {
+                _identifier = value;
+                OnPropertyChanged(nameof(Identifier));
+            }
+        }
+
         public string Name
         {
             get => _name;
@@ -117,7 +150,7 @@ namespace VetManagement.ViewModels
 
         public ICommand NavigateOwnersCommand { get; set; }
 
-        public CreatePatientViewModel(Action<Patient> OnPatientCreated, int? id)
+        public CreatePatientViewModel(Action<Patient>? OnPatientCreated, int? id)
         {
             _onPatientCreated = OnPatientCreated;
 
@@ -171,6 +204,26 @@ namespace VetManagement.ViewModels
 
         }
 
+        private bool CustomValidation(Patient patient)
+        {
+            if(string.IsNullOrEmpty(patient.Name) && patient.Identifier == null)
+            {
+                _customErrors.Add("Trebuie sa adăugați Numele sau Numărul de identificare!");
+            }
+
+            if (patient.Age <= 0)
+            {
+                _customErrors.Add("Vârsta pacientului trebuie sa fie mai mare decat 0!");
+            }
+
+            if (patient.Weight <= 0)
+            {
+                _customErrors.Add("Greutatea pacientului trebuie sa fie mai mare decat 0!");
+            }
+
+            return _customErrors.Count() == 0;
+        }
+
         private bool Validate( Patient patient)
         {
 
@@ -180,7 +233,9 @@ namespace VetManagement.ViewModels
 
             bool isValid = Validator.TryValidateObject(patient, context, validationResults);
 
-            if (!isValid)
+            bool customValidation = CustomValidation(patient);
+
+            if (!isValid || !customValidation)
             {
                 foreach (var error in validationResults)
                 {
@@ -193,12 +248,20 @@ namespace VetManagement.ViewModels
             return true;
         }
 
-        public Patient RetrievePatient()
+        public Patient? RetrievePatient()
         {
-            Patient patient =  new Patient() { Name = Name, Species = Species, Race = Race, Sex = Sex , Age = Age, Weight = Weight, Color = Color, Details = Details , DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
+            Patient patient =  new Patient() {Type = Type, Identifier = Identifier, Name = Name, Species = Species, Race = Race, Sex = Sex , Age = Age, Weight = Weight, Color = Color, Details = Details , DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
 
             if (!Validate(patient))
             {
+                string message = "Completați câmpurile necesare pentru animal!\n";
+
+                message += string.Join("\n", Errors.Select(kv => kv.Value.FirstOrDefault())) + "\n";
+                message += string.Join("\n", _customErrors);
+
+                Boxes.InfoBox(message);
+                Errors.Clear();
+                _customErrors.Clear();
                 return null;
             }
 

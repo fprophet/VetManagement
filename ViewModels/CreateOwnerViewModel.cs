@@ -16,12 +16,13 @@ namespace VetManagement.ViewModels
 {
     public class CreateOwnerViewModel : ViewModelBase
     {
-        private string _name;
-        private string _email;
-        private string _address;
-        private string _phone;
-        private string _details;
+        private string _name = string.Empty;
+        private string _email = string.Empty;
+        private string _address = string.Empty;
+        private string _phone = string.Empty;
+        private string _details = string.Empty;
         private Action<Owner> _onOwnerCreated;
+
         public string Name
         {
             get => _name;
@@ -41,7 +42,6 @@ namespace VetManagement.ViewModels
                 OnPropertyChanged(nameof(Address));
             }
         }
-
 
         public string Email
         {
@@ -75,20 +75,16 @@ namespace VetManagement.ViewModels
 
         public ICommand CreateOwnerCommand { get; set; }
 
-
         public CreateOwnerViewModel(Action<Owner> onOwnerCreated)
         {
             _onOwnerCreated = onOwnerCreated;
-
             CreateOwnerCommand = new RelayCommand(CreateOwner);
         }
 
         private bool Validate(Owner owner)
         {
             var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
-
             var context = new ValidationContext(owner, serviceProvider: null, items: null);
-
             bool isValid = Validator.TryValidateObject(owner, context, validationResults);
 
             if (!isValid)
@@ -109,6 +105,12 @@ namespace VetManagement.ViewModels
 
             if (!Validate(owner))
             {
+                string message = "Completați câmpurile necesare pentru proprietar!\n";
+
+                message += string.Join("\n", Errors.Select(kv => kv.Value.FirstOrDefault())) + "\n";
+
+                Boxes.InfoBox(message);
+                Errors.Clear();
                 return null;
             }
 
@@ -127,11 +129,8 @@ namespace VetManagement.ViewModels
             try
             {
                 BaseRepository<Owner> ownerRepository = new BaseRepository<Owner>();
-
                 owner = await ownerRepository.Add(owner);
-
                 _onOwnerCreated?.Invoke(owner);
-
                 Boxes.InfoBox("Pacientul a fost creat!");
             }
             catch (Exception e)
@@ -139,7 +138,6 @@ namespace VetManagement.ViewModels
                 Boxes.ErrorBox("Pacientul nu a putut fi înregistrat!\n" + e.Message);
                 Logger.LogError("Error", e.ToString());
             }
-
         }
     }
 }

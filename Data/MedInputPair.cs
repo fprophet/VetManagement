@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VetManagement.DataWrappers;
 
 namespace VetManagement.Data
 {
@@ -12,27 +13,27 @@ namespace VetManagement.Data
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private Med _med;
+        private MedWrapper _medWrapper;
 
-        private float _quantity;
+        private decimal _quantity;
 
         private float _rank;
 
-        private float _stockQuantity;
+        private decimal _stockQuantity;
 
-        public Med Med
+        public MedWrapper MedWrapper
         {
-            get => _med;
+            get => _medWrapper;
 
             set
             {
-                _med = value;
-                OnPropertyChanged(nameof(Med));
+                _medWrapper = value;
+                OnPropertyChanged(nameof(MedWrapper));
                 OnPropertyChanged(nameof(StockQuantity));
             }
         }
 
-        public float Quantity
+        public decimal Quantity
         {
             get => _quantity;
 
@@ -50,8 +51,8 @@ namespace VetManagement.Data
             get => _quantityString;
             set
             {
-                float parsed;
-                if( float.TryParse(value, out parsed))
+                decimal parsed;
+                if(decimal.TryParse(value, out parsed))
                 {
                     _quantityString = value;
                     Quantity = parsed;
@@ -60,7 +61,7 @@ namespace VetManagement.Data
             }
         }
 
-        private string _administration;
+        private string _administration = string.Empty;
         public string Administration
         {
             get => _administration;
@@ -68,17 +69,6 @@ namespace VetManagement.Data
             {
                     _administration = value;
                     OnPropertyChanged(nameof(Administration));
-            }
-        }
-
-        private string _waitingTime;
-        public string WaitingTime
-        {
-            get => _waitingTime;
-            set
-            {
-                _waitingTime = value;
-                OnPropertyChanged(nameof(WaitingTime));
             }
         }
 
@@ -95,9 +85,9 @@ namespace VetManagement.Data
 
         }
 
-        public float StockQuantity
+        public decimal StockQuantity
         {
-            get => Med.TotalAmount;
+            get => MedWrapper.Med.TotalAmount;
 
         }
 

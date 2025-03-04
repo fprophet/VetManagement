@@ -131,9 +131,7 @@ namespace VetManagement.ViewModels
             }
 
             user.Password = PasswordHelper.HashPassword(Password);
-            Trace.WriteLine("HASHED");
-            Trace.WriteLine(user.Password);
-
+       
             try
             {
                 await _userRepository.Add(user);
@@ -142,9 +140,8 @@ namespace VetManagement.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Utilizatorul nu a putut fi adăugat!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Boxes.ErrorBox("Utilizatorul nu a putut fi adăugat!\n" + ex.Message);
 
-                Trace.WriteLine(ex.ToString());
             }
 
         }

@@ -33,7 +33,7 @@ namespace VetManagement.Views
   
             if (DataContext is CreateTreatmentViewModel createTreatmentViewModel)
             {
-                await createTreatmentViewModel.LoadOwnerPatients();
+                await createTreatmentViewModel.LoadOwners();
                 await createTreatmentViewModel.LoadMeds();
             }
         }

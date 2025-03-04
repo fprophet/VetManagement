@@ -71,7 +71,10 @@
     </UserControl.Resources>
     <StackPanel Orientation="Vertical" Grid.Column="0"  VerticalAlignment="Top" Margin="10,10,10,70" Width="500" >
         <!-- First Section: Owner's Basic Info -->
-        <TextBlock Text="Detaliile stăpânului" FontSize="18" FontWeight="Bold" Margin="0,10"/>
+        <StackPanel Margin="0,10" Orientation="Horizontal">
+            <TextBlock Text="Detaliile stăpânului" FontSize="18" FontWeight="Bold" />
+            <TextBlock VerticalAlignment="Center" Text=" - câmpurile cu * sunt obligatorii" FontSize="13"/>
+        </StackPanel>
 
         <Grid>
             <Grid.RowDefinitions>
@@ -84,20 +87,20 @@
             </Grid.RowDefinitions>
 
             <StackPanel Orientation="Vertical" Grid.Row="0">
-                <TextBlock Text="Nume:" VerticalAlignment="Center" Margin="5"/>
+                <TextBlock Text="Nume: *" VerticalAlignment="Center" Margin="5"/>
                 <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged,ValidatesOnDataErrors=True }" 
                     Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
                     x:Name="NameTextBox" Style="{StaticResource TextBoxStyle}" />
 
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Row="1">
-                <TextBlock Text="Adresa:" VerticalAlignment="Center" Margin="5" />
+                <TextBlock Text="Adresa: *" VerticalAlignment="Center" Margin="5" />
                 <TextBox Text="{Binding Address, ValidatesOnDataErrors=True}" 
                 Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
                 Name="AddressTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="1"/>
             </StackPanel>
             <StackPanel Orientation="Vertical" Grid.Row="2">
-                <TextBlock Text="Telefon:" VerticalAlignment="Center" Margin="5" />
+                <TextBlock Text="Telefon: *" VerticalAlignment="Center" Margin="5" />
                 <TextBox Text="{Binding Phone,ValidatesOnDataErrors=True}"
                 Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}"
                 Name="PhoneTextBox" Style="{StaticResource TextBoxStyle}" Grid.Row="2"/>

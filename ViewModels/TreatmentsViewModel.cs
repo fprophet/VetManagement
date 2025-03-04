@@ -12,14 +12,16 @@ using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.Services;
 using VetManagement.Stores;
+using VetManagement.Views;
 
 namespace VetManagement.ViewModels
 {
     public class TreatmentsViewModel : ViewModelBase
     {
-        public string _pageTitle = "Tratamente";
+        public string _pageTitle = "Registru animale mici";
 
         public ICommand NavigateOwnersCommand { get; set; }
+        public ICommand NavigateCreateTreatmentWindowCommand { get; set; }
 
         private bool _isLoading = true;
 
@@ -87,19 +89,19 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.PageTitle = _pageTitle;
 
-
             _filteredTreatments = new ListCollectionView(Treatments);
             _filteredTreatments.Filter = FilterTreatments;
 
-
             NavigateOwnersCommand = new NavigateCommand<HomeViewModel>(new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore)));
+            NavigateCreateTreatmentWindowCommand = new NavigateWindowCommand<CreateTreatmentViewModel>
+                (new NavigationService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(OnTreatmentCreated,null,null)), () => new CreateTreatmentWindow() );
+            
+            
             //CreateTreatmentViewModel = new CreateTreatmentViewModel(OnTreatmentCreated, id);
-
         }
 
         private bool FilterTreatments(object obj)
         {
-            Trace.WriteLine("AICI");
             if (String.IsNullOrEmpty(OwnerNameFilter) && String.IsNullOrEmpty(PatientNameFilter) && String.IsNullOrEmpty(MedNameFilter))
             {
                 return true;

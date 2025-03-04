@@ -30,8 +30,9 @@ namespace VetManagement.Views
         {
             if( DataContext is CreateRegistryRecordViewModel createRegistryRecordViewModel )
             {
-                await createRegistryRecordViewModel.LoadOwners();
-                await createRegistryRecordViewModel.LoadMeds();
+
+                await createRegistryRecordViewModel.CreateTreatmentViewModel.LoadOwners();
+                await createRegistryRecordViewModel.CreateTreatmentViewModel.LoadMeds();
             }
         }
     }

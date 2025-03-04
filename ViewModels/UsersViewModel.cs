@@ -22,7 +22,7 @@ namespace VetManagement.ViewModels
     {
         private readonly BaseRepository<User> _userRepository;
 
-        private readonly NavigationStore _navigationStore;
+        private new readonly NavigationStore _navigationStore;
 
         public ObservableCollection<User> Users { get; set; }
 

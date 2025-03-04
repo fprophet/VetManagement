@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,13 +13,13 @@ namespace VetManagement.Data
         
         public int TreatmentId { get; set; }
 
-        public float Quantity { get; set; }
+        [Required]
+        public decimal Quantity { get; set; }
 
-        public float Pieces { get; set; }
+        [Required]
+        public decimal Pieces { get; set; }
 
         public string Administration { get; set; }
-        
-        public string WaitingTime { get; set; }
 
         public Treatment Treatment { get; set; }
 

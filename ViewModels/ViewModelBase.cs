@@ -17,26 +17,26 @@ namespace VetManagement.ViewModels
 
         public string PageTitle { get; set; }
 
-        protected NavigationStore _navigationStore;
-
-        bool INotifyDataErrorInfo.HasErrors => Errors.Any();
-
-        public Dictionary<string, List<string>> Errors = new();
+        protected NavigationStore? _navigationStore;
 
 
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
-
-        public  virtual void OnPropertyChanged(string propertyName = null)
+        public virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+
+        public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+
+        bool INotifyDataErrorInfo.HasErrors => Errors.Any();
+
+        public Dictionary<string, List<string>> Errors = new();
         IEnumerable INotifyDataErrorInfo.GetErrors(string? propertyName)
         {
             return Errors.ContainsKey(propertyName) ? Errors[propertyName] : null;
         }
 
-        protected void OnErrorsChanged(string propertyName = null)
+        protected void OnErrorsChanged(string propertyName)
         {
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }

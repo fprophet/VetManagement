@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
-using Google.Protobuf.Compiler;
-using Mysqlx.Connection;
-using Mysqlx.Crud;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.DataWrappers;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -20,77 +13,6 @@ namespace VetManagement.ViewModels
 {
     public class CreateRegistryRecordViewModel : ViewModelBase
     {
-        private ObservableCollection<Owner> _owners = new ObservableCollection<Owner>();
-        public ObservableCollection<Owner> Owners
-        { 
-            get => _owners; 
-            set
-            {
-                _owners = value;
-                OnPropertyChanged(nameof(Owners));
-            }
-        } 
-
-        public ObservableCollection<Med> Meds { get; set; } = new ObservableCollection<Med>();
-
-        public ObservableCollection<MedInputPair> MedInputPair { get; set; } = new ObservableCollection<MedInputPair>();
-
-        private Action<RegistryRecord> OnCreateRegistryRecord;
-
-        private Owner _selectedOwner;
-        public Owner SelectedOwner
-        { 
-            get => _selectedOwner;
-            set
-            {
-                _selectedOwner = value;
-                OnPropertyChanged(nameof(SelectedOwner));
-            }
-        }
-
-        private string _species;
-        public string Species
-        {
-            get => _species;
-            set
-            {
-                _species = value;
-                OnPropertyChanged(nameof(Species));
-            }
-        }
-
-        private string _sex;
-        public string Sex
-        {
-            get => _sex;
-            set
-            {
-                _sex = value;
-                OnPropertyChanged(nameof(Sex));
-            }
-        }
-
-        private float _age;
-        public float Age
-        {
-            get => _age;
-            set
-            {
-                _age = value;
-                OnPropertyChanged(nameof(Age));
-            }
-        }
-
-        private string _identifier;
-        public string Identifier
-        {
-            get => _identifier;
-            set
-            {
-                _identifier = value;
-                OnPropertyChanged(nameof(Identifier));
-            }
-        }
 
         private int _recipeNumber;
         public int RecipeNumber
@@ -169,132 +91,95 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public ICommand AddInputPairCommand { get; }
+        private Treatment? _treatment;
 
-        public ICommand RemoveInputPairCommand { get; }
+        private Action<RegistryRecord> OnCreateRegistryRecord;
 
         public ICommand CreateRegistryRecordCommand { get; }
 
-        public ICommand NavigateCreateOwnerWindowCommand { get; }
+        public CreateTreatmentViewModel CreateTreatmentViewModel { get; } 
 
         public CreateRegistryRecordViewModel(NavigationStore navigationStore, Action<RegistryRecord> OnCreateRegistryRecord)
         {
             _navigationStore = navigationStore;
-
             OnCreateRegistryRecord += OnCreateRegistryRecord;
 
-            AddInputPairCommand = new RelayCommand(AddInputPair);
-
-            RemoveInputPairCommand = new RelayCommand(RemoveInputPair);
+            CreateTreatmentViewModel = new CreateTreatmentViewModel(OnTreatmentCreated, null, "livestock");
 
             CreateRegistryRecordCommand = new RelayCommand(CreateRegistryRecord);
 
-            NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerViewModel>
-                (new NavigationService<CreateOwnerViewModel>(_navigationStore, (id) => new CreateOwnerViewModel(OnOwnerCreated)), () => new CreateOwnerWindow());
-
         }
 
-        private void OnOwnerCreated(Owner owner)
+
+        private void OnTreatmentCreated(Treatment treatment)
         {
-            Owners.Add(owner);
+            _treatment = treatment;
+        }
 
-            var sorted = Owners.OrderByDescending(o => o.DateAdded).ToList();
+        private bool Validate(RegistryRecord registryRecord)
+        {
 
-            Owners.Clear();
+            var validationResults = new List<ValidationResult>();
 
-            foreach( var sortedOwner in sorted)
+            var context = new ValidationContext(registryRecord, serviceProvider: null, items: null);
+
+            bool isValid = Validator.TryValidateObject(registryRecord, context, validationResults);
+
+
+            if (!isValid )
             {
-                Owners.Add(sortedOwner);
+                foreach (var error in validationResults)
+                {
+                    Errors.Add(error.MemberNames.First(), new List<string> { error.ErrorMessage });
+                    OnErrorsChanged(error.MemberNames.First());
+                }
+                return false;
             }
 
-            SelectedOwner = owner;
-
-
+            return true;
         }
 
         private async void CreateRegistryRecord(object sender)
         {
             try
             {
-                foreach (var pair in MedInputPair)
-                {
-                    //Trace.WriteLine("Medicament: " + pair.Med.Name);
-                    //Trace.WriteLine("Cantitate: " + pair.Quantity);
-                    //Trace.WriteLine("Rank: " + pair.Rank);
-                    if ((float)pair.Med.TotalAmount < pair.Quantity)
-                    {
-                        Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + pair.Med.Name + " este mai mică decât cea din stoc!");
-                        return;
-                    }
 
-                }
-
-                BaseRepository<RegistryRecord> registryRecordRepository = new BaseRepository<RegistryRecord>();
-                BaseRepository<TreatmentMed> treatmentMedRepository = new BaseRepository<TreatmentMed>();
-                BaseRepository<Med> medRepository = new BaseRepository<Med>();
-                BaseRepository<Treatment> treatmentRepository = new BaseRepository<Treatment>();
-
-                //create treatment
-                var treatment = new Treatment()
-                {
-                    PatientId = 1,
-                    OwnerId = SelectedOwner.Id,
-                    PatientType = "livestock",
-                    Details = "empty",
-                    DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-                };
-                treatment = await treatmentRepository.Add(treatment);
-
-                if (treatment == null)
-                {
-                    Boxes.ErrorBox("Eroare in crearea tratamentului!");
-                    return;
-                }
-
-                //create registry record
                 RegistryRecord registryRecord = new RegistryRecord()
-                { 
-                    TreatmentId = treatment.Id,
+                {
+                    //TreatmentId = _treatment.Id,
                     Date = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                    Species = Species,
-                    Sex = Sex,
-                    Age = Age,
-                    Identifier = Identifier,
                     Symptoms = Symptoms,
                     RecipeDate = (int)((DateTimeOffset)RecipeDate).ToUnixTimeSeconds(),
-                    RecipeNumber = RecipeNumber,
                     MedName = MedName,
                     Outcome = Outcome,
                     TreatmentDuration = TreatmentDuration,
                     Observations = Observations,
                 };
 
-                registryRecord = await registryRecordRepository.Add(registryRecord);
-
-                //create treatment meds
-                foreach (var pair in MedInputPair)
+                if ( !Validate(registryRecord))
                 {
-                    pair.Med.TotalAmount = pair.Med.TotalAmount - pair.Quantity;
-                    pair.Med.Pieces = pair.Med.TotalAmount / pair.Med.PerPiece;
-                    await medRepository.Update(pair.Med);
+                    string message = "Completați câmpurile necesare pentru Registru!\n";
 
-                    TreatmentMed tretmentMed = new TreatmentMed()
-                    { 
-                        MedId = pair.Med.Id,
-                        TreatmentId = treatment.Id,
-                        Quantity = pair.Quantity,
-                        Pieces = pair.Quantity / pair.Med.PerPiece,
-                        Administration = pair.Administration,
-                        WaitingTime = pair.WaitingTime 
-                    };
+                    message += string.Join("\n", Errors.Select(kv => kv.Value.FirstOrDefault())) + "\n";
 
-                    var tm = await treatmentMedRepository.Add(tretmentMed);
-
-                    tm.Med = pair.Med;
-                    treatment.TreatmentMeds.Add(tm);
+                    Boxes.InfoBox(message);
+                    Errors.Clear();
+                    return;
                 }
-                registryRecord.Treatment = treatment;
-                OnCreateRegistryRecord.Invoke(registryRecord);
+
+                bool treatmentCreated = await CreateTreatmentViewModel.CreateTreatment();
+
+                if (!treatmentCreated)
+                {
+                    //Boxes.ErrorBox("Eroare in crearea tratamentului!");
+                    return;
+                }
+
+                registryRecord.TreatmentId = _treatment.Id;
+
+                registryRecord = await new BaseRepository<RegistryRecord>().Add(registryRecord);
+
+                OnCreateRegistryRecord?.Invoke(registryRecord);
                 Boxes.InfoBox("Tratamentul a fost adăugat în registru cu success!");
 
             }catch(Exception e)
@@ -306,59 +191,5 @@ namespace VetManagement.ViewModels
 
         }
 
-        public void AddInputPair(object parameter)
-        {
-            int count = MedInputPair.Count();
-            MedInputPair.Add(new MedInputPair { Med = Meds[0], Quantity = 0, Rank = count });
-        }
-
-        public void RemoveInputPair(object parameter)
-        {
-            try
-            {
-                MedInputPair.Remove(MedInputPair[(int)parameter]);
-
-                for (int i = 0; i < MedInputPair.Count(); i++)
-                {
-                    MedInputPair[i].Rank = i;
-                }
-            }
-            catch (Exception e)
-            {
-                Boxes.ErrorBox("Medicamentul nu poate fi șters din listă!\n" + e.Message);
-            }
-
-        }
-
-        public async Task LoadOwners()
-        {
-            BaseRepository<Owner> ownerRepository = new BaseRepository<Owner>();
-
-            var owners = await ownerRepository.GetAll();
-
-            var sorted = owners.OrderByDescending(o => o.DateAdded);
-            
-            foreach( var owner in sorted)
-            {
-                Owners.Add(owner);
-            }
-
-        }
-
-        public async Task LoadMeds()
-        {
-            BaseRepository<Med> medRepository = new BaseRepository<Med>();
-
-            var meds = await medRepository.GetAll();
-
-            var sorted = meds.OrderByDescending(o => o.DateAdded);
-
-            foreach (var med in sorted)
-            {
-                Meds.Add(med);
-            }
-
-            MedInputPair.Add(new Data.MedInputPair { Med = Meds[0], Quantity = 0, Rank = 0 });
-        }
     }
 }

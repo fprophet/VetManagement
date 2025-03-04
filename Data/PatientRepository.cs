@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VetManagement.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace VetManagement.Data
 {
@@ -16,7 +17,12 @@ namespace VetManagement.Data
             return await _context.GetDbSet<Patient>().Where(p => p.OwnerId == id).ToListAsync();
 
         }
+        
+        public async Task<List<Patient>> GetForOwnerByType( int id, string type)
+        {
+            return await _context.GetDbSet<Patient>().Where(p => p.OwnerId == id && p.Type == type).ToListAsync();
 
+        }
 
     }
 }

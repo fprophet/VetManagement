@@ -163,13 +163,13 @@ namespace VetManagement.ViewModels
                 var owner = obj as Owner;
 
                 bool nameMatch = string.IsNullOrEmpty(NameFilter) 
-                    || (owner.Name != null && owner.Name.IndexOf(NameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+                    || (owner?.Name != null && owner.Name.IndexOf(NameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
 
-                bool patientNameMatch = string.IsNullOrEmpty(PatientNameFilter) || owner.Patients
+                bool patientNameMatch = string.IsNullOrEmpty(PatientNameFilter) || owner?.Patients
                     .Find(p => p.Name != null && p.Name.IndexOf(PatientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0) != null;
 
                 bool detailsMatch = string.IsNullOrEmpty(DetailsFilter)
-                     || (owner.Details != null && owner.Details.IndexOf(DetailsFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+                     || (owner?.Details != null && owner.Details.IndexOf(DetailsFilter, StringComparison.OrdinalIgnoreCase) >= 0);
 
                 return nameMatch && patientNameMatch && detailsMatch;
                    
