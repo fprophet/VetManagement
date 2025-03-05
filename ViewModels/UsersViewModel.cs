@@ -71,7 +71,7 @@ namespace VetManagement.ViewModels
                 (new NavigationService<HomeViewModel>(_navigationStore,(id) => new HomeViewModel(_navigationStore)));
 
             NavigateCreateUserWindow = new NavigateWindowCommand<CreateUserViewModel>
-                (new NavigationService<CreateUserViewModel>(_navigationStore, (id) => new CreateUserViewModel(OnUserCreated)), () => new CreateUserWindow());
+                (new WindowService<CreateUserViewModel>(_navigationStore, (id) => new CreateUserViewModel(_navigationStore,OnUserCreated)), () => new CreateUserWindow());
 
         }
 

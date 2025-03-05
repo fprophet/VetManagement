@@ -18,7 +18,7 @@ namespace VetManagement.Data
 
         public DbSet<T> GetDbSet<T>() where T : class
         {
-            return Set<T>();  // Return the DbSet<T> for any entity
+            return Set<T>();  
         }
 
         public DbSet<User> Users { get; set; }
@@ -116,17 +116,17 @@ namespace VetManagement.Data
                 .Property(t => t.Details)
                 .HasColumnType("mediumtext");
 
-            modelBuilder.Entity<Patient>()
-                .Property(p => p.Type)
-                .HasColumnType("ENUM('pet','livestock')");
+            //modelBuilder.Entity<Patient>()
+            //    .Property(p => p.Type)
+            //    .HasColumnType("ENUM('pet','livestock')");
 
-            modelBuilder.Entity<Patient>()
-                .Property(p => p.Sex)
-                .HasColumnType("ENUM('Male','Female')");
+            //modelBuilder.Entity<Patient>()
+            //    .Property(p => p.Sex)
+            //    .HasColumnType("ENUM('Male','Female')");
 
-            modelBuilder.Entity<Med>()
-                .Property(m => m.Type)
-                .HasColumnType("ENUM('medicament','vaccin')");
+            //modelBuilder.Entity<Med>()
+            //    .Property(m => m.Type)
+            //    .HasColumnType("ENUM('medicament','vaccin')");
 
 
         }

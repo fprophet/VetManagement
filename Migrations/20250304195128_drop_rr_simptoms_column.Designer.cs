@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VetManagement.Data;
 
@@ -10,9 +11,11 @@ using VetManagement.Data;
 namespace VetManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250304195128_drop_rr_simptoms_column")]
+    partial class drop_rr_simptoms_column
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,8 +83,8 @@ namespace VetManagement.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("PieceType");
 
-                    b.Property<int>("Pieces")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Pieces")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Provider")
                         .IsRequired()
@@ -92,7 +95,7 @@ namespace VetManagement.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("ENUM('medicament','vaccin')");
 
                     b.Property<long>("Valability")
                         .HasColumnType("bigint");
@@ -186,7 +189,7 @@ namespace VetManagement.Migrations
 
                     b.Property<string>("Sex")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("ENUM('Male','Female')");
 
                     b.Property<string>("Species")
                         .IsRequired()
@@ -195,7 +198,7 @@ namespace VetManagement.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("ENUM('pet','livestock')");
 
                     b.Property<float>("Weight")
                         .HasColumnType("float");

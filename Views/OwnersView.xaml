@@ -21,9 +21,11 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0">
-            
-                <TextBlock Text="Filtre" FontSize="20" Margin="0,0,0,5"/>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+
+                <Button Content="➕ Crează proprietar nou" HorizontalAlignment="Left"
+                    Style="{StaticResource CreateButtonStyle}" Command="{Binding NavigateCreateOwnerWindowCommand}"  />
+                <Expander Header="Filtre" HorizontalAlignment="Left" Width="700">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
                         <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
                             <TextBlock Text="Nume" FontSize="15"/>
                             <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
@@ -38,15 +40,16 @@
                             <TextBlock Text="Detalii" FontSize="15"/>
                             <TextBox Text="{Binding DetailsFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="15"/>
                         </StackPanel>
-                </StackPanel>
-                <Button Content="➕ Crează proprietar nou" HorizontalAlignment="Left"
-                    Style="{StaticResource CreateButtonStyle}" Command="{Binding NavigateCreateOwnerWindowCommand}"  />
+                    </StackPanel>
+                </Expander>
+          
             </StackPanel>
 
         <StackPanel Grid.Row="1" Margin="0,10,0,0">
 
             <DataGrid Name="OwnerList" 
                     MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}"
+                    ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
                     ItemsSource="{Binding FilteredOwners}" Style="{StaticResource StylishDataGrid}" HorizontalAlignment="Stretch">
                 <DataGrid.Columns>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data Înscriere" Binding="{Binding DateAddedFormated, Mode=OneWay}" Width="150"/>

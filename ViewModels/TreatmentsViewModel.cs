@@ -94,7 +94,7 @@ namespace VetManagement.ViewModels
 
             NavigateOwnersCommand = new NavigateCommand<HomeViewModel>(new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore)));
             NavigateCreateTreatmentWindowCommand = new NavigateWindowCommand<CreateTreatmentViewModel>
-                (new NavigationService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(OnTreatmentCreated,null,null)), () => new CreateTreatmentWindow() );
+                (new WindowService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(_navigationStore,OnTreatmentCreated, null,null)), () => new CreateTreatmentWindow() );
             
             
             //CreateTreatmentViewModel = new CreateTreatmentViewModel(OnTreatmentCreated, id);

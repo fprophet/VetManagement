@@ -55,9 +55,9 @@ namespace VetManagement.ViewModels
                 _password = value;
             }
         }
-        public UserLoginViewModel()
+        public UserLoginViewModel(NavigationStore navigationStore)
         {
-
+            _navigationStore = navigationStore;
             LoginCommand = new RelayCommand(LogUser, CanExecute);
         
         }
@@ -91,13 +91,8 @@ namespace VetManagement.ViewModels
                 {
                     SessionManager.Instance.LogUser(-1, Password, "admin");
 
-                    NavigationStore navigationStore = new NavigationStore();
-
-                    navigationStore.CurrentViewModel = new HomeViewModel(navigationStore);
-                    navigationStore.PageTitle = "Acasă";
-
                     new NavigateWindowCommand<MainViewModel>
-                        (new NavigationService<MainViewModel>(navigationStore, (id) => new MainViewModel(navigationStore)), () => new MainWindow(), true, true);
+                        (new WindowService<MainViewModel>(_navigationStore, (id) => new MainViewModel(_navigationStore)), () => new MainWindow(), true, true);
 
                 }
                 else
@@ -126,13 +121,8 @@ namespace VetManagement.ViewModels
                     {
                         SessionManager.Instance.LogUser(user.Id, user.Username, user.Role);
 
-                        NavigationStore navigationStore = new NavigationStore();
-
-                        navigationStore.CurrentViewModel = new HomeViewModel(navigationStore);
-                        navigationStore.PageTitle = "Acasă";
-
                         new NavigateWindowCommand<MainViewModel>
-                            (new NavigationService<MainViewModel>(navigationStore, (id) => new MainViewModel(navigationStore)), () => new MainWindow(), true, true);
+                            (new WindowService<MainViewModel>(_navigationStore, (id) => new MainViewModel(_navigationStore)), () => new MainWindow(), true, true);
 
                     }
                     else

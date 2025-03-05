@@ -33,7 +33,7 @@ namespace VetManagement.ViewModels
 
         public ObservableCollection<Patient> Patients{ get; private set; } = new ObservableCollection<Patient>();
 
-        public OwnerPatientsViewModel(NavigationStore navigationStore, int? id)
+        public OwnerPatientsViewModel(NavigationStore navigationStore,int? id)
         {
 
             if (id.HasValue)
@@ -52,7 +52,7 @@ namespace VetManagement.ViewModels
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
 
             NavigateCreatePatientWindowCommand = new NavigateWindowCommand<CreatePatientViewModel>
-                (new NavigationService<CreatePatientViewModel>(_navigationStore, (id) => new CreatePatientViewModel(OnPatientCreated, id)), () => new CreatePatientWindow());
+                (new WindowService<CreatePatientViewModel>(_navigationStore, (id) => new CreatePatientViewModel(_navigationStore,OnPatientCreated, id)), () => new CreatePatientWindow());
 
             UpdatePatientCommand = new RelayCommand(UpdatePatient);
             DeletePatientCommand = new RelayCommand(DeletePatient);

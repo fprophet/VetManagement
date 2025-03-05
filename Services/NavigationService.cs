@@ -27,18 +27,6 @@ namespace VetManagement.Services
             _createViewModel = createViewModel ?? throw new ArgumentNullException(nameof(createViewModel));
         }
 
-        public void NavigateWindow(Func<Window> createWindow, int? passedId)
-        {
-            if (passedId != null)
-            {
-                _navigationStore.PassedId = (int)passedId;
-            }
-
-            Window window = createWindow();
-            window.DataContext = _createViewModel(_navigationStore.PassedId);
-            window.Show();
-        }
-
         public void Navigate(int? id = null)
         {
             var viewModel = _createViewModel(id);

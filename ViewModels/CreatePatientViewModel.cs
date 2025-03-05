@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using VetManagement.Commands;
@@ -150,11 +151,12 @@ namespace VetManagement.ViewModels
 
         public ICommand NavigateOwnersCommand { get; set; }
 
-        public CreatePatientViewModel(Action<Patient>? OnPatientCreated, int? id)
+        public CreatePatientViewModel(NavigationStore navigationStore,Action<Patient>? OnPatientCreated, int? id)
         {
+            _navigationStore = navigationStore;
             _onPatientCreated = OnPatientCreated;
 
-            NavigateOwnersCommand = NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
+            NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
 
             CreatePatientCommand = new RelayCommand(CreatePatient);
@@ -194,7 +196,14 @@ namespace VetManagement.ViewModels
 
                 _onPatientCreated?.Invoke(patient);
 
-                Boxes.InfoBox("Pacientul a fost creat!");
+                var res = Boxes.InfoBox("Pacientul a fost creat!");
+
+
+                if (res == MessageBoxResult.OK)
+                {
+                    new CloseWindowCommand<CreatePatientViewModel>
+                        (new WindowService<CreatePatientViewModel>(_navigationStore, null), this);
+                }
             }
             catch(Exception e)
             {

@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Windows;
 using System.Windows.Input;
 using VetManagement.Commands;
 using VetManagement.Data;
@@ -104,7 +105,7 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             OnCreateRegistryRecord += OnCreateRegistryRecord;
 
-            CreateTreatmentViewModel = new CreateTreatmentViewModel(OnTreatmentCreated, null, "livestock");
+            CreateTreatmentViewModel = new CreateTreatmentViewModel(_navigationStore,OnTreatmentCreated, null, "livestock");
 
             CreateRegistryRecordCommand = new RelayCommand(CreateRegistryRecord);
 
@@ -148,7 +149,7 @@ namespace VetManagement.ViewModels
                 {
                     //TreatmentId = _treatment.Id,
                     Date = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-                    Symptoms = Symptoms,
+                    //Symptoms = Symptoms,
                     RecipeDate = (int)((DateTimeOffset)RecipeDate).ToUnixTimeSeconds(),
                     MedName = MedName,
                     Outcome = Outcome,
@@ -180,9 +181,16 @@ namespace VetManagement.ViewModels
                 registryRecord = await new BaseRepository<RegistryRecord>().Add(registryRecord);
 
                 OnCreateRegistryRecord?.Invoke(registryRecord);
-                Boxes.InfoBox("Tratamentul a fost adăugat în registru cu success!");
+                var res = Boxes.InfoBox("Tratamentul a fost adăugat în registru cu success!");
 
-            }catch(Exception e)
+                if (res == MessageBoxResult.OK)
+                {
+                    new CloseWindowCommand<CreateRegistryRecordViewModel>
+                        (new WindowService<CreateRegistryRecordViewModel>(_navigationStore, null), this);
+                }
+
+            }
+            catch(Exception e)
             {
                 Boxes.ErrorBox("Tratamentul nu a putut fi creat!\n" + e.ToString());
             }

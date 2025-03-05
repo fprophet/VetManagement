@@ -15,8 +15,8 @@ namespace VetManagement.Data
         [Required]
         public long Date { get; set; }
 
-        [Required(ErrorMessage = "Câmpul 'Simptome' este obligatoriu!")]
-        public string Symptoms { get; set; }
+        //[Required(ErrorMessage = "Câmpul 'Simptome' este obligatoriu!")]
+        //public string Symptoms { get; set; }
 
         [Required]
         public int RecipeNumber { get; set; }

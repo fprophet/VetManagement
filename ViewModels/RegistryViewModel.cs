@@ -92,7 +92,7 @@ namespace VetManagement.ViewModels
 
 
             NavigateCreateRegisterRecordWindowCommand = new NavigateWindowCommand<CreateRegistryRecordViewModel>
-                (new NavigationService<CreateRegistryRecordViewModel>
+                (new WindowService<CreateRegistryRecordViewModel>
                     (_navigationStore, (id) => new CreateRegistryRecordViewModel(_navigationStore, UpdateRegistryRecords)), () => new CreateRegistryRecordWindow());
         }
         
@@ -110,28 +110,28 @@ namespace VetManagement.ViewModels
 
                 bool ownerNameMatch = string.IsNullOrEmpty(OwnerNameFilter)
                     || (registryRecord?.Treatment?.Owner?.Name != null 
-                            && (registryRecord.Treatment?.Owner?.Name.IndexOf(OwnerNameFilter, StringComparison.OrdinalIgnoreCase) >= 0));
+                            && (registryRecord.Treatment?.Owner?.Name.IndexOf(OwnerNameFilter, StringComparison.OrdinalIgnoreCase) == 0));
 
-                //bool patientMatch = string.IsNullOrEmpty(PatientFilter)
-                //    || (registryRecord?.Species != null 
-                //            && registryRecord.Species.IndexOf(PatientFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+                bool patientMatch = string.IsNullOrEmpty(PatientFilter)
+                    || (registryRecord?.Treatment.Patient.Species != null
+                            && registryRecord.Treatment.Patient.Species.IndexOf(PatientFilter, StringComparison.OrdinalIgnoreCase) == 0);
 
                 bool medNameMatch = string.IsNullOrEmpty(MedNameFilter)
                     || (registryRecord?.Treatment?.TreatmentMeds != null &&
-                        registryRecord.Treatment?.TreatmentMeds.Find(tm => tm.Med.Name.IndexOf(MedNameFilter, StringComparison.OrdinalIgnoreCase) >= 0) != null);
+                        registryRecord.Treatment?.TreatmentMeds.Find(tm => tm.Med.Name.IndexOf(MedNameFilter, StringComparison.OrdinalIgnoreCase) == 0) != null);
 
-                //bool identifierMatch = string.IsNullOrEmpty(IdentifierFilter)
-                //   || (registryRecord?.Identifier != null
-                //           && registryRecord.Identifier.IndexOf(IdentifierFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-
-                return ownerNameMatch  && medNameMatch ;
+                bool identifierMatch = string.IsNullOrEmpty(IdentifierFilter)
+                   || (registryRecord?.Treatment.Patient.Identifier != null
+                           && registryRecord?.Treatment.Patient.Identifier.ToString().IndexOf(IdentifierFilter, StringComparison.OrdinalIgnoreCase) == 0);
+               
+                return ownerNameMatch && patientMatch && medNameMatch && identifierMatch;
             }
         }
 
         private void UpdateRegistryRecords(RegistryRecord registryRecord)
         {
             RegistryRecords.Add(registryRecord);
-
+          
             var sorted = RegistryRecords.OrderByDescending(rr => rr.Date);
 
             RegistryRecords.Clear();
@@ -140,6 +140,7 @@ namespace VetManagement.ViewModels
             {
                 RegistryRecords.Add(rr);
             }
+            FilteredRegistryRecords.Refresh();
 
         }
 
@@ -153,16 +154,10 @@ namespace VetManagement.ViewModels
 
                 var sorted = registryRecords.OrderByDescending(r => r.Date);
 
-                Trace.WriteLine("VEIRICARE");
                 foreach( RegistryRecord registryRecord in sorted)
                 {
                     RegistryRecords.Add(registryRecord);
-                    Trace.WriteLine(registryRecord.Treatment.Patient);
-                    //Trace.WriteLine(registryRecord.Treatment.Patient.Identifier);
-                    //Trace.WriteLine(registryRecord.Treatment.Patient.Age);
-
                 }
-
 
             }
             catch(Exception e)

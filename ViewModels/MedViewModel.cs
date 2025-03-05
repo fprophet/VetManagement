@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.DataWrappers;
 using VetManagement.Services;
 using VetManagement.Stores;
 
@@ -38,14 +39,14 @@ namespace VetManagement.ViewModels
 
         public ObservableCollection<TreatmentMed> Treatments { get; set; } = new ObservableCollection<TreatmentMed>();
 
-        private Med _med;
-        public Med CurrentMed 
+        private MedWrapper _med;
+        public MedWrapper CurrentMedWrapper 
         { 
             get => _med;
             set
             {
                 _med = value;
-                OnPropertyChanged(nameof(CurrentMed));
+                OnPropertyChanged(nameof(CurrentMedWrapper));
             }
         }
 
@@ -85,7 +86,7 @@ namespace VetManagement.ViewModels
             } 
         }
 
-        public MedViewModel(NavigationStore navigationStore,int? id)
+        public MedViewModel(NavigationStore navigationStore, int? id)
         {
             _navigationStore = navigationStore;
 
@@ -123,20 +124,23 @@ namespace VetManagement.ViewModels
         {
             try 
             {
-                _med =  await new BaseRepository<Med>().GetById(_passedId);
-                _navigationStore.PageTitle = "Tratamente cu: " + _med.Name;
-                CurrentMed = _med;
+                Med med =  await new BaseRepository<Med>().GetById(_passedId);
+                _navigationStore.PageTitle = "Tratamente cu: " + med.Name;
+                CurrentMedWrapper = new MedWrapper(med);
 
-                StartedPieceAmount = CurrentMed.Pieces % 1;
+
+                var totalPieces = CurrentMedWrapper.TotalAmount / CurrentMedWrapper.PerPiece;
+                StartedPieceAmount = totalPieces % 1;
+
                 if(StartedPieceAmount > 0)
                 {
                     HasStartedPiece = true;
-                    Pieces = CurrentMed.Pieces - StartedPieceAmount + 1;
-                    StartedPieceAmount = decimal.Round((StartedPieceAmount / CurrentMed.PerPiece) * 100, 1);
+
+                    StartedPieceAmount = decimal.Round(StartedPieceAmount  * CurrentMedWrapper.PerPiece, 1);
                 }
                 else
                 {
-                    Pieces = CurrentMed.Pieces;
+                    Pieces = CurrentMedWrapper.Pieces;
                 }
 
             }

@@ -15,6 +15,8 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
 
+
+        
     </UserControl.Resources>
     
     <Grid>
@@ -24,43 +26,50 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" >
-            <TextBlock Text="Filtre" FontSize="20" Margin="0,0,0,5"/>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+            <StackPanel>
+                <Button Content="➕ Adaugă medicamente" Style="{StaticResource CreateButtonStyle}" Command="{Binding OpenCreateMedWindowCommand}" />
 
-                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                    <TextBlock Text="Tipul medicamentului" FontSize="15"/>
-                    <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding MedTypeList}" DisplayMemberPath="Name" 
-                        SelectedValuePath="Value" SelectedValue="{Binding TypeFilter, Mode=TwoWay}" />
-                </StackPanel>
+                <Expander Header="Filtre" Width="1200" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal" >
 
-                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                    <TextBlock Text="Nume" FontSize="15"/>
-                    <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
-                </StackPanel>
+                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                            <TextBlock Text="Tipul medicamentului" FontSize="15"/>
+                            <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding MedTypeList}" DisplayMemberPath="Name" 
+                                SelectedValuePath="Value" SelectedValue="{Binding TypeFilter, Mode=TwoWay}" />
+                        </StackPanel>
 
-                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                    <TextBlock Text="Lot" FontSize="15"/>
-                    <TextBox Text="{Binding LotFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="15"/>
-                </StackPanel>
-                
-                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                    <TextBlock Text="Valabilitate" FontSize="15"/>
-                    <DatePicker SelectedDate="{Binding ValabilityFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  DisplayDateStart="2025-01-01" />
-                </StackPanel>
+                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                            <TextBlock Text="Nume" FontSize="15"/>
+                            <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
+                        </StackPanel>
 
-                <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                    <TextBlock Text="Data în care a fost adăugat" FontSize="15"/>
-                    <DatePicker SelectedDate="{Binding DateAddedFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  DisplayDateStart="2024-01-01" />
-                </StackPanel>
+                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                            <TextBlock Text="Lot" FontSize="15"/>
+                            <TextBox Text="{Binding LotFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="15"/>
+                        </StackPanel>
+
+                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                            <TextBlock Text="Valabilitate" FontSize="15"/>
+                            <DatePicker SelectedDate="{Binding ValabilityFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  DisplayDateStart="2025-01-01" />
+                        </StackPanel>
+
+                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
+                            <TextBlock Text="Data în care a fost adăugat" FontSize="15"/>
+                            <DatePicker SelectedDate="{Binding DateAddedFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  DisplayDateStart="2024-01-01" />
+                        </StackPanel>
+                    </StackPanel>
+                </Expander>
+
             </StackPanel>
-            <Button Content="➕ Adaugă un medicament" Style="{StaticResource CreateButtonStyle}" Command="{Binding OpenCreateMedWindowCommand}" />
+            
         </StackPanel>
 
     
         <StackPanel Grid.Row="1" Margin="0,10,0,0">
             <DataGrid ItemsSource="{Binding FilteredMeds}"
                       MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}"
-                      AutoGenerateColumns="False" Style="{StaticResource StylishDataGrid}" BorderThickness="1"  HorizontalAlignment="Stretch">
+                      ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
+                      AutoGenerateColumns="False" Style="{StaticResource DataGridExpanded}" BorderThickness="1"  HorizontalAlignment="Stretch">
                 
                 <DataGrid.Columns>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAddedFormated, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>

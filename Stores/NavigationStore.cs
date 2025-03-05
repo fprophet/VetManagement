@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using VetManagement.ViewModels;
 
 namespace VetManagement.Stores
@@ -19,7 +20,7 @@ namespace VetManagement.Stores
 
         private ViewModelBase _currentViewModel;
 
-        private int _passedId;
+        public readonly Dictionary<Window, string> Windows = new Dictionary<Window, string>();
 
         public string PageTitle
         {
@@ -35,6 +36,7 @@ namespace VetManagement.Stores
 
         }
 
+        private int _passedId;
         public int PassedId
         {
             get => _passedId;

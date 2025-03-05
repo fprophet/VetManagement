@@ -27,7 +27,10 @@
             Command="{Binding  NavigateCreatePatientWindowCommand }" 
                 />
             <!--Command="{Binding CreateTreatmentViewModel.ToggleFormVisibilityCommand}"-->
-            <DataGrid ItemsSource="{Binding Patients}" Style="{StaticResource StylishDataGrid}" AutoGenerateColumns="False" HorizontalAlignment="Stretch">
+            <DataGrid ItemsSource="{Binding Patients}" 
+                      Style="{StaticResource StylishDataGrid}"
+                      ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
+                      HorizontalAlignment="Stretch">
                 <DataGrid.Columns>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data"  Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume"  Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="150"/>

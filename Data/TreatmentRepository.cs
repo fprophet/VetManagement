@@ -31,6 +31,18 @@ namespace VetManagement.Data
                 .ToListAsync();
         }
 
-      
+        public async Task<List<Treatment>> GetByMedName(string medName)
+        {
+            return await _context.Treatments
+                .Include(t => t.Patient)
+                .Include(t => t.TreatmentMeds)
+                .ThenInclude(tm => tm.Med)
+                .Include(t => t.Owner)
+                .Where(t => t.TreatmentMeds.Any(tm => tm.Med.Name.IndexOf(medName.Trim()) == 0 ))
+                .ToListAsync();
+        }
+
+
+
     }
 }

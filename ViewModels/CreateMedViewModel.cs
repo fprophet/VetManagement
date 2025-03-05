@@ -13,9 +13,11 @@ using System.Windows.Input;
 using K4os.Compression.LZ4.Internal;
 using Mysqlx;
 using Mysqlx.Crud;
+using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
 using VetManagement.Services;
+using VetManagement.Stores;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VetManagement.ViewModels
@@ -96,8 +98,9 @@ namespace VetManagement.ViewModels
         public ObservableCollection<object> MedTypeList { get; set; } =
             new ObservableCollection<object>  { new { Name = "Medicament", Value = "medicament" }, new { Name = "Vaccin", Value = "vaccin" } } ;  
 
-        public CreateMedViewModel(Action<Med> onMedCreated)
+        public CreateMedViewModel(NavigationStore navigationStore ,Action<Med> onMedCreated)
         {
+            _navigationStore = navigationStore;
             _onMedCreated = onMedCreated;
             CreateMedCommand = new RelayCommand(CreateMeds);
             AddMedsCommand = new RelayCommand(AddMeds);
@@ -220,7 +223,13 @@ namespace VetManagement.ViewModels
                     _onMedCreated?.Invoke(medWrapper.Med);
                 }
 
-                Boxes.InfoBox("Medicamentele au fost adăugate!");
+                var res = Boxes.InfoBox("Medicamentele au fost adăugate!");
+
+                if( res == MessageBoxResult.OK)
+                {
+                    new CloseWindowCommand<CreateMedViewModel>
+                        ( new WindowService<CreateMedViewModel>(_navigationStore, null), this);
+                }
 
             }
 

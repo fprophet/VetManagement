@@ -133,6 +133,7 @@ namespace VetManagement.ViewModels
         public InventoryViewModel(NavigationStore navigationStore) 
         { 
             _navigationStore = navigationStore;
+
             _navigationStore.PageTitle = _pageTitle;
          
             DeleteMedCommand = new RelayCommand(DeleteMed);
@@ -141,7 +142,7 @@ namespace VetManagement.ViewModels
                 (new NavigationService<MedViewModel>(_navigationStore, (id) => new MedViewModel(_navigationStore,id)));
             
             OpenCreateMedWindowCommand = new NavigateWindowCommand<CreateMedViewModel>
-                (new NavigationService<CreateMedViewModel>(_navigationStore, (id) => new CreateMedViewModel(UpdateMedList)), () => new CreateMedWindow());
+                (new WindowService<CreateMedViewModel>(_navigationStore, (id) => new CreateMedViewModel(_navigationStore, UpdateMedList)), () => new CreateMedWindow());
         }
 
         private bool FilterMeds(object obj)

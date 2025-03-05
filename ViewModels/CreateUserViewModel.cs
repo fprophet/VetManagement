@@ -94,8 +94,9 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public CreateUserViewModel(Action<User> onUserCreated)
+        public CreateUserViewModel(NavigationStore navigationStore,Action<User> onUserCreated)
         {
+            _navigationStore = navigationStore;
             _onUserCreated = onUserCreated;
             _userRepository = new BaseRepository<User>();
             CreateUserCommand = new RelayCommand(CreateUser);
@@ -136,7 +137,13 @@ namespace VetManagement.ViewModels
             {
                 await _userRepository.Add(user);
                 _onUserCreated?.Invoke(user);
-                Boxes.InfoBox("Utilizatorul a fost creat!");
+                var res = Boxes.InfoBox("Utilizatorul a fost creat!");
+                if (res == MessageBoxResult.OK)
+                {
+                    new CloseWindowCommand<CreateUserViewModel>
+                        (new WindowService<CreateUserViewModel>(_navigationStore, null), this);
+                }
+
             }
             catch (Exception ex)
             {

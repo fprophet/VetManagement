@@ -19,8 +19,9 @@
                     Command="{Binding NavigateCreateUserWindow}" />
 
         <DataGrid ItemsSource="{Binding Users}" Grid.Row="1"
-          MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}" Margin="0,10"
-          AutoGenerateColumns="False" Style="{StaticResource StylishDataGrid}" BorderThickness="1"  HorizontalAlignment="Stretch">
+            MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}" Margin="0,10"
+            ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
+            Style="{StaticResource StylishDataGrid}" BorderThickness="1"  HorizontalAlignment="Stretch">
 
             <DataGrid.Columns>
                 <!--<DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAddedFormated, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>-->

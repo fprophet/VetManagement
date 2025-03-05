@@ -150,13 +150,13 @@
                                         <TextBlock Text="Medicament" Style="{StaticResource CenterTextBlock}"/>
                                     </Border>
                                     <Border Grid.Column="1" Style="{StaticResource SubHeaderTextBlock}" HorizontalAlignment="Stretch">
-                                        <TextBlock Text="Cantitate" HorizontalAlignment="Stretch" Style="{StaticResource CenterTextBlock}"/>
+                                        <TextBlock Text="Serie și valabilitate" HorizontalAlignment="Stretch" Style="{StaticResource CenterTextBlock}"/>
                                     </Border>
                                     <Border Grid.Column="2" Style="{StaticResource SubHeaderTextBlock}" HorizontalAlignment="Stretch">
-                                        <TextBlock Text="Tip Dozaj" HorizontalAlignment="Stretch" Style="{StaticResource CenterTextBlock}"/>
+                                        <TextBlock Text="Dozaj" HorizontalAlignment="Stretch" Style="{StaticResource CenterTextBlock}"/>
                                     </Border>
                                     <Border Grid.Column="3" Style="{StaticResource SubHeaderTextBlock}" HorizontalAlignment="Stretch">
-                                        <TextBlock Text="Serie Lot" HorizontalAlignment="Stretch" Style="{StaticResource CenterTextBlock}"/>
+                                        <TextBlock Text="Timp de așteptare" HorizontalAlignment="Stretch" Style="{StaticResource CenterTextBlock}"/>
                                     </Border>
                                 </Grid>
                             </Grid>
@@ -164,7 +164,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <DataGrid  Width="700" ItemsSource="{Binding TreatmentMeds}" VerticalAlignment="Stretch"
-                        Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
+                                        Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
                                     <DataGrid.Columns>
                                         <DataGridTemplateColumn Width="4*">
                                             <DataGridTemplateColumn.CellTemplate>
@@ -180,7 +180,34 @@
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                        <TextBlock Text="{Binding Quantity}"/>
+                                                        <!--<TextBlock Text="{Binding Med.LotID}"/>-->
+                                                        <TextBlock>
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}Serie: {0} &#x0a; {1}">
+                                                                    <Binding Path="Med.LotID"/>
+                                                                    <Binding Path="Med.ValabilityFormated"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+
+                                        <DataGridTemplateColumn Width="2*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+
+                                                        <TextBlock>
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0} {1}">
+                                                                    <Binding Path="Quantity"/>
+                                                                    <Binding Path="Med.MeasurmentUnit"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
                                                     </Border>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
@@ -190,21 +217,12 @@
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                        <TextBlock Text="{Binding Med.MeasurmentUnit}"/>
+                                                        <TextBlock Text="{Binding Med.WaitingTime}"/>
                                                     </Border>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
 
-                                        <DataGridTemplateColumn Width="2*">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                        <TextBlock Text="{Binding Med.LotID}"/>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
                                     </DataGrid.Columns>
                                 </DataGrid>
                             </DataTemplate>

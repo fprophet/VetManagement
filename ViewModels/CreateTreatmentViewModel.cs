@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using VetManagement.Commands;
@@ -98,8 +99,9 @@ namespace VetManagement.ViewModels
         }
 
 
-        public CreateTreatmentViewModel(Action<Treatment> onTreatmentCreateChanged, int? id, string? patientType)
+        public CreateTreatmentViewModel(NavigationStore navigationStore,Action<Treatment> onTreatmentCreateChanged, int? id, string? patientType)
         {
+            _navigationStore = navigationStore;
             _onTreatmentCreateChanged = onTreatmentCreateChanged;
 
             RemoveMedCommand = new RelayCommand(RemoveMed);
@@ -126,10 +128,10 @@ namespace VetManagement.ViewModels
 
 
             NavigateCreatePatientWindowCommand = new NavigateWindowCommand<CreatePatientViewModel>
-                (new NavigationService<CreatePatientViewModel>(new NavigationStore(), (_passedId) => new CreatePatientViewModel(OnPatientCreated, _passedId)), () => new CreatePatientWindow());
+                (new WindowService<CreatePatientViewModel>(new NavigationStore(), (_passedId) => new CreatePatientViewModel(_navigationStore,OnPatientCreated, _passedId)), () => new CreatePatientWindow());
            
             NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerViewModel>
-              (new NavigationService<CreateOwnerViewModel>(new NavigationStore(), (_passedId) => new CreateOwnerViewModel(OnOwnerCreated)), () => new CreateOwnerWindow());
+              (new WindowService<CreateOwnerViewModel>(new NavigationStore(), (_passedId) => new CreateOwnerViewModel(_navigationStore,OnOwnerCreated)), () => new CreateOwnerWindow());
 
         }
         private void OnPatientCreated(Patient patient)
@@ -342,7 +344,7 @@ namespace VetManagement.ViewModels
                         medWrapper.TotalAmount = medWrapper.TotalAmount - medWrapper.TreatmentQuantity;
 
                         //update the medWrapper.Med directly to avoid triggering propchange event
-                        medWrapper.Med.Pieces = decimal.Round(medWrapper.TotalAmount / medWrapper.PerPiece, 1);
+                        medWrapper.Med.Pieces = (int)Math.Ceiling(medWrapper.TotalAmount / medWrapper.PerPiece);
 
                         await medRepository.Update(medWrapper.Med);
 
@@ -364,7 +366,13 @@ namespace VetManagement.ViewModels
                     treatment.Owner = Owner;
 
                     _onTreatmentCreateChanged?.Invoke(treatment);
-                    Boxes.InfoBox("Tratamentul a fost adăugat!");
+                    var res = Boxes.InfoBox("Tratamentul a fost adăugat!");
+
+                    if (res == MessageBoxResult.OK)
+                    {
+                        new CloseWindowCommand<CreateTreatmentViewModel>
+                            (new WindowService<CreateTreatmentViewModel>(_navigationStore, null), this);
+                    }
                 }
             }
             catch (Exception e)

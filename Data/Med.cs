@@ -27,7 +27,7 @@ namespace VetManagement.Data
         public string PieceType { get; set; }
 
         [Required(ErrorMessage = "Cantitatea în bucăți trebuie să fie mai mare ca 0!")]
-        public decimal Pieces { get; set; }
+        public int Pieces { get; set; }
 
         [Required(ErrorMessage = "Cantitatea per bucată trebuie să fie mai mare ca 0!")]
         public decimal PerPiece { get; set; }
@@ -68,6 +68,8 @@ namespace VetManagement.Data
         //public string UnitPerPiece => PieceType == "comprimate" ? "-" : PerPiece + "ml/flacon";
 
         public string UnitPerPiece => MeasurmentUnit + "/" + SingularPieceType;
+
+        public string PerPieceAndUnit => PerPiece + " " + UnitPerPiece;
 
         public string SingularPieceType => PieceType == "comprimate" ? "comprimat" : "flacon";
 

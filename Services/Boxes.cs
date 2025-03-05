@@ -20,9 +20,9 @@ namespace VetManagement.Services
 
         }
 
-        public static void InfoBox( string message)
+        public static MessageBoxResult InfoBox( string message)
         {
-            MessageBox.Show(message,"Info",MessageBoxButton.OK, MessageBoxImage.Information);
+           return MessageBox.Show(message,"Info",MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

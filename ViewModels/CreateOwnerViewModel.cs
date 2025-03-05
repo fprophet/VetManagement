@@ -11,6 +11,9 @@ using System.Windows.Media.Media3D;
 using VetManagement.Data;
 using VetManagement.Services;
 using System.Windows.Input;
+using System.Windows;
+using VetManagement.Commands;
+using VetManagement.Stores;
 
 namespace VetManagement.ViewModels
 {
@@ -75,8 +78,9 @@ namespace VetManagement.ViewModels
 
         public ICommand CreateOwnerCommand { get; set; }
 
-        public CreateOwnerViewModel(Action<Owner> onOwnerCreated)
+        public CreateOwnerViewModel(NavigationStore navigationStore, Action<Owner> onOwnerCreated)
         {
+            _navigationStore = navigationStore;
             _onOwnerCreated = onOwnerCreated;
             CreateOwnerCommand = new RelayCommand(CreateOwner);
         }
@@ -131,7 +135,14 @@ namespace VetManagement.ViewModels
                 BaseRepository<Owner> ownerRepository = new BaseRepository<Owner>();
                 owner = await ownerRepository.Add(owner);
                 _onOwnerCreated?.Invoke(owner);
-                Boxes.InfoBox("Pacientul a fost creat!");
+                var res = Boxes.InfoBox("Pacientul a fost creat!");
+
+
+                if (res == MessageBoxResult.OK)
+                {
+                    new CloseWindowCommand<CreateOwnerViewModel>
+                        (new WindowService<CreateOwnerViewModel>(_navigationStore, null), this);
+                }
             }
             catch (Exception e)
             {

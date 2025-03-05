@@ -109,15 +109,10 @@ namespace VetManagement.DataWrappers
             }
         }
 
-        public decimal Pieces
+        public int Pieces
         {
-            get
-            {
-                if (_med.Pieces < 1)
-                    return _med.Pieces;
-                else
-                    return Math.Floor(_med.Pieces);
-            }
+            get => _med.Pieces;
+
             set
             {
                 _med.Pieces = value;
@@ -243,6 +238,28 @@ namespace VetManagement.DataWrappers
             }
         }
 
+        public string Unit
+        {
+            get => _med.Unit;
+        }
+
+        //public string UnitPerPiece => PieceType == "comprimate" ? "-" : PerPiece + "ml/flacon";
+
+        public string UnitPerPiece
+        {
+            get => _med.UnitPerPiece;
+        }
+
+        public string PerPieceAndUnit
+        {
+            get => _med.PerPieceAndUnit;
+        }
+
+        public string SingularPieceType
+        {
+            get => _med.SingularPieceType;
+        }
+
         private void CalculateTotalAmount()
         {
             TotalAmount = Pieces * PerPiece;
@@ -258,11 +275,6 @@ namespace VetManagement.DataWrappers
         public string ValabilityFormated =>
             TimeZoneInfo.ConvertTimeFromUtc(DateTimeOffset.FromUnixTimeSeconds(Valability).UtcDateTime, TimeZoneInfo.Local).Date.ToString("yyyy-MM-dd");
 
-        public string Unit => _med.Unit;
-
-        public string UnitPerPiece => _med.UnitPerPiece;
-
-        public string SingularPieceType => _med.SingularPieceType;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

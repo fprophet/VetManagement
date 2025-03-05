@@ -19,65 +19,74 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- 🡨 Back Button + Add New Item -->
+        
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" Margin="0,5">
                 <Button Content="🡨 Înapoi" Padding="10,5" Background="#2196F3" Foreground="White"
                     FontWeight="Bold" BorderThickness="0" Cursor="Hand" Width="100" HorizontalAlignment="Left"
                     Command="{Binding NavigateInventoryCommand}" />
 
-                <StackPanel Orientation="Vertical" Margin="0,20,0,0">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding CurrentMed.Name}" FontWeight="Bold" FontSize="18"/>
-                        <StackPanel Orientation="Horizontal" Margin="10,0" VerticalAlignment="Bottom">
-                            <TextBlock Text="Serie Lot: " FontSize="15"/>
-                            <TextBlock Text="{Binding CurrentMed.LotID}" FontSize="15"/>
+                <Border Margin="0,10" Padding="15" Background="White" CornerRadius="10" BorderBrush="#ddd" BorderThickness="1" Width="400" HorizontalAlignment="Left">
+                    <StackPanel>
+                        <TextBlock Text="{Binding CurrentMedWrapper.Name}" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Margin="0,5,10,0">
+                                <TextBlock FontSize="14" Text="Lot: " FontWeight="SemiBold"/>
+                                <TextBlock FontSize="14" Text="{Binding CurrentMedWrapper.LotID}" />
+                            </StackPanel>  
+                        
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                <TextBlock FontSize="14" Text="Valabilitate: " FontWeight="SemiBold"/>
+                                <TextBlock FontSize="14" Text="{Binding CurrentMedWrapper.ValabilityFormated}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock FontSize="14" Text="Bucăți: " FontWeight="SemiBold"/>
+                            <TextBlock FontSize="14">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} {1}">
+                                        <Binding Path="CurrentMedWrapper.Pieces" />
+                                        <Binding Path="CurrentMedWrapper.PieceType" />
+                                    </MultiBinding>
+                                   
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock FontSize="14" Text="Per bucată: " FontWeight="SemiBold"/>
+                            <TextBlock FontSize="14" Text="{Binding CurrentMedWrapper.PerPieceAndUnit}" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontSize="14" Text="Cantitate totală: " FontWeight="SemiBold"/>
+                            <TextBlock FontSize="14" Text="{Binding CurrentMedWrapper.TotalAmount}" />
+                            <TextBlock FontSize="14" Text="{Binding CurrentMedWrapper.MeasurmentUnit}" FontWeight="SemiBold" Margin="5,0,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0" >
+                            <TextBlock  FontSize="14" Foreground="Red">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Un {0} început : {1} {2}">
+                                        <Binding Path="CurrentMedWrapper.SingularPieceType" />
+                                        <Binding Path="StartedPieceAmount" />
+                                        <Binding Path="CurrentMedWrapper.MeasurmentUnit" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
                         </StackPanel>
                     </StackPanel>
-
-                    <StackPanel Orientation="Vertical" Margin="0,0,20,0">
-                        <TextBlock  FontSize="18" Margin="0,0,20,0">
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{}Total {0}: {1} ">
-                                    <Binding Path="CurrentMed.PieceType" />
-                                    <Binding Path="Pieces" />
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-
-                        <TextBlock  FontSize="18" Margin="0,0,20,0" Visibility="{Binding HasStartedPiece,Converter={StaticResource BoolToVisibilityConverter}}">
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{}Un {0} început : {1} {2}">
-                                    <Binding Path="CurrentMed.SingularPieceType" />
-                                    <Binding Path="StartedPieceAmount" />
-                                    <Binding Path="CurrentMed.MeasurmentUnit" />
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-
-                        <TextBlock FontSize="18">
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{}Cantitate totală: {0} {1}">
-                                    <Binding Path="CurrentMed.TotalAmount" />
-                                    <Binding Path="CurrentMed.MeasurmentUnit" />
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-                    </StackPanel>
-              
-                    <!--<StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Tratamente: " FontSize="18" />
-                        <TextBlock Text="{Binding Treatments.Count}" FontSize="18"/>
-                    </StackPanel>-->
-                    
-                </StackPanel>
+                </Border>
             </StackPanel>
 
-            <DataGrid Grid.Row="1" ItemsSource="{Binding Treatments}" AutoGenerateColumns="False" HorizontalAlignment="Stretch" Style="{StaticResource StylishDataGrid}">
+            <DataGrid Grid.Row="1" 
+                      ItemsSource="{Binding Treatments}" 
+                      HorizontalAlignment="Stretch" 
+                      ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
+                      Style="{StaticResource DataGridExpanded}">
                 <DataGrid.Columns>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding Treatment.DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
-                    <!--<DataGridTextColumn Header="Serie Lot" 
-                                        Binding="{Binding DataContext.CurrentMed.LotID, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="100"/>-->
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Valabilitate" Binding="{Binding DataContext.CurrentMed.ValabilityFormated, RelativeSource={RelativeSource AncestorType=DataGrid}}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Nume Proprietar" Binding="{Binding Treatment.Owner.Name}" Width="200"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Adresa" Binding="{Binding Treatment.Owner.Address}" Width="200"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" IsReadOnly="True" Header="Specie" Binding="{Binding Treatment.Patient.Species}" Width="100"/>
@@ -89,7 +98,7 @@
                             <TextBlock >
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}cantitate ({0})">
-                                        <Binding Path="DataContext.CurrentMed.MeasurmentUnit" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                        <Binding Path="DataContext.CurrentMedWrapper.MeasurmentUnit" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
@@ -104,7 +113,7 @@
                             <TextBlock >
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0} folosite">
-                                        <Binding Path="DataContext.CurrentMed.PieceType" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                        <Binding Path="DataContext.CurrentMedWrapper.PieceType" RelativeSource="{RelativeSource AncestorType=UserControl}" />
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>

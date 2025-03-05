@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
@@ -92,8 +93,9 @@ namespace VetManagement.ViewModels
         }
 
 
-        public CreateOwnerTreatmentViewModel(Action<Treatment> onTreatmentCreateChanged, int? id) 
+        public CreateOwnerTreatmentViewModel(NavigationStore navigationStore, Action<Treatment> onTreatmentCreateChanged, int? id) 
         {
+            _navigationStore = navigationStore;
             _onTreatmentCreateChanged = onTreatmentCreateChanged;
 
             RemoveMedCommand = new RelayCommand(RemoveMed);
@@ -115,7 +117,7 @@ namespace VetManagement.ViewModels
 
 
             NavigateCreatePatientWindowCommand = new NavigateWindowCommand<CreatePatientViewModel>
-                (new NavigationService<CreatePatientViewModel>(new NavigationStore(), (_passedId) => new CreatePatientViewModel(OnPatientCreated, _passedId)), () => new CreatePatientWindow());
+                (new WindowService<CreatePatientViewModel>(new NavigationStore(), (_passedId) => new CreatePatientViewModel(_navigationStore,OnPatientCreated, _passedId)), () => new CreatePatientWindow());
 
           
 
@@ -244,19 +246,6 @@ namespace VetManagement.ViewModels
         public async void CreateTreatment(object Sender)
         {
 
-            //Trace.WriteLine("TESTING SHIT");
-            //foreach (var medwrapepr in MedWrappers)
-            //{
-            //    Trace.WriteLine(medwrapepr.Name);
-            //    Trace.WriteLine(medwrapepr.Type);
-            //    Trace.WriteLine(medwrapepr.BillNumber);
-            //    Trace.WriteLine(medwrapepr.Pieces);
-            //    Trace.WriteLine(medwrapepr.PerPiece);
-            //    Trace.WriteLine("----------------------");
-
-            //}
-
-            //return;
             BaseRepository<TreatmentMed> tretmentMedRepository = new BaseRepository<TreatmentMed>();
             BaseRepository<Treatment> treatmentRepository = new BaseRepository<Treatment>();
             BaseRepository<Med> medRepository = new BaseRepository<Med>();
@@ -292,7 +281,7 @@ namespace VetManagement.ViewModels
                         medWrapper.TotalAmount = medWrapper.TotalAmount - medWrapper.TreatmentQuantity;
 
                         //update the Med directly to avoid triggering propchange event
-                        medWrapper.Med.Pieces = decimal.Round(medWrapper.TotalAmount / medWrapper.PerPiece,1);
+                        medWrapper.Med.Pieces = (int) Math.Ceiling(medWrapper.TotalAmount / medWrapper.PerPiece);
 
                         await medRepository.Update(medWrapper.Med);
 
@@ -315,7 +304,14 @@ namespace VetManagement.ViewModels
 
 
                     _onTreatmentCreateChanged?.Invoke(treatment);
-                    Boxes.InfoBox("Tratamentul a fost adăugat!");
+                    var res = Boxes.InfoBox("Tratamentul a fost adăugat!");
+
+
+                    if (res == MessageBoxResult.OK)
+                    {
+                        new CloseWindowCommand<CreateOwnerTreatmentViewModel>
+                            (new WindowService<CreateOwnerTreatmentViewModel>(_navigationStore, null), this);
+                    }
                 }
             }
             catch (Exception e)

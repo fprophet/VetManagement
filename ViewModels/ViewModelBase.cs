@@ -40,5 +40,6 @@ namespace VetManagement.ViewModels
         {
             ErrorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName));
         }
+
     }
 }

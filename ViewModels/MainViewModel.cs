@@ -15,6 +15,9 @@ namespace VetManagement.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private new readonly NavigationStore _navigationStore;
+
+        private new readonly WindowStore _windowStore;
+
         public ICommand NavigateHomeCommand { get; }
         public ICommand NavigateUsersCommand { get; }
         public ICommand NavigateOwnersCommand { get; }
@@ -41,15 +44,11 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
             _navigationStore.PageTitleChanged += OnPageTitleChanged;
-            Trace.WriteLine("IS ROOT");
-            Trace.WriteLine(IsRoot);
 
             if (SessionManager.Instance.Role == "admin")
             {
                 IsRoot = true;
             }
-
-            Trace.WriteLine(IsRoot);
 
             NavigateHomeCommand = new NavigateCommand<HomeViewModel>
                 (new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore))); 
@@ -73,7 +72,7 @@ namespace VetManagement.ViewModels
                 (new NavigationService<AppSettingsViewModel>(_navigationStore, (id) => new AppSettingsViewModel(_navigationStore)));
 
             NavigateMedReportsCommand = new NavigateCommand<MedReportsViewModel>
-                (new NavigationService<MedReportsViewModel>(_navigationStore, (id) => new MedReportsViewModel()));
+                (new NavigationService<MedReportsViewModel>(_navigationStore, (id) => new MedReportsViewModel(_navigationStore)));
         }
 
         private void OnCurrentViewModelChanged()

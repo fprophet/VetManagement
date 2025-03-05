@@ -48,7 +48,7 @@ namespace VetManagement.ViewModels
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
 
             NavigateCreateTreatment = new NavigateWindowCommand<CreateOwnerTreatmentViewModel>
-                (new NavigationService<CreateOwnerTreatmentViewModel>(_navigationStore, (id) => new CreateOwnerTreatmentViewModel(OnTreatmentCreated, id) ), () => new CreateOwnerTreatmentWindow());
+                (new WindowService<CreateOwnerTreatmentViewModel>(_navigationStore, (id) => new CreateOwnerTreatmentViewModel(_navigationStore,OnTreatmentCreated, id) ), () => new CreateOwnerTreatmentWindow());
           
 
         }

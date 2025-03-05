@@ -111,8 +111,7 @@
             </Setter.Value>
         </Setter>
 
-        <!-- Column Header Styling -->
-        <Setter Property="ColumnHeaderStyle">
+        <Setter Property="ColumnHeaderStyle" >
             <Setter.Value>
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="BorderBrush" Value="LightGray"/>
@@ -123,7 +122,6 @@
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Setter Property="Height" Value="120"/>
                     <Style.Triggers>
-                        <!-- Highlight column header on mouse hover -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Background" Value="#004D40"/>
                         </Trigger>
@@ -131,11 +129,25 @@
                 </Style>
             </Setter.Value>
         </Setter>
-
-        <!-- ScrollBar Styling -->
         <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
     </Style>
+
+    <Style TargetType="DataGridColumnHeader" x:Key="ExpandedColumnHeader">
+        <Setter Property="BorderBrush" Value="LightGray"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="#00796B"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Height" Value="50"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#004D40"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
 
 
     <Style TargetType="TextBlock" x:Key="CenterTextBlock">
@@ -290,5 +302,40 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
-    
+
+
+    <Style TargetType="DataGrid" x:Key="CreateTreatmentGrid">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#DDDDDD"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="RowBackground" Value="White"/>
+        <Setter Property="AlternatingRowBackground" Value="#F8F8F8"/>
+        <Setter Property="GridLinesVisibility" Value="None"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="#E0E0E0"/>
+        <Setter Property="VerticalGridLinesBrush" Value="#E0E0E0"/>
+        <Setter Property="CanUserAddRows" Value="False"/>
+        <Setter Property="CanUserResizeRows" Value="False"/>
+        <Setter Property="SelectionMode" Value="Single"/>
+        <Setter Property="SelectionUnit" Value="FullRow"/>
+        <Setter Property="RowHeaderWidth" Value="0"/>
+
+        <!-- Row Style -->
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Margin" Value="2"/>
+                    <Setter Property="Padding" Value="5"/>
+                    <Setter Property="ToolTip" Value="{Binding}"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Height" Value="30"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

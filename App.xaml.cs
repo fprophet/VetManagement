@@ -22,37 +22,45 @@ namespace vet_management
             bool settingsFileFreshCreated;
 
             AppSettings.CheckFile(out settingsFileFreshCreated);
-            
-            if(settingsFileFreshCreated)
+
+            NavigationStore navigationStore = new NavigationStore();
+
+            navigationStore.CurrentViewModel = new HomeViewModel(navigationStore);
+
+            navigationStore.PageTitle = "Acasă";
+
+            if (settingsFileFreshCreated)
             {
                 Boxes.InfoBox("Settings file was not found! It has been freshly created and needs configuration. Root access only!");
+            
+
                 MainWindow = new RootLoginWindow()
                 {
-                    DataContext = new RootLoginViewModel()
+                    DataContext = new RootLoginViewModel(navigationStore)
                 };
+                navigationStore.Windows[MainWindow] = typeof(MainViewModel).Name;
 
-            }else
+            }
+            else
             {
                 if (SessionManager.Instance.isIsLoggedIn())
                 {
                     MainWindow = new UserLogin()
                     {
-                        DataContext = new UserLoginViewModel()
+                        DataContext = new UserLoginViewModel(navigationStore)
                     };
+                    navigationStore.Windows[MainWindow] = typeof(MainViewModel).Name;
 
                 }
                 else
                 {
-                    NavigationStore navigationStore = new NavigationStore();
-
-                    navigationStore.CurrentViewModel = new HomeViewModel(navigationStore);
-
-                    navigationStore.PageTitle = "Acasă";
 
                     MainWindow = new MainWindow()
                     {
                         DataContext = new MainViewModel(navigationStore)
                     };
+                    navigationStore.Windows[MainWindow] = typeof(MainViewModel).Name;
+
 
                 }
             }

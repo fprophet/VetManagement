@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,14 +13,14 @@ namespace VetManagement.Commands
 {
     public class NavigateWindowCommand<TViewModel> : CommandBase where TViewModel : ViewModelBase
     {
-        private readonly NavigationService<TViewModel> _navigationService;
+        private readonly WindowService<TViewModel> _windowService;
 
         private readonly Func<Window> _window;
 
-        public NavigateWindowCommand(NavigationService<TViewModel> navigationService, Func<Window> window, bool directExecution = false, bool closeCurrent = false)
+        public NavigateWindowCommand(WindowService<TViewModel> windowService, Func<Window> window, bool directExecution = false, bool closeCurrent = false)
         {
             _window = window;
-            _navigationService = navigationService;
+            _windowService = windowService;
 
             Window? currentWindow =
                 Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
@@ -38,14 +39,14 @@ namespace VetManagement.Commands
 
         public override void Execute(object? parameter)
         {
+
             if (parameter is int id)
             {
-                _navigationService.NavigateWindow(_window, id);
+                _windowService.NavigateWindow(_window, id);
             }
             else
             {
-                _navigationService.NavigateWindow(_window, null);
-
+                _windowService.NavigateWindow(_window, null);
             }
         }
     }

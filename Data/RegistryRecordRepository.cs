@@ -19,6 +19,7 @@ namespace VetManagement.Data
                 .Include(rr => rr.Treatment)
                     .ThenInclude(t => t.TreatmentMeds)
                     .ThenInclude(tm => tm.Med)
+                .Where(rr => rr.Treatment.Patient.Type == "livestock")
                 .ToListAsync();
         }
     }
