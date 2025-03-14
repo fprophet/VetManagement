@@ -34,7 +34,7 @@ namespace VetManagement.Services
             //avoid reloading page. reloading page this way does not trigger the window load event therefore not loading data
             if (_navigationStore.CurrentViewModel.GetType().Name != viewModel.GetType().Name)
             {
-                _navigationStore.CurrentViewModel = _createViewModel(id);
+                _navigationStore.CurrentViewModel = viewModel;
             }
         }
     }

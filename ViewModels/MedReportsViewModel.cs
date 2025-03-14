@@ -6,7 +6,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Mysqlx.Prepare;
 using VetManagement.Data;
+using VetManagement.Services;
 using VetManagement.Stores;
 
 namespace VetManagement.ViewModels
@@ -14,7 +16,11 @@ namespace VetManagement.ViewModels
     public class MedReportsViewModel : ViewModelBase
     {
 
-        private NavigationStore _navigationStore;
+        private readonly NavigationStore _navigationStore;
+
+        public  PaginationService PaginationService { get; set; }
+
+        private readonly FilterService _filterService;
 
         private TreatmentRepository _treatmentRepository = new TreatmentRepository();
 
@@ -26,11 +32,35 @@ namespace VetManagement.ViewModels
             {
                 _medName = value;
                 IsLoading = true;
-                NoResults = false;
-                Treatments.Clear();
-                DebouncePropertyChanged(nameof(MedName));
+                _filterService.DebouncePropertyChanged(nameof(MedName));
 
                 //GetNewMedList();
+            }
+        }
+
+        private string _ownerName;
+        public string OwnerName
+        {
+            get => _ownerName;
+            set
+            {
+                _ownerName = value;
+                IsLoading = true;
+                _filterService.DebouncePropertyChanged(nameof(OwnerName));
+
+                //GetNewMedList();
+            }
+        }
+
+        private DateTime? _date = null;
+        public DateTime? Date
+        {
+            get => _date;
+            set
+            {
+                _date = value;
+                _filterService.DebouncePropertyChanged(nameof(Date));
+
             }
         }
 
@@ -63,50 +93,61 @@ namespace VetManagement.ViewModels
         public MedReportsViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
-            _navigationStore.PageTitle = "Rapoarte medicamente";
+            _navigationStore.PageTitle = "📊 Rapoarte medicamente";
+            _filterService = new FilterService(() => GetNewMedList());
+
+            PaginationService = new PaginationService(() => GetNewMedList(), () => GetNewMedList(),100);
         }
 
-        private async void GetNewMedList()
+        private async Task GetNewMedList()
         {
-            var treatments = await  _treatmentRepository.GetByMedName(MedName);
-
-            foreach ( Treatment treatment in treatments)
-            {
-                Treatments.Add(treatment);
-            }
-
-            if( Treatments.Count() == 0 )
-            {
-                NoResults = true;
-            }
-           
-
-        }
-
-        private CancellationTokenSource _debounceCts;
-        private async void DebouncePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            _debounceCts?.Cancel(); // Cancel previous pending task
-            _debounceCts = new CancellationTokenSource();
-            var token = _debounceCts.Token;
+            Treatments.Clear();
 
             try
             {
-                await Task.Delay(600, token);
 
-                if (!token.IsCancellationRequested)
+                Dictionary<string, object> filters = new Dictionary<string, object>();
+
+                filters.Add("medName", MedName);
+                filters.Add("dateFilter", Date);
+                filters.Add("ownerName", OwnerName);
+
+                var (treatments, totalFound) = await _treatmentRepository.GetFullTreatments(PaginationService.PageNumber, PaginationService.PerPage, filters);
+
+                PaginationService.TotalFound = totalFound;
+
+                foreach (Treatment treatment in treatments)
                 {
-                    Trace.WriteLine(IsLoading);
+                    Treatments.Add(treatment);
+                }
 
-                    OnPropertyChanged(propertyName);
-                    GetNewMedList();
-                    IsLoading = false;
+                if (Treatments.Count() == 0)
+                {
+                    NoResults = true;
                 }
             }
-            catch (TaskCanceledException)
+            catch(Exception e)
             {
-                // Ignore task cancellation
+                Boxes.ErrorBox("Tratamentele nu au fost găsite!\n" + e.Message);
+                Logger.LogError("Error", e.ToString());
             }
+            finally
+            {
+                IsLoading = false;
+                if(Treatments.Count > 0 )
+                {
+                    NoResults = false;
+                }
+                else
+                {
+                    NoResults = true;
+
+                }
+
+            }
+
         }
+
+      
     }
 }

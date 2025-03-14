@@ -15,7 +15,6 @@ namespace VetManagement.ViewModels
     public class HomeViewModel : ViewModelBase
     {
 
-        public new string PageTitle = "Acasă";
         public ViewModelBase CurrentViewModel { get; }
 
         public ICommand NavigateUsersCommand { get; }
@@ -28,6 +27,9 @@ namespace VetManagement.ViewModels
 
         public HomeViewModel( NavigationStore navigationStore)
         {
+            _navigationStore = navigationStore;
+            _navigationStore.PageTitle = "🏠 Acasă";
+
             NavigateUsersCommand = new NavigateCommand<UsersViewModel>(new NavigationService<UsersViewModel>(navigationStore,(id) => new UsersViewModel(navigationStore)));
             NavigateInventoryCommand = new NavigateCommand<InventoryViewModel>(new NavigationService<InventoryViewModel>(navigationStore,(id) => new InventoryViewModel(navigationStore)));
             NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>(new NavigationService<OwnersViewModel>(navigationStore,(id) => new OwnersViewModel(navigationStore)));

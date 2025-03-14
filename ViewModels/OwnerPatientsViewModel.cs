@@ -124,7 +124,7 @@ namespace VetManagement.ViewModels
         public async Task LoadOwner()
         {
             Owner = await new BaseRepository<Owner>().GetById(PassedId);
-            _navigationStore.PageTitle = "Animalele lui " + Owner.Name;
+            _navigationStore.PageTitle = "🐕 Animalele lui " + Owner.Name;
 
 
         }

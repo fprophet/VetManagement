@@ -5,6 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:VetManagement.ViewModels" 
         xmlns:views="clr-namespace:VetManagement.Views"
+        xmlns:components="clr-namespace:VetManagement.Components"
+        xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
+        
         WindowState="Maximized"
         Title="Vet Management" Height="600" Width="1000">
 
@@ -27,14 +30,13 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="MenuItem">
                         <Border Background="{TemplateBinding Background}" 
-                        BorderBrush="{TemplateBinding BorderBrush}" 
-                        BorderThickness="{TemplateBinding BorderThickness}" 
-                        Padding="{TemplateBinding Padding}">
-
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            Padding="{TemplateBinding Padding}">
                             <Grid>
                                 <Border Name="HoverBorder" Background="Transparent"/>
                                 <ContentPresenter ContentSource="Header" 
-                                          HorizontalAlignment="Left"/>
+                                    HorizontalAlignment="Left"/>
                             </Grid>
                         </Border>
 
@@ -59,96 +61,92 @@
             <MenuItem Header="Stăpâni" Command="{Binding NavigateOwnersCommand}" />
             <MenuItem Header="Inventar" Command="{Binding NavigateInventoryCommand}" />
             <MenuItem Header="Tratamente" Command="{Binding NavigateTreatmentsCommand}" />
+            <MenuItem Header="Registru mare" Command="{Binding NavigateRegistryCommand}" />
             <MenuItem Header="Utilizatori" Command="{Binding NavigateUsersCommand}" />
         </Menu>
 
-        <!-- MAIN GRID -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
-                <!-- Sidebar -->
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <!-- Main Content -->
             </Grid.ColumnDefinitions>
 
-            <!-- SIDE MENU -->
-            <StackPanel Background="#2C3E50" Grid.Column="0">
-                <ItemsControl>
+            <Grid VerticalAlignment="Stretch" Background="#2C3E50" Grid.Column="0" Width="{Binding SideMenuWidth, UpdateSourceTrigger=PropertyChanged}" x:Name="SideMenu">
+                <ItemsControl VerticalAlignment="Top">
                     <ItemsControl.Items>
                         <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateHomeCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="🏠 Acasă" />
+                                <emoji:TextBlock Text="🏠 Acasă" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateOwnersCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="👤 Stăpâni" />
+                                <emoji:TextBlock Text="👤 Stăpâni" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateInventoryCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="📦 Inventar" />
+                                <emoji:TextBlock Text="📦 Inventar" />
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateImportedProductsCommand}">
+                            <MenuItem.Header>
+                                <emoji:TextBlock Text="📦 Produse Importate" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem MinWidth="400" Style="{StaticResource MenuItem}" Command="{Binding NavigateTreatmentsCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="💊 Registru animale mici" HorizontalAlignment="Left" />
+                                <emoji:TextBlock Text="💊 Registru animale mici" HorizontalAlignment="Left" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateRegistryCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="📖 Registru animale mari" />
+                                <emoji:TextBlock Text="📖 Registru animale mari" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateMedReportsCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="📝 Raporturi" />
+                                <emoji:TextBlock Text="📊 Rapoarte" />
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateRecipeListCommand}">
+                            <MenuItem.Header>
+                                <emoji:TextBlock Text="📝 Rețete" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateUsersCommand}">
                             <MenuItem.Header>
-                                <TextBlock Text="🔐 Utilizatori" />
+                                <emoji:TextBlock Text="🔐 Utilizatori" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem Style="{StaticResource MenuItem}" 
                                   Visibility="{Binding IsRoot, Converter={StaticResource BoolToVisibilityConverter}}"
                                   Command="{Binding NavigateAppSettingsCommand}" >
                             <MenuItem.Header>
-                                <TextBlock Text="⚙ App Settings" />
+                                <emoji:TextBlock Text="⚙ App Settings" />
                             </MenuItem.Header>
                         </MenuItem>
                     </ItemsControl.Items>
                 </ItemsControl>
-            </StackPanel>
+                <Canvas VerticalAlignment="Bottom" >
+                    <Button x:Name="MyButton" Content="{Binding ToggleButtonSymbol}" 
+                      Background="White"
+                      Padding="10,0"
+                      Canvas.Left="0" 
+                      Canvas.Bottom="0" FontSize="20" Command="{Binding ToggleSideMenuCommand}" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" RenderTransformOrigin="1.59,1.669"/>
+                </Canvas>
+            </Grid>
 
-            <!-- MAIN CONTENT AREA -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <!-- Page Title -->
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*"/>
-                    <!-- Content -->
                 </Grid.RowDefinitions>
 
-                <!-- PAGE TITLE -->
-                <Border BorderBrush="#3d5382" BorderThickness="0,0,0,2" >
-                    <StackPanel Orientation="Horizontal" Margin="20,10" Grid.Row="0" >
-                        <TextBlock Text="🧾" 
-                            FontSize="34" FontWeight="Bold"
-                            Foreground="#3d5382"
-                            HorizontalAlignment="Stretch" 
-                            VerticalAlignment="Top" />
-                        <TextBlock Text="{Binding PageTitle}" 
-                            Foreground="#3d5382"
-                            FontSize="34" FontWeight="Bold" 
-                            HorizontalAlignment="Stretch" 
-                            VerticalAlignment="Top" 
-                            Grid.Row="0"/>
-                    </StackPanel>
-                </Border>
+                <components:Header/>
 
-                <!-- SCROLLABLE CONTENT -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="20,20">
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" x:Name="MainScroller" Margin="20,20">
                     <ContentControl Content="{Binding CurrentViewModel}">
                         <ContentControl.Resources>
                             <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
@@ -183,6 +181,15 @@
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:AppSettingsViewModel}" >
                                 <views:AppSettingsView />
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:RecipeListViewModel}" >
+                                <views:RecipeListView />
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:RecipeViewModel}" >
+                                <views:RecipeView />
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:ImportedProductsViewModel}" >
+                                <views:ImportedProductsView />
                             </DataTemplate>
                         </ContentControl.Resources>
                     </ContentControl>

@@ -25,16 +25,30 @@
     
         <StackPanel Grid.Row="1" >
             <Button Content="➕ Adaugă tratament" Style="{StaticResource CreateButtonStyle}"
-                Command="{Binding NavigateCreateTreatment}" 
-                    />
-                <!--Command="{Binding CreateTreatmentViewModel.ToggleFormVisibilityCommand}"-->
-            <DataGrid Grid.Row="0" ItemsSource="{Binding Treatments}"
-              Style="{StaticResource DataGridExpanded}" 
-              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-              AutoGenerateColumns="False"
-              Height="Auto" >
-
+                Command="{Binding NavigateCreateTreatment}" />
+            <DataGrid  Margin="0,10,0,0" ItemsSource="{Binding Treatments}"
+                    Style="{StaticResource DataGridExpanded}" 
+                    MaxHeight="700">
+                
                 <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="100">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="" Style="{StaticResource CenterTextBlock}"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button  Height="25" Margin="10,0" 
+                                     CommandParameter="{Binding Id}"
+                                     Command="{Binding DataContext.RepeatTreatmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}">
+                                <TextBlock Text="Repetă"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"/>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="Număr" Binding="{Binding Id}" Width="70"/>
 
                     <DataGridTemplateColumn  Width="150">
                         <DataGridTemplateColumn.Header>
@@ -43,7 +57,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                    <TextBlock Text="{Binding DateAddedFormated,StringFormat='yyyy-MM-dd HH:mm:ss'}" Style="{StaticResource CenterTextBlock}"/>
+                                    <TextBlock Text="{Binding DateAdded,StringFormat='yyyy-MM-dd'}" Style="{StaticResource CenterTextBlock}"/>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -180,15 +194,10 @@
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                        <!--<TextBlock Text="{Binding Med.LotID}"/>-->
-                                                        <TextBlock>
-                                                            <TextBlock.Text>
-                                                                <MultiBinding StringFormat="{}Serie: {0} &#x0a; {1}">
-                                                                    <Binding Path="Med.LotID"/>
-                                                                    <Binding Path="Med.ValabilityFormated"/>
-                                                                </MultiBinding>
-                                                            </TextBlock.Text>
-                                                        </TextBlock>
+                                                        <StackPanel>
+                                                            <TextBlock Text="{Binding Med.LotID}"/>
+                                                            <TextBlock Text="{Binding Med.Valability, StringFormat='yyyy-mm-dd'}"/>
+                                                        </StackPanel>
                                                     </Border>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
@@ -228,7 +237,6 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-
 
                     <DataGridTextColumn Header="Detalii" Binding="{Binding Details}" Width="250"/>
                 </DataGrid.Columns>

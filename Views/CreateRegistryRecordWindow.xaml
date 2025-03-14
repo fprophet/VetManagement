@@ -19,6 +19,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -34,17 +35,7 @@
                     <TextBlock Text="Detalii suplimentare" FontSize="16" FontWeight="Bold" Foreground="#333"/>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-                        <StackPanel>
-                            <TextBlock Text="Numarul rețetei:"/>
-                            <TextBox Width="200" Padding="5" HorizontalAlignment="Left"
-                                Text="{Binding RecipeNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
-
-                        <StackPanel Margin="10">
-                            <TextBlock Text="Data rețetei:"/>
-                            <DatePicker Width="200" HorizontalAlignment="Left" Text="{Binding RecipeDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-
+                 
                         <StackPanel Margin="10">
                             <TextBlock Text="Durata tratamentului:"/>
                             <TextBox Width="200" Padding="5" HorizontalAlignment="Left"
@@ -72,7 +63,10 @@
                 </StackPanel>
             </Border>
 
-            <Button Grid.Row="2" Margin="0,20" Content="💾 Salvează tratament" Background="#4A90E2" Foreground="White" FontWeight="Bold"
+            <Button Grid.Row="2" Margin="0,20" Content="SEMNATURA" Background="#4A90E2" Foreground="White" FontWeight="Bold"
+                Height="30" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Command="{Binding NavigateSignatureCanvasCommand}" />
+            
+            <Button Grid.Row="3" Margin="0,20" Content="💾 Salvează tratament" Background="#4A90E2" Foreground="White" FontWeight="Bold"
                 Height="30" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Command="{Binding CreateRegistryRecordCommand}" />
         </Grid>
     </ScrollViewer>

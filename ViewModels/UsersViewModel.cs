@@ -40,6 +40,8 @@ namespace VetManagement.ViewModels
 
         public ICommand NavigateCreateUserWindow { get; }
 
+        public ICommand SendNotificationCommand { get; }
+
         public CreateUserViewModel CreateUserViewModel { get; }
 
         private bool _isVisibleForm = false;
@@ -61,7 +63,7 @@ namespace VetManagement.ViewModels
          
             _navigationStore = navigationStore;
             _userRepository = new BaseRepository<User>();
-            _navigationStore.PageTitle = "Utilizatori înregistrați";
+            _navigationStore.PageTitle = "🔐 Utilizatori înregistrați";
    
             ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
             DeleteUserCommand = new RelayCommand(DeleteUser);
@@ -73,6 +75,13 @@ namespace VetManagement.ViewModels
             NavigateCreateUserWindow = new NavigateWindowCommand<CreateUserViewModel>
                 (new WindowService<CreateUserViewModel>(_navigationStore, (id) => new CreateUserViewModel(_navigationStore,OnUserCreated)), () => new CreateUserWindow());
 
+            SendNotificationCommand = new RelayCommand(SendNot);
+        }
+
+        private void SendNot(object parameter)
+        {
+            SoundService.PlayNotificationSound();
+            //NotificationService.SendNotification("titlu", "mesajul notificarii", "user");
         }
 
         private void ToggleFormVisibility(object parameter) {

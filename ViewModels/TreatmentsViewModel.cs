@@ -13,18 +13,26 @@ using VetManagement.Data;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VetManagement.ViewModels
 {
     public class TreatmentsViewModel : ViewModelBase
     {
-        public string _pageTitle = "Registru animale mici";
+        public string _pageTitle = "💊 Registru animale mici";
 
         public ICommand NavigateOwnersCommand { get; set; }
+
         public ICommand NavigateCreateTreatmentWindowCommand { get; set; }
+        
+        public ICommand RepeatTreatmentCommand { get; set; }
+
+
+        public PaginationService PaginationService { get; set; }
+
+        private readonly FilterService _filterService;
 
         private bool _isLoading = true;
-
         public bool isLoading
         {
             get => _isLoading;
@@ -36,98 +44,105 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private string _ownerNameFilter;
+        private string _ownerNameFilter = "";
         public string OwnerNameFilter
         {
             get => _ownerNameFilter;
             set
             {
                 _ownerNameFilter = value;
-                OnPropertyChanged(nameof(OwnerNameFilter));
-                FilteredTreatments.Refresh();
+                isLoading = true;
+                Treatments.Clear();
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(OwnerNameFilter));
             }
         }
 
-        private string _patientNameFilter;
+        private string _patientNameFilter = "";
         public string PatientNameFilter
         {
             get => _patientNameFilter;
             set
             {
                 _patientNameFilter = value;
-                OnPropertyChanged(nameof(PatientNameFilter));
-                FilteredTreatments.Refresh();
+                isLoading = true;
+                Treatments.Clear();
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(PatientNameFilter));
+
             }
         }
 
-        private string _medNameFilter;
+        private string _medNameFilter = "";
         public string MedNameFilter
         {
             get => _medNameFilter;
             set
             {
                 _medNameFilter = value;
-                OnPropertyChanged(nameof(MedNameFilter));
-                FilteredTreatments.Refresh();
+                isLoading = true;
+                Treatments.Clear();
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(MedNameFilter));
+
             }
         }
 
-        //public CreateTreatmentViewModel CreateTreatmentViewModel { get; set; }
-
         public ObservableCollection<Treatment> Treatments { get; private set; } = new ObservableCollection<Treatment>();
-
-        private ListCollectionView _filteredTreatments;
-
-        public ICollectionView FilteredTreatments
-        {
-            get => _filteredTreatments;
-
-        }
 
         public TreatmentsViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
             _navigationStore.PageTitle = _pageTitle;
 
-            _filteredTreatments = new ListCollectionView(Treatments);
-            _filteredTreatments.Filter = FilterTreatments;
+            _filterService = new FilterService(() => LoadTreatments());
+
+            PaginationService = new PaginationService(() => LoadTreatments(), () => LoadTreatments());
+
+            RepeatTreatmentCommand = new RelayCommand(RepeatTreatment);
 
             NavigateOwnersCommand = new NavigateCommand<HomeViewModel>(new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore)));
             NavigateCreateTreatmentWindowCommand = new NavigateWindowCommand<CreateTreatmentViewModel>
-                (new WindowService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(_navigationStore,OnTreatmentCreated, null,null)), () => new CreateTreatmentWindow() );
-            
-            
-            //CreateTreatmentViewModel = new CreateTreatmentViewModel(OnTreatmentCreated, id);
+                (new WindowService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(_navigationStore, OnTreatmentCreated, null, null)), () => new CreateTreatmentWindow());
         }
 
-        private bool FilterTreatments(object obj)
+
+        private async void RepeatTreatment(object parameter)
         {
-            if (String.IsNullOrEmpty(OwnerNameFilter) && String.IsNullOrEmpty(PatientNameFilter) && String.IsNullOrEmpty(MedNameFilter))
+            if (parameter is not int)
             {
-                return true;
+                Boxes.InfoBox("Tratamentul nu a putut fi repetat!");
+                return;
             }
-            else
+            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa repetați tratementul cu numărul: " + parameter + "?");
+
+            if (result == System.Windows.MessageBoxResult.No)
             {
-                var treatment = obj as Treatment;
+                return;
+            }
 
-                bool ownerNameMatch = string.IsNullOrEmpty(OwnerNameFilter)
-                    || (treatment?.Owner?.Name != null && (treatment?.Owner?.Name.IndexOf(OwnerNameFilter, StringComparison.OrdinalIgnoreCase) >= 0));
+            Treatment treatment = Treatments.FirstOrDefault(t => t.Id == (int)parameter);
 
-                bool patientNameMatch = string.IsNullOrEmpty(PatientNameFilter)
-                    || (treatment?.Patient?.Name != null && treatment.Patient.Name.IndexOf(PatientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-
-                bool medNameMatch = string.IsNullOrEmpty(MedNameFilter)
-                    || (treatment?.TreatmentMeds != null &&
-                        treatment?.TreatmentMeds.Find(tm => tm.Med.Name.IndexOf(PatientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0) != null ) ;
-
-                return ownerNameMatch && patientNameMatch && medNameMatch;
+            try
+            {
+                Treatment newTreatment = await DuplicateObjectService.DuplicateTreatment(treatment);
+                OnTreatmentCreated(newTreatment);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("Error", e.ToString());
             }
         }
 
         private void OnTreatmentCreated(Treatment treatment)
         {
+            if( treatment is null )
+            {
+                return;
+            }
+
             Treatments.Add(treatment);
-            var sortedTreatments = Treatments.OrderByDescending(t => t.DateAdded).ToList();
+            var sortedTreatments = Treatments.OrderByDescending(t => t.Id).ToList();
 
             Treatments.Clear();
 
@@ -135,29 +150,42 @@ namespace VetManagement.ViewModels
             {
                 Treatments.Add(sorted);
             }
-            FilteredTreatments.Refresh();
         }
 
 
         public async Task LoadTreatments()
         {
+            Treatments.Clear();
             try
             {
-                var treatments = await new TreatmentRepository().GetFullTreatments();
+                Dictionary<string, object> filters = new Dictionary<string, object>();
+
+                filters["ownerName"] = OwnerNameFilter;
+                filters["patientName"] = PatientNameFilter;
+                filters["medName"] = MedNameFilter;
+                filters["patientType"] = "pet";
+                var (treatments, totalRecords) = await new TreatmentRepository().GetFullTreatments(PaginationService.PageNumber, PaginationService.PerPage, filters);
+
+                PaginationService.TotalFound = totalRecords;
 
                 var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
+                
 
                 foreach (var treatment in sortedTreatments)
                 {
 
                     Treatments.Add(treatment);
                 }
-                isLoading = false;
+
             }catch(Exception e)
             {
                 Boxes.ErrorBox("Tratamentele nu au putut fi găsite!\n" + e.Message);
+                Logger.LogError("Error", e.ToString());
             }
-
+            finally
+            {
+                isLoading = false;
+            }
 
         }
     }

@@ -23,6 +23,7 @@ namespace VetManagement.ViewModels
 
         public ICommand NavigateOwnersCommand { get; set; }
         public ICommand NavigateCreateTreatment { get; set; }
+        public ICommand RepeatTreatmentCommand { get; set; }
 
         public Owner? Owner;
 
@@ -44,13 +45,41 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.PassedId = PassedId;
 
+            RepeatTreatmentCommand = new RelayCommand(RepeatTreatment);
+
             NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
 
             NavigateCreateTreatment = new NavigateWindowCommand<CreateOwnerTreatmentViewModel>
                 (new WindowService<CreateOwnerTreatmentViewModel>(_navigationStore, (id) => new CreateOwnerTreatmentViewModel(_navigationStore,OnTreatmentCreated, id) ), () => new CreateOwnerTreatmentWindow());
-          
 
+        }
+
+        private async void RepeatTreatment(object parameter)
+        {
+            if (parameter is not int)
+            {
+                Boxes.InfoBox("Tratamentul nu a putut fi repetat!");
+                return;
+            }
+            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa repetați tratementul cu numărul: " + parameter + "?");
+
+            if (result == System.Windows.MessageBoxResult.No)
+            {
+                return;
+            }
+
+            Treatment treatment = Treatments.FirstOrDefault(t => t.Id == (int)parameter);
+
+            try
+            {
+                Treatment newTreatment = await DuplicateObjectService.DuplicateTreatment(treatment);
+                OnTreatmentCreated(newTreatment);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("Error", e.ToString());
+            }
         }
 
         private void OnTreatmentCreated( Treatment treatment)
@@ -70,7 +99,7 @@ namespace VetManagement.ViewModels
         public async Task LoadOwner()
         {
             Owner = await new BaseRepository<Owner>().GetById(PassedId);
-            _navigationStore.PageTitle = "Tratamentele lui " + Owner.Name; 
+            _navigationStore.PageTitle = "💊 Tratamentele lui " + Owner.Name; 
 
 
         }

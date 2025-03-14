@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace VetManagement.Data
 {
-    public class BaseEntity : INotifyPropertyChanged
+    public class BaseEntity 
     {
         [Key]
         public int Id { get; set; }

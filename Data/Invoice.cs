@@ -13,7 +13,7 @@ namespace VetManagement.Data
         public int Number { get; set; }
 
         [Required]
-        public long Date { get; set; }
+        public DateTime Date { get; set; }
 
         [Required]
         public string Provider { get; set; }

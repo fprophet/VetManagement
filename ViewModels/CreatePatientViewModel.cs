@@ -259,7 +259,7 @@ namespace VetManagement.ViewModels
 
         public Patient? RetrievePatient()
         {
-            Patient patient =  new Patient() {Type = Type, Identifier = Identifier, Name = Name, Species = Species, Race = Race, Sex = Sex , Age = Age, Weight = Weight, Color = Color, Details = Details , DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
+            Patient patient =  new Patient() {Type = Type, Identifier = Identifier, Name = Name, Species = Species, Race = Race, Sex = Sex , Age = Age, Weight = Weight, Color = Color, Details = Details , DateAdded = DateTime.Now };
 
             if (!Validate(patient))
             {

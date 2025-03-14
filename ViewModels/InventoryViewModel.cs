@@ -24,7 +24,7 @@ namespace VetManagement.ViewModels
 {
     public class InventoryViewModel : ViewModelBase
     {
-        private string _pageTitle = "Inventar";
+        private string _pageTitle = "📦 Inventar";
 
         private new readonly NavigationStore _navigationStore;
 
@@ -44,19 +44,10 @@ namespace VetManagement.ViewModels
 
            new ObservableCollection<object> { new { Name = "Medicament", Value = "medicament" }, new { Name = "Vaccin", Value = "vaccin" } };
 
-        private ListCollectionView _filteredMeds;
+        public PaginationService PaginationService { get; set; }
 
-        public ListCollectionView FilteredMeds
-        {
-            get => _filteredMeds;
-            set
-            {
-                _filteredMeds = value;
-                OnPropertyChanged(nameof(FilteredMeds));
-                FilteredMeds.Refresh();
+        private readonly FilterService _filterService;
 
-            }
-        }
 
         private bool _isLoading = true;
         public bool isLoading
@@ -77,32 +68,38 @@ namespace VetManagement.ViewModels
             set
             {
                 _typeFilter = value;
-                OnPropertyChanged(nameof(TypeFilter));
-                FilteredMeds.Refresh();
+                Meds.Clear();
+                isLoading = true;
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(TypeFilter));
             }
         }  
         
-        private string _nameFilter;
+        private string _nameFilter = "";
         public string NameFilter
         {
             get => _nameFilter;
             set
             {
                 _nameFilter = value;
-                OnPropertyChanged(nameof(NameFilter));
-                FilteredMeds.Refresh();
+                Meds.Clear();
+                isLoading = true;
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(NameFilter));
             }
         }
 
-        private DateTime? _valabilityFilter;
+        private DateTime? _valabilityFilter = null;
         public DateTime? ValabilityFilter
         {
             get => _valabilityFilter;
             set
             {
                 _valabilityFilter = value;
-                OnPropertyChanged(nameof(ValabilityFilter));
-                FilteredMeds.Refresh();
+                Meds.Clear();
+                isLoading = true;
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(ValabilityFilter));
             }
         }
 
@@ -113,29 +110,36 @@ namespace VetManagement.ViewModels
             set
             {
                 _dateAddedFilter = value;
-                OnPropertyChanged(nameof(DateAddedFilter));
-                FilteredMeds.Refresh();
+                Meds.Clear();
+                isLoading = true;
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(DateAddedFilter));
             }
         }
 
-        private string _lotFilter;
+        private string _lotFilter = "";
         public string LotFilter
         {
             get => _lotFilter;
             set
             {
                 _lotFilter = value;
-                OnPropertyChanged(nameof(LotFilter));
-                FilteredMeds.Refresh();
+                Meds.Clear();
+                isLoading = true;
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(_lotFilter));
             }
         }
 
         public InventoryViewModel(NavigationStore navigationStore) 
-        { 
+        {
             _navigationStore = navigationStore;
-
             _navigationStore.PageTitle = _pageTitle;
-         
+
+            _filterService = new FilterService(() => LoadMeds());
+
+            PaginationService = new PaginationService(() =>  LoadMeds(), () =>  LoadMeds(),20);
+
             DeleteMedCommand = new RelayCommand(DeleteMed);
             EditItemCommand = new RelayCommand(UpdateMed);
             NavigateViewMedCommand = new NavigateCommand<MedViewModel>
@@ -145,37 +149,6 @@ namespace VetManagement.ViewModels
                 (new WindowService<CreateMedViewModel>(_navigationStore, (id) => new CreateMedViewModel(_navigationStore, UpdateMedList)), () => new CreateMedWindow());
         }
 
-        private bool FilterMeds(object obj)
-        {
-            if (String.IsNullOrEmpty(NameFilter) && String.IsNullOrEmpty(LotFilter) 
-                && DateAddedFilter == default(DateTime) && ValabilityFilter == default(DateTime))
-            {
-                return true;
-            }
-            else
-            {
-
-
-                var med = obj as MedWrapper;
-
-                bool nameMatch = string.IsNullOrEmpty(NameFilter)
-                    || (med?.Name != null && med.Name.IndexOf(NameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-
-                bool lotMatch = string.IsNullOrEmpty(LotFilter)
-                    || (med?.LotID != null && med.LotID.IndexOf(LotFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-
-                bool dateAddedMatch = DateAddedFilter == null ||
-                    DateTimeOffset.FromUnixTimeSeconds(med?.DateAdded ?? 0).UtcDateTime.Date == DateAddedFilter;
-
-                bool valabilityMatch = ValabilityFilter == null ||
-                    DateTimeOffset.FromUnixTimeSeconds(med?.Valability ?? 0).UtcDateTime.Date == ValabilityFilter;
-
-                bool typeMatch = TypeFilter == null || (med?.Type != null && TypeFilter == med.Type);
-
-                return nameMatch && lotMatch && dateAddedMatch && valabilityMatch && typeMatch;
-
-            }
-        }
 
         private void UpdateMedList(Med med)
         {
@@ -192,9 +165,6 @@ namespace VetManagement.ViewModels
                 Meds.Add(itm);
             }
 
-            _filteredMeds = new ListCollectionView(Meds);
-
-            FilteredMeds.Refresh();
         }
 
         private async void UpdateMed(object parameter)
@@ -251,11 +221,24 @@ namespace VetManagement.ViewModels
 
         public async Task LoadMeds() 
         {
+
+            Meds.Clear();
             try
             {
-                var meds = await new BaseRepository<Med>().GetAll();
 
-                var sorted = meds.OrderByDescending(m => m.DateAdded);
+                Dictionary<string, object> filters = new Dictionary<string, object>();
+
+                filters["typeFilter"] = TypeFilter;
+                filters["nameFilter"] = NameFilter;
+                filters["lotFilter"] = LotFilter;
+                filters["valabilityFilter"] = ValabilityFilter;
+                filters["dateAddedFilter"] = DateAddedFilter;
+
+                var (meds,totalRecords) = await new MedRepository().GetAllFiltered(PaginationService.PageNumber, PaginationService.PerPage, filters);
+
+                PaginationService.TotalFound = totalRecords;
+
+                var sorted = meds.OrderByDescending(m => m.Id).ToList();
 
                 Meds.Clear();
 
@@ -263,22 +246,18 @@ namespace VetManagement.ViewModels
                 {
                     Meds.Add( new MedWrapper(med));
                 }
-
-                FilteredMeds = new ListCollectionView(Meds);
-
-                _filteredMeds.Filter = FilterMeds;
-
               
             }
            
             catch (Exception e)
             {
-                MessageBox.Show("Lista de medicamente nu a putut fi redată!\n" + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Lista de medicamente nu a putut fi redată!\n" + e.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }finally
             {
                 isLoading = false;
             }
-        
+
+
         }
     }
 }

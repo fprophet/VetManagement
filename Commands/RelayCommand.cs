@@ -12,8 +12,8 @@ public class RelayCommand : ICommand
         _canExecute = canExecute;
     }
 
-    public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter);
-    public void Execute(object parameter) => _execute(parameter);
+    public bool CanExecute(object parameters) => _canExecute == null || _canExecute(parameters);
+    public void Execute(object parameters) => _execute(parameters);
 
     public event EventHandler CanExecuteChanged
     {

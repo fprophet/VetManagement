@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VetManagement.ViewModels;
 
 namespace VetManagement
 {
@@ -20,6 +21,16 @@ namespace VetManagement
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += MainWindow_Loaded;
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if( DataContext is MainViewModel mainViewModel)
+            {
+                 mainViewModel.ListenForNotifications();
+                await mainViewModel.LoadNotifications();
+            }
         }
     }
 }

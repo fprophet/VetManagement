@@ -95,8 +95,8 @@ namespace VetManagement.ViewModels
         private Treatment? _treatment;
 
         private Action<RegistryRecord> OnCreateRegistryRecord;
-
         public ICommand CreateRegistryRecordCommand { get; }
+        public ICommand NavigateSignatureCanvasCommand { get; }
 
         public CreateTreatmentViewModel CreateTreatmentViewModel { get; } 
 
@@ -108,6 +108,10 @@ namespace VetManagement.ViewModels
             CreateTreatmentViewModel = new CreateTreatmentViewModel(_navigationStore,OnTreatmentCreated, null, "livestock");
 
             CreateRegistryRecordCommand = new RelayCommand(CreateRegistryRecord);
+
+            NavigateSignatureCanvasCommand = new NavigateWindowCommand<SignatureCanvasViewModel>
+                (new WindowService<SignatureCanvasViewModel>(_navigationStore, (id) => new SignatureCanvasViewModel()), () => new SignatureCanvasWindow());
+
 
         }
 
@@ -148,9 +152,9 @@ namespace VetManagement.ViewModels
                 RegistryRecord registryRecord = new RegistryRecord()
                 {
                     //TreatmentId = _treatment.Id,
-                    Date = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    Date = DateTime.Now,
                     //Symptoms = Symptoms,
-                    RecipeDate = (int)((DateTimeOffset)RecipeDate).ToUnixTimeSeconds(),
+                    //RecipeDate = (int)((DateTimeOffset)RecipeDate).ToUnixTimeSeconds(),
                     MedName = MedName,
                     Outcome = Outcome,
                     TreatmentDuration = TreatmentDuration,
@@ -180,8 +184,32 @@ namespace VetManagement.ViewModels
 
                 registryRecord = await new BaseRepository<RegistryRecord>().Add(registryRecord);
 
+
+                if( registryRecord == null)
+                {
+                    return;
+
+                }
+
+                Recipe recipe = await new BaseRepository<Recipe>().Add(new Recipe()
+                {
+                    RegistryNumber = registryRecord.Id,
+                    MedName = MedName,
+                    //TreatmentId = _treatment.Id,
+                    Signed = false,
+                    OwnerSignature = "",
+                    Date = DateTime.Now
+                });
+
+
+                registryRecord.RecipeNumber = recipe.Id;
+                await new BaseRepository<RegistryRecord>().Update(registryRecord);
+
+
                 OnCreateRegistryRecord?.Invoke(registryRecord);
                 var res = Boxes.InfoBox("Tratamentul a fost adăugat în registru cu success!");
+
+                NotificationService.SendNotification("new-recipe","A fost creată rețeta cu numărul:" + recipe.Id, "", "user");
 
                 if (res == MessageBoxResult.OK)
                 {

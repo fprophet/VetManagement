@@ -176,7 +176,14 @@ namespace VetManagement.ViewModels
 
         private void InsertNewMed(Object sender)
         {
-            MedWrappers.Add(new MedWrapper(MedList[0]));
+            int i = 0;
+
+            while (MedWrappers.FirstOrDefault(m => m.Med == MedList[i]) != null)
+            {
+                i++;
+            }
+
+            MedWrappers.Add(new MedWrapper(MedList[i]));
         }
 
         public async Task LoadOwner()
@@ -330,13 +337,10 @@ namespace VetManagement.ViewModels
 
             try
             {
-                BaseRepository<TreatmentMed> tretmentMedRepository = new BaseRepository<TreatmentMed>();
-                BaseRepository<Treatment> treatmentRepository = new BaseRepository<Treatment>();
-                BaseRepository<Med> medRepository = new BaseRepository<Med>();
 
-                var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = Owner.Id, Details = Details, DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
+                var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = Owner.Id, Details = Details, DateAdded = DateTime.Now };
 
-                treatment = await treatmentRepository.Add(treatment);
+                treatment = await new BaseRepository<Treatment>().Add(treatment);
                 if (treatment != null)
                 {
                     foreach (var medWrapper in MedWrappers)
@@ -346,21 +350,23 @@ namespace VetManagement.ViewModels
                         //update the medWrapper.Med directly to avoid triggering propchange event
                         medWrapper.Med.Pieces = (int)Math.Ceiling(medWrapper.TotalAmount / medWrapper.PerPiece);
 
-                        await medRepository.Update(medWrapper.Med);
+                        await new BaseRepository<Med>().Update(medWrapper.Med);
 
-                        var tm = await tretmentMedRepository.Add(new TreatmentMed()
+                        TreatmentMed treatmentMed = new TreatmentMed()
                         {
                             MedId = medWrapper.Id,
                             TreatmentId = treatment.Id,
                             Quantity = medWrapper.TreatmentQuantity,
                             Pieces = 1,//decimal.Round(medWrapper.TreatmentQuantity / medWrapper.PerPiece,2),
                             Administration = "",
-                        });
-                        Trace.WriteLine(medWrapper.TotalAmount);
+                        };
+
+                        var tm = await new BaseRepository<TreatmentMed>().Add(treatmentMed);
 
                         //for display purpose
                         tm.Med = medWrapper.Med;
                         treatment.TreatmentMeds.Add(tm);
+                        treatmentMed = null;
                     }
                     treatment.Patient = Patient;
                     treatment.Owner = Owner;

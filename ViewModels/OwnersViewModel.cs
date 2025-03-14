@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,7 +22,7 @@ namespace VetManagement.ViewModels
     public class OwnersViewModel : ViewModelBase
     {
 
-        private string _pageTitle = "Pagină proprietari";
+        private string _pageTitle = "👤 Pagină proprietari";
 
         public ICommand NavigateCreateOwnerWindowCommand { get; set; }
 
@@ -33,6 +34,9 @@ namespace VetManagement.ViewModels
 
         public ICommand UpdateOwnerCommand { get; set; }
 
+        public PaginationService PaginationService { get; set; }
+
+        private readonly FilterService _filterService;
 
         private bool _isLoading = true;
         public bool isLoading
@@ -48,47 +52,46 @@ namespace VetManagement.ViewModels
 
         public ObservableCollection<Owner> Owners { get; set; } = new ObservableCollection<Owner>();
 
-        private ListCollectionView _filteredOwners;
 
-        public ICollectionView FilteredOwners
-        {
-            get => _filteredOwners;
-
-        }
-
-        private string _nameFilter;
+        private string _nameFilter = "";
         public string NameFilter
         {
             get => _nameFilter;
             set
             {
                 _nameFilter = value;
-                OnPropertyChanged(nameof(NameFilter));
-                FilteredOwners.Refresh();
+                isLoading = true;
+                Owners.Clear();
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(NameFilter));
             }
         }
 
-        private string _patientNameFilter;
+        private string _patientNameFilter = "";
         public string PatientNameFilter
         {
             get => _patientNameFilter;
             set
             {
                 _patientNameFilter = value;
-                OnPropertyChanged(nameof(PatientNameFilter));
-                FilteredOwners.Refresh();
+                isLoading = true;
+                Owners.Clear();
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(PatientNameFilter));
             }
         }
 
-        private string _detailsFilter;
+        private string _detailsFilter = "";
         public string DetailsFilter
         {
             get => _detailsFilter;
             set
             {
                 _detailsFilter = value;
-                OnPropertyChanged(nameof(DetailsFilter));
-                FilteredOwners.Refresh();
+                isLoading = true;
+                Owners.Clear();
+                PaginationService.PageNumber = 1;
+                _filterService.DebouncePropertyChanged(nameof(DetailsFilter));
             }
         }
 
@@ -97,8 +100,10 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.PageTitle = _pageTitle;
 
-            _filteredOwners = new ListCollectionView(Owners);
-            _filteredOwners.Filter = FilterOwners;
+
+            _filterService = new FilterService(() => LoadOwners());
+
+            PaginationService = new PaginationService(() => LoadOwners(), () => LoadOwners(),20);
 
             NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerAndPatientViewModel>
                 (new WindowService<CreateOwnerAndPatientViewModel>(_navigationStore, (id) => new CreateOwnerAndPatientViewModel(_navigationStore, UpdateOwners)), () => new CreateOwnerAndPatientWindow());
@@ -116,9 +121,19 @@ namespace VetManagement.ViewModels
 
         public async Task LoadOwners()
         {
+            Owners.Clear();
             try
             {
-                var owners = await new OwnerRepository().GetFullInfo();
+                Dictionary<string, string> filters = new Dictionary<string, string>();
+
+                filters["nameFilter"] = NameFilter;
+                filters["patientNameFilter"] = PatientNameFilter;
+                filters["detailsFIlter"] = DetailsFilter;
+
+                var (owners, totalRecords) = await new OwnerRepository().GetFullInfoFiltered(PaginationService.PageNumber, PaginationService.PerPage, filters);
+                //var owners = await new OwnerRepository().GetFullInfo();
+
+                PaginationService.TotalFound = totalRecords;
 
                 var sortedOwners = owners.OrderByDescending(o => o.DateAdded);
 
@@ -149,30 +164,6 @@ namespace VetManagement.ViewModels
             foreach( var sorted in sortedOwners)
             {
                 Owners.Add(sorted);
-            }
-        }
-
-        private bool FilterOwners(object obj)
-        {
-            if (String.IsNullOrEmpty(NameFilter) && String.IsNullOrEmpty(PatientNameFilter) && String.IsNullOrEmpty(DetailsFilter))
-            {
-                return true;
-            }
-            else
-            {
-                var owner = obj as Owner;
-
-                bool nameMatch = string.IsNullOrEmpty(NameFilter) 
-                    || (owner?.Name != null && owner.Name.IndexOf(NameFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-
-                bool patientNameMatch = string.IsNullOrEmpty(PatientNameFilter) || owner?.Patients
-                    .Find(p => p.Name != null && p.Name.IndexOf(PatientNameFilter, StringComparison.OrdinalIgnoreCase) >= 0) != null;
-
-                bool detailsMatch = string.IsNullOrEmpty(DetailsFilter)
-                     || (owner?.Details != null && owner.Details.IndexOf(DetailsFilter, StringComparison.OrdinalIgnoreCase) >= 0);
-
-                return nameMatch && patientNameMatch && detailsMatch;
-                   
             }
         }
 

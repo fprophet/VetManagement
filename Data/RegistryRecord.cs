@@ -13,16 +13,9 @@ namespace VetManagement.Data
         public int TreatmentId { get; set; }
 
         [Required]
-        public long Date { get; set; }
+        public DateTime Date { get; set; }
 
-        //[Required(ErrorMessage = "Câmpul 'Simptome' este obligatoriu!")]
-        //public string Symptoms { get; set; }
-
-        [Required]
-        public int RecipeNumber { get; set; }
-
-        [Required]
-        public int RecipeDate { get; set; }
+        public int? RecipeNumber { get; set; }
 
         [Required(ErrorMessage = "Câmpul 'Durata Tratamentului' este obligatoriu!")]
         public string TreatmentDuration { get; set; }
@@ -37,9 +30,11 @@ namespace VetManagement.Data
 
         public Treatment Treatment { get; set; }
 
-        public DateTime DateFormated => DateTimeOffset.FromUnixTimeSeconds(Date).UtcDateTime;
+        public Recipe Recipe { get; set; }
 
-        public string RecipeDateFormated => DateTimeOffset.FromUnixTimeSeconds(Date).UtcDateTime.ToString("yyy-MM-dd");
+        //public DateTime DateFormated => DateTimeOffset.FromUnixTimeSeconds(Date).UtcDateTime;
+
+        //public string RecipeDateFormated => DateTimeOffset.FromUnixTimeSeconds(Date).UtcDateTime.ToString("yyy-MM-dd");
 
 
 

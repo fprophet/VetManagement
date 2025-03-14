@@ -55,9 +55,9 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private long _invoiceDate = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+        private DateTime _invoiceDate = DateTime.Now;
 
-        public long InvoiceDate
+        public DateTime InvoiceDate
         {
             get => _invoiceDate;
             set
@@ -106,7 +106,7 @@ namespace VetManagement.ViewModels
             AddMedsCommand = new RelayCommand(AddMeds);
             InsertNewMedCommand = new RelayCommand(InsertNewMed);
 
-            Meds.Add(new MedWrapper(new Med { Type = "medicament", PieceType = "flacoane", Valability = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds()} ));
+            Meds.Add(new MedWrapper(new Med { Type = "medicament", PieceType = "flacoane", Valability = DateTime.Now }));
 
             Meds.CollectionChanged += AddEmptyMedToList;
 
@@ -114,7 +114,7 @@ namespace VetManagement.ViewModels
 
         private void InsertNewMed(object paramete)
         {
-            Meds.Add(new MedWrapper(new Med { Type = "medicament", PieceType = "flacoane", Valability = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds() }));
+            Meds.Add(new MedWrapper(new Med { Type = "medicament", PieceType = "flacoane", Valability = DateTime.Now }));
         }
 
         private void AddEmptyMedToList(object parameter, NotifyCollectionChangedEventArgs e)
@@ -124,7 +124,7 @@ namespace VetManagement.ViewModels
             {
                 var lastMed = Meds.Last();
 
-                lastMed = new MedWrapper(new Med { Type = "medicament", PieceType = "flacoane", Valability = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds() });
+                lastMed = new MedWrapper(new Med { Type = "medicament", PieceType = "flacoane", Valability = DateTime.Now });
             }
         }
 
@@ -217,7 +217,7 @@ namespace VetManagement.ViewModels
 
                 foreach (MedWrapper medWrapper in Meds)
                 {
-                    medWrapper.Med.DateAdded = (long)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+                    medWrapper.Med.DateAdded = DateTime.Now;
                     medWrapper.Med.InvoiceNumber = InvoiceNumber; 
                     await medRepository.Add(medWrapper.Med);
                     _onMedCreated?.Invoke(medWrapper.Med);

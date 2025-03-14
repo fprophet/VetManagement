@@ -9,7 +9,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Emoji.Wpf" Version="0.3.4" />
+		<PackageReference Include="EPPlus" Version="7.6.1" />
 		<PackageReference Include="Handlebars.Net" Version="2.1.6" />
+		<PackageReference Include="MahApps.Metro.IconPacks" Version="5.1.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,6 +24,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 		<PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.2" />
+		<PackageReference Include="NPOI" Version="2.7.2" />
 	</ItemGroup>
 
 	<ItemGroup>

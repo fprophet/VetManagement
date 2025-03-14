@@ -143,7 +143,14 @@ namespace VetManagement.ViewModels
 
         private void InsertNewMed(Object sender)
         {
-            MedWrappers.Add(new MedWrapper(MedList[0]));
+            int i = 0;
+
+            while (MedWrappers.FirstOrDefault(m => m.Med == MedList[i]) != null)
+            {
+                i++;
+            }
+
+            MedWrappers.Add(new MedWrapper(MedList[i]));
         }
 
         public async Task LoadOwner()
@@ -269,7 +276,7 @@ namespace VetManagement.ViewModels
 
                 }
               
-                var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = _passedId, Details = Details, DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
+                var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = _passedId, Details = Details, DateAdded = DateTime.Now };
 
                 treatment = await treatmentRepository.Add(treatment);
                 if (treatment != null)

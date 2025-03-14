@@ -1,5 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:services="clr-namespace:VetManagement.Services">
+
+    <services:AddPixelConverter x:Key="AddPixelConverter"/>
     
     <Style TargetType="DataGrid" x:Key="StylishDataGrid">
         <!-- General DataGrid Appearance -->
@@ -20,9 +23,17 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="TextBox.TextWrapping" Value="Wrap"/>
+        <Setter Property="MaxWidth">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource AddPixelConverter}">
+                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Window}" />
+                    <Binding Path="Width" ElementName="SideMenu"/>
+                    <Binding Path="Margin" ElementName="MainScroller"/>
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
 
-       
-            <!-- Row Styling -->
+        <!-- Row Styling -->
         <Setter Property="RowStyle">
             <Setter.Value>
                 <Style TargetType="DataGridRow">
@@ -88,6 +99,16 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="TextBox.TextWrapping" Value="Wrap"/>
+        <Setter Property="MaxWidth">
+            <Setter.Value>
+                <MultiBinding Converter="{StaticResource AddPixelConverter}">
+                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Window}" />
+                    <Binding Path="Width" ElementName="SideMenu"/>
+                    <Binding Path="Margin" ElementName="MainScroller"/>
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
+        <!--<Setter Property="MaxWidth" Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window}}"/>-->
         <!-- Row Styling -->
         <Setter Property="RowStyle">
             <Setter.Value>
@@ -171,7 +192,7 @@
         <Setter Property="Padding" Value="10,5"/>
         <Setter Property="BorderBrush" Value="#FF388E3C"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Margin" Value="0,10"/>
+        <Setter Property="Margin" Value="0,0,0,10"/>
         <Setter Property="Width" Value="200"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Cursor" Value="Hand"/>
@@ -336,6 +357,68 @@
                 </Style>
             </Setter.Value>
         </Setter>
+    </Style>
+
+
+    <Style x:Key="PaginationButtonStyle" TargetType="Button">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="Gray"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style x:Key="CardStyle" TargetType="Border">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Margin" Value="10"/>
+        <Setter Property="Padding" Value="15"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="BorderBrush" Value="#DDDDDD"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- Header Style -->
+    <Style x:Key="HeaderStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="17"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="#333"/>
+    </Style>
+
+    <!-- Label Style -->
+    <Style x:Key="LabelStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="#007ACC"/>
+        <Setter Property="Margin" Value="5,10,0,2"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <!-- Value Style -->
+    <Style x:Key="ValueStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="#444"/>
+        <Setter Property="Margin" Value="5,0,0,10"/>
+    </Style>
+
+    <!-- Button Style -->
+    <Style x:Key="ButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="#007ACC"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Padding" Value="8,5"/>
+        <Setter Property="Margin" Value="10,20,0,0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Width" Value="130"/>
     </Style>
 
 </ResourceDictionary>

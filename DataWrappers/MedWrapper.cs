@@ -171,7 +171,7 @@ namespace VetManagement.DataWrappers
             }
         }
 
-        public long Valability
+        public DateTime Valability
         {
             get => _med.Valability;
             set
@@ -191,7 +191,7 @@ namespace VetManagement.DataWrappers
             }
         }
 
-        public long DateAdded
+        public DateTime DateAdded
         {
             get => _med.DateAdded;
             set
@@ -201,7 +201,7 @@ namespace VetManagement.DataWrappers
             }
         }
 
-        public long DateUpdated
+        public DateTime DateUpdated
         {
             get => _med.DateUpdated;
             set
@@ -269,11 +269,6 @@ namespace VetManagement.DataWrappers
         {
             _med = med;
         }
-
-        public DateTime DateAddedFormated => DateTimeOffset.FromUnixTimeSeconds(DateAdded).UtcDateTime;
-
-        public string ValabilityFormated =>
-            TimeZoneInfo.ConvertTimeFromUtc(DateTimeOffset.FromUnixTimeSeconds(Valability).UtcDateTime, TimeZoneInfo.Local).Date.ToString("yyyy-MM-dd");
 
 
         public event PropertyChangedEventHandler PropertyChanged;

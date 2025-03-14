@@ -17,17 +17,13 @@ namespace VetManagement.Data
 
         public Owner Owner{ get; set; }
 
-        public int DateAdded { get; set; }
+        public DateTime DateAdded { get; set; }
 
-        public int DateUpdated { get; set; }
-
-        [Required, AllowedValues("pet", "livestock")]
-        public string PatientType { get; set; } = "pet";
+        public DateTime DateUpdated { get; set; }
 
         public string? Details { get; set; }
 
         public List<TreatmentMed> TreatmentMeds{ get; set; } = new List<TreatmentMed>();
 
-        public DateTime DateAddedFormated => DateTimeOffset.FromUnixTimeSeconds(DateAdded).UtcDateTime;
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VetManagement.Data
 {
-    public class TreatmentMed : BaseEntity
+    public class TreatmentMed 
     {
         public int MedId { get; set; }
         

@@ -26,18 +26,13 @@ namespace VetManagement.Data
 
         public string? Details { get; set; }
 
-        public int DateAdded { get; set; }
+        public DateTime DateAdded { get; set; }
 
-        public int DateUpdated { get; set; }
+        public DateTime DateUpdated { get; set; }
 
         public List<Patient> Patients { get; set; }
 
         public List<Treatment> Treatments{ get; set; }
-
-        public DateTime DateAddedFormated => DateTimeOffset.FromUnixTimeSeconds(DateAdded).UtcDateTime;
-
-
-
 
 
     }

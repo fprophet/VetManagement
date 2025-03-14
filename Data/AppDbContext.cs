@@ -37,6 +37,11 @@ namespace VetManagement.Data
 
         public DbSet<Invoice> Invoices { get; set; }
 
+        public DbSet<Recipe> Recipes { get; set; }
+
+        public DbSet<Notification> Notifications { get; set; }
+
+        public DbSet<ImportedProduct> ImportedProducts { get; set; }
 
 
         //private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlserver";
@@ -107,6 +112,11 @@ namespace VetManagement.Data
              .HasOne(m => m.Invoice)
              .WithMany(i => i.Meds)
              .HasForeignKey(m => m.InvoiceNumber);
+
+            modelBuilder.Entity<Recipe>()
+            .HasOne(r => r.RegistryRecord)
+            .WithOne(rr => rr.Recipe)
+            .HasForeignKey<RegistryRecord>(rr => rr.RecipeNumber);
 
             modelBuilder.Entity<Treatment>()
                 .Property(t => t.Details)

@@ -19,14 +19,114 @@ namespace VetManagement.Migrations
                 .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            modelBuilder.Entity("VetManagement.Data.ImportedProduct", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Categorie")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Cod")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CodIntern")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CodOnline")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("DataInceput")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DataSfarsit")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Denumire")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DenumireScurta")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool?>("EsteElaborabil")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("EsteVizibilLaVanzare")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("Fractionabil")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("InStocFurnizor")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Link")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PenUltimulFurnizor")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal?>("PenUltimulPretDeIntrare")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PretAmanunt")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("PretEuro")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Producator")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Sursa")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TipImpachetare")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UltimulFurnizor")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal?>("UltimulPretDeIntrare")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool?>("VizibilComandaAndroid")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("VizibilOnline")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<decimal?>("cantMinima")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("codBareProducator")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal?>("fractieIntreg")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("tip")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal?>("tva")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("um")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ImportedProducts");
+                });
+
             modelBuilder.Entity("VetManagement.Data.Invoice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<long>("Date")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("Number")
                         .HasColumnType("int");
@@ -49,11 +149,11 @@ namespace VetManagement.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<long>("DateAdded")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<long>("DateUpdated")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -94,8 +194,8 @@ namespace VetManagement.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<long>("Valability")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("Valability")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("WaitingTime")
                         .IsRequired()
@@ -106,6 +206,46 @@ namespace VetManagement.Migrations
                     b.HasIndex("InvoiceNumber");
 
                     b.ToTable("Meds");
+                });
+
+            modelBuilder.Entity("VetManagement.Data.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<bool>("Read")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("ReadAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("VetManagement.Data.Owner", b =>
@@ -119,11 +259,11 @@ namespace VetManagement.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
-                    b.Property<int>("DateAdded")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<int>("DateUpdated")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Details")
                         .HasColumnType("longtext");
@@ -160,11 +300,11 @@ namespace VetManagement.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
-                    b.Property<int>("DateAdded")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<int>("DateUpdated")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Details")
                         .HasColumnType("mediumtext");
@@ -207,14 +347,42 @@ namespace VetManagement.Migrations
                     b.ToTable("Patients");
                 });
 
+            modelBuilder.Entity("VetManagement.Data.Recipe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("MedName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OwnerSignature")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("RegistryNumber")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Signed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Recipes");
+                });
+
             modelBuilder.Entity("VetManagement.Data.RegistryRecord", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<long>("Date")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("MedName")
                         .IsRequired()
@@ -228,10 +396,7 @@ namespace VetManagement.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("RecipeDate")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RecipeNumber")
+                    b.Property<int?>("RecipeNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("TreatmentDuration")
@@ -242,6 +407,9 @@ namespace VetManagement.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RecipeNumber")
+                        .IsUnique();
 
                     b.HasIndex("TreatmentId");
 
@@ -254,11 +422,11 @@ namespace VetManagement.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("DateAdded")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<int>("DateUpdated")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Details")
                         .HasColumnType("mediumtext");
@@ -268,10 +436,6 @@ namespace VetManagement.Migrations
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
-
-                    b.Property<string>("PatientType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -293,9 +457,6 @@ namespace VetManagement.Migrations
                     b.Property<string>("Administration")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("Pieces")
                         .HasColumnType("decimal(18,2)");
@@ -372,11 +533,17 @@ namespace VetManagement.Migrations
 
             modelBuilder.Entity("VetManagement.Data.RegistryRecord", b =>
                 {
+                    b.HasOne("VetManagement.Data.Recipe", "Recipe")
+                        .WithOne("RegistryRecord")
+                        .HasForeignKey("VetManagement.Data.RegistryRecord", "RecipeNumber");
+
                     b.HasOne("VetManagement.Data.Treatment", "Treatment")
                         .WithMany()
                         .HasForeignKey("TreatmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Recipe");
 
                     b.Navigation("Treatment");
                 });
@@ -439,6 +606,12 @@ namespace VetManagement.Migrations
             modelBuilder.Entity("VetManagement.Data.Patient", b =>
                 {
                     b.Navigation("Treatments");
+                });
+
+            modelBuilder.Entity("VetManagement.Data.Recipe", b =>
+                {
+                    b.Navigation("RegistryRecord")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VetManagement.Data.Treatment", b =>

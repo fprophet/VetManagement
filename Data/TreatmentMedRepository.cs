@@ -19,8 +19,8 @@ namespace VetManagement.Data
                 .Include(tm => tm.Treatment.Patient)
                 .Include(tm => tm.Treatment.Owner)
                 .ToListAsync();
-        }        
+        }
 
-      
+
     }
 }

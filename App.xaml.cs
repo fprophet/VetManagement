@@ -16,6 +16,7 @@ namespace vet_management
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            //await NotificationService.StartListening();
 
             base.OnStartup(e);
 
@@ -27,7 +28,7 @@ namespace vet_management
 
             navigationStore.CurrentViewModel = new HomeViewModel(navigationStore);
 
-            navigationStore.PageTitle = "Acasă";
+            navigationStore.PageTitle = "🏠 Acasă" ;
 
             if (settingsFileFreshCreated)
             {
@@ -65,9 +66,8 @@ namespace vet_management
                 }
             }
 
-
-        
             MainWindow.Show();
+
 
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
@@ -20,137 +21,170 @@ namespace VetManagement.ViewModels
 
         public ObservableCollection<RegistryRecord> RegistryRecords { get; } = new ObservableCollection<RegistryRecord>();
 
-        private ListCollectionView _filteredRegistryRecords;
 
-        public ListCollectionView FilteredRegistryRecords
-        {
-            get => _filteredRegistryRecords;
-            set
-            {
-                _filteredRegistryRecords = value;
-                OnPropertyChanged(nameof(FilteredRegistryRecords));
-                FilteredRegistryRecords.Refresh();
-            }
-        }
-
-        private string _ownerNameFilter;
+        private string _ownerNameFilter = "";
         public string OwnerNameFilter
         {
             get => _ownerNameFilter;
             set
             {
                 _ownerNameFilter = value;
-                OnPropertyChanged(nameof(OwnerNameFilter));
-                FilteredRegistryRecords.Refresh();
+                PaginationService.PageNumber = 1;
+                RegistryRecords.Clear();
+                isLoading = true;
+                _filterService.DebouncePropertyChanged(nameof(OwnerNameFilter));
             }
         }
 
-        private string _patientFilter;
+        private string _patientFilter = "";
         public string PatientFilter
         {
             get => _patientFilter;
             set
             {
                 _patientFilter = value;
-                OnPropertyChanged(nameof(PatientFilter));
-                FilteredRegistryRecords.Refresh();
+                isLoading = true;
+                PaginationService.PageNumber = 1;
+                RegistryRecords.Clear();
+                _filterService.DebouncePropertyChanged(nameof(PatientFilter));
             }
         }
 
-        private string _medNameFilter;
+        private string _medNameFilter = "";
         public string MedNameFilter
         {
             get => _medNameFilter;
             set
             {
                 _medNameFilter = value;
-                OnPropertyChanged(nameof(MedNameFilter));
-                FilteredRegistryRecords.Refresh();
+                isLoading = true;
+                PaginationService.PageNumber = 1;
+                RegistryRecords.Clear();
+                _filterService.DebouncePropertyChanged(nameof(MedNameFilter));
             }
         }
 
-        private string _identifierFilter;
+        private string _identifierFilter = "";
         public string IdentifierFilter
         {
             get => _identifierFilter;
             set
             {
                 _identifierFilter = value;
-                OnPropertyChanged(nameof(IdentifierFilter));
-                FilteredRegistryRecords.Refresh();
+                isLoading = true;
+                PaginationService.PageNumber = 1;
+                RegistryRecords.Clear();
+                _filterService.DebouncePropertyChanged(nameof(IdentifierFilter));
             }
         }
 
+        private bool _isLoading = true;
+        public bool isLoading
+        {
+            get => _isLoading;
+
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(isLoading));
+            }
+        }
+
+        public PaginationService PaginationService { get; set; }
+
+        private readonly FilterService _filterService;
 
         public ICommand NavigateCreateRegisterRecordWindowCommand { get; set; }
+
+        public ICommand RepeatTreatmentCommand { get; set; }
+        
         public RegistryViewModel(NavigationStore navigationStore) {
             _navigationStore = navigationStore;
-            _navigationStore.PageTitle = "Registru animale mari";
+            _navigationStore.PageTitle = "📖 Registru animale mari";
 
-            FilteredRegistryRecords = new ListCollectionView(RegistryRecords);
-            FilteredRegistryRecords.Filter = FilterRegistryRecords;
+            _filterService = new FilterService(() => LoadRegistryRecords());
 
+            RepeatTreatmentCommand = new RelayCommand(RepeatTreatment);
+
+            PaginationService = new PaginationService(() => LoadRegistryRecords(), () => LoadRegistryRecords());
 
             NavigateCreateRegisterRecordWindowCommand = new NavigateWindowCommand<CreateRegistryRecordViewModel>
                 (new WindowService<CreateRegistryRecordViewModel>
                     (_navigationStore, (id) => new CreateRegistryRecordViewModel(_navigationStore, UpdateRegistryRecords)), () => new CreateRegistryRecordWindow());
         }
-        
 
-        private bool FilterRegistryRecords(object obj)
+        private async void RepeatTreatment(object parameter)
         {
-            if (String.IsNullOrEmpty(OwnerNameFilter) && String.IsNullOrEmpty(PatientFilter) 
-                && String.IsNullOrEmpty(MedNameFilter) && String.IsNullOrEmpty(IdentifierFilter))
+
+
+            if (parameter is not int)
             {
-                return true;
+                Boxes.InfoBox("Tratamentul nu a putut fi repetat!");
+                return;
             }
-            else
+            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa repetați tratementul cu numărul: " + parameter + "?");
+
+            if( result == System.Windows.MessageBoxResult.No )
             {
-                var registryRecord = obj as RegistryRecord;
+                return;
+            }
 
-                bool ownerNameMatch = string.IsNullOrEmpty(OwnerNameFilter)
-                    || (registryRecord?.Treatment?.Owner?.Name != null 
-                            && (registryRecord.Treatment?.Owner?.Name.IndexOf(OwnerNameFilter, StringComparison.OrdinalIgnoreCase) == 0));
+            RegistryRecord registryRecord = RegistryRecords.FirstOrDefault(rr => rr.Id == (int)parameter);
 
-                bool patientMatch = string.IsNullOrEmpty(PatientFilter)
-                    || (registryRecord?.Treatment.Patient.Species != null
-                            && registryRecord.Treatment.Patient.Species.IndexOf(PatientFilter, StringComparison.OrdinalIgnoreCase) == 0);
+            try 
+            { 
+                RegistryRecord newRegistryRecord = await DuplicateObjectService.DuplicateRegistryRecord(registryRecord);
+                UpdateRegistryRecords(newRegistryRecord);
+                NotificationService.SendNotification("new-recipe", "A fost creată rețeta cu numărul:" + registryRecord.RecipeNumber, "", "user");
 
-                bool medNameMatch = string.IsNullOrEmpty(MedNameFilter)
-                    || (registryRecord?.Treatment?.TreatmentMeds != null &&
-                        registryRecord.Treatment?.TreatmentMeds.Find(tm => tm.Med.Name.IndexOf(MedNameFilter, StringComparison.OrdinalIgnoreCase) == 0) != null);
-
-                bool identifierMatch = string.IsNullOrEmpty(IdentifierFilter)
-                   || (registryRecord?.Treatment.Patient.Identifier != null
-                           && registryRecord?.Treatment.Patient.Identifier.ToString().IndexOf(IdentifierFilter, StringComparison.OrdinalIgnoreCase) == 0);
-               
-                return ownerNameMatch && patientMatch && medNameMatch && identifierMatch;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("Error", e.ToString());
             }
         }
 
+
         private void UpdateRegistryRecords(RegistryRecord registryRecord)
         {
+
+            if(registryRecord == null)
+            {
+                return;
+            }
+
             RegistryRecords.Add(registryRecord);
           
-            var sorted = RegistryRecords.OrderByDescending(rr => rr.Date);
+            var sorted = RegistryRecords.OrderByDescending(rr => rr.Id).ToList();
 
             RegistryRecords.Clear();
 
-            foreach( var rr in sorted)
+
+            foreach ( RegistryRecord rr in sorted )
             {
                 RegistryRecords.Add(rr);
             }
-            FilteredRegistryRecords.Refresh();
 
         }
 
         public async Task LoadRegistryRecords()
         {
+            RegistryRecords.Clear();
             try
             {
                 RegistryRecordRepository registryRecordRepository = new RegistryRecordRepository();
 
-                var registryRecords = await registryRecordRepository.GetRegistryRecords();
+                Dictionary<string, string> filters = new Dictionary<string, string>();
+
+                filters["ownerNameFilter"] = OwnerNameFilter;
+                filters["patientSpeciesFilter"] = PatientFilter;
+                filters["medNameFilter"] = MedNameFilter;
+                filters["identifierFilter"] = IdentifierFilter;
+
+                //var registryRecords = await registryRecordRepository.GetRegistryRecords();
+                var (registryRecords,totalRecords) = await registryRecordRepository.GetRegistryRecordsFiltered(PaginationService.PageNumber, PaginationService.PerPage, filters);
+
+                PaginationService.TotalFound = totalRecords;
 
                 var sorted = registryRecords.OrderByDescending(r => r.Date);
 
@@ -163,6 +197,11 @@ namespace VetManagement.ViewModels
             catch(Exception e)
             {
                 Boxes.ErrorBox("Tratamentele nu au fost găsite!\n" + e.Message);
+                Logger.LogError("Error", e.ToString());
+            }
+            finally
+            {
+                isLoading = false;
             }
 
         }

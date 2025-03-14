@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace VetManagement.Data
 {
-    public class BaseRepository<T> : IRepository<T> where T : BaseEntity
+    public class BaseRepository<T> : IRepository<T> where T : class
     {
         protected readonly AppDbContext _context = new AppDbContext();
 
@@ -18,11 +18,22 @@ namespace VetManagement.Data
 
         public async Task<T> GetById(int id)
         {
-            return await _context.GetDbSet<T>().FirstOrDefaultAsync(itm => itm.Id == id);
+            var property = typeof(T).GetProperty("Id");
+            if (property == null)
+            {
+                return null;
+            }
+
+            return await _context.GetDbSet<T>().FirstOrDefaultAsync(itm => EF.Property<int>(itm, "Id") == id);
         }
 
         public async Task<T> Add(T model)
         {
+
+  
+
+  
+
             _context.GetDbSet<T>().Add(model);
             await _context.SaveChangesAsync();
 
@@ -45,5 +56,21 @@ namespace VetManagement.Data
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<T?> LastRecord()
+        {
+            var property = typeof(T).GetProperty("Id");
+            if (property == null)
+            {
+                return null;
+            }
+
+
+            return await _context.GetDbSet<T>()
+            .OrderByDescending(x => EF.Property<int>(x, "Id")) 
+            .FirstOrDefaultAsync();
+        }
+
+      
     }
 }

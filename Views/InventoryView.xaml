@@ -14,13 +14,12 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
-
-
-        
     </UserControl.Resources>
     
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -66,14 +65,14 @@
 
     
         <StackPanel Grid.Row="1" Margin="0,10,0,0">
-            <DataGrid ItemsSource="{Binding FilteredMeds}"
-                      MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}"
+            <DataGrid ItemsSource="{Binding Meds}"
                       ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
-                      AutoGenerateColumns="False" Style="{StaticResource DataGridExpanded}" BorderThickness="1"  HorizontalAlignment="Stretch">
+                      MaxHeight="700"
+                      Style="{StaticResource DataGridExpanded}" BorderThickness="1"  HorizontalAlignment="Left">
                 
                 <DataGrid.Columns>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAddedFormated, Mode=OneWay, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding ValabilityFormated, Mode=OneWay}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAdded, Mode=OneWay, StringFormat='yyyy-MM-dd'}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding Valability, Mode=OneWay,StringFormat='yyyy-MM-dd'}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Denumire Produs" Binding="{Binding Name}" Width="200"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Furnizor" Binding="{Binding Provider}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Serie Lot" Binding="{Binding LotID}" Width="150"/>
@@ -120,7 +119,7 @@
                     <!--<DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Cantitate/Bucată" Binding="{Binding UnitPerPiece, Mode=OneWay}" Width="150"/>-->
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Număr Factură" Binding="{Binding InvoiceNumber, Mode=OneWay}" Width="150"/>
 
-                    <DataGridTemplateColumn  Width="*">
+                    <DataGridTemplateColumn  >
                         <DataGridTemplateColumn.Header>
                             <TextBlock Text="Actions"/>
                         </DataGridTemplateColumn.Header>
@@ -143,8 +142,12 @@
 
                 </DataGrid.Columns>
             </DataGrid>
-            <ProgressBar Height="15" Width="200" IsIndeterminate="True"
+
+            <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Column="2" Margin="0,20"
                 Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Column="2" Margin="0,10"/>
+
         </StackPanel>
     </Grid>
 </UserControl>

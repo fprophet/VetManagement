@@ -16,7 +16,11 @@
                
         <Button Content="➕ Creează utilizator nou" Padding="10,5" Background="#4CAF50" Foreground="White" Width="200" HorizontalAlignment="Left"
                     FontWeight="Bold" BorderThickness="0" Cursor="Hand" Grid.Row="0"
-                    Command="{Binding NavigateCreateUserWindow}" />
+                    Command="{Binding NavigateCreateUserWindow}" /> 
+        
+        <Button Content="TRIMITE NOTIFICARE" Padding="10,5" Background="#4CAF50" Foreground="White" Width="200" HorizontalAlignment="Left"
+                    FontWeight="Bold" BorderThickness="0" Cursor="Hand" Grid.Row="0"
+                    Command="{Binding SendNotificationCommand}" />
 
         <DataGrid ItemsSource="{Binding Users}" Grid.Row="1"
             MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}" Margin="0,10"

@@ -105,7 +105,7 @@ namespace VetManagement.ViewModels
 
         public Owner RetrieveOwner()
         {
-            Owner owner = new Owner() { Name = Name, Address = Address, Phone = Phone, Details = Details, Email = Email, DateAdded = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
+            Owner owner = new Owner() { Name = Name, Address = Address, Phone = Phone, Details = Details, Email = Email, DateAdded = DateTime.Now };
 
             if (!Validate(owner))
             {

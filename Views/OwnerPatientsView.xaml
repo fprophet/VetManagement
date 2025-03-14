@@ -29,10 +29,12 @@
             <!--Command="{Binding CreateTreatmentViewModel.ToggleFormVisibilityCommand}"-->
             <DataGrid ItemsSource="{Binding Patients}" 
                       Style="{StaticResource StylishDataGrid}"
+                      MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}"
                       ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
+                      MaxHeight="700"
                       HorizontalAlignment="Stretch">
                 <DataGrid.Columns>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data"  Binding="{Binding DateAddedFormated, StringFormat='yyyy-MM-dd HH:mm:ss'}" Width="150"/>
+                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data"  Binding="{Binding DateAdded, StringFormat='yyyy-MM-dd'}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume"  Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Specie"  Binding="{Binding Species, Mode=OneWay}" Width="150"/>
                     <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Rasa" Binding="{Binding Race,UpdateSourceTrigger=PropertyChanged}" Width="150"/>

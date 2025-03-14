@@ -44,24 +44,18 @@ namespace VetManagement.Data
 
         public string? LotID { get; set; }
 
-
         [Required(ErrorMessage = "Valabilitatea trebuie să fie o dată în viitor!")]
-        public long Valability { get; set; }
+        public DateTime Valability { get; set; }
+
+        public DateTime DateAdded { get; set; }
+
+        public DateTime DateUpdated { get; set; }
 
         public string? Description { get; set; }
-
-        public long DateAdded { get; set; }
-
-        public long DateUpdated { get; set; }
 
         public List<TreatmentMed> TreatmentMeds { get; set; } = new List<TreatmentMed>();
 
         public Invoice Invoice { get; set; }
-
-        public DateTime DateAddedFormated => DateTimeOffset.FromUnixTimeSeconds(DateAdded).UtcDateTime;
-
-        public string ValabilityFormated => 
-            TimeZoneInfo.ConvertTimeFromUtc(DateTimeOffset.FromUnixTimeSeconds(Valability).UtcDateTime, TimeZoneInfo.Local).Date.ToString("yyyy-MM-dd");
 
         public string Unit => PieceType == "comprimate" ? "pastilă" : "ml";
 

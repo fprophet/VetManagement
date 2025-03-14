@@ -43,14 +43,12 @@ namespace VetManagement.Data
 
         public string? Details { get; set; }
 
-        public int DateAdded { get; set; }
+        public DateTime DateAdded { get; set; }
 
-        public int DateUpdated { get; set; }
+        public DateTime DateUpdated { get; set; }
 
         public Owner Owner { get; set; }
         
-        public DateTime DateAddedFormated => DateTimeOffset.FromUnixTimeSeconds(DateAdded).UtcDateTime;
-
         public List<Treatment> Treatments{ get; set; } = new List<Treatment>();
 
 
