@@ -19,20 +19,26 @@ namespace VetManagement.Data
         public async Task<(List<Owner>,int)> GetFullInfoFiltered(int pageNumber, int perPage, Dictionary<string,string>? filters)
         {
 
+
+
             var nameFilter = filters.ContainsKey("nameFilter") ? filters["nameFilter"] : string.Empty;
             var patientNameFilter = filters.ContainsKey("patientNameFilter") ? filters["patientNameFilter"] : string.Empty;
             var detailsFilter = filters.ContainsKey("detailsFilter") ? filters["detailsFilter"] : string.Empty;
 
-            List<Owner> list = await _context.Owners
-                 .Where(o => ( (string.IsNullOrEmpty(nameFilter) || o.Name.StartsWith(nameFilter))
+            var query = _context.Owners
+                 .Where(o => ((string.IsNullOrEmpty(nameFilter) || o.Name.StartsWith(nameFilter))
                     && (string.IsNullOrEmpty(patientNameFilter) || o.Patients.Any(p => p.Name.StartsWith(patientNameFilter))
                     && (string.IsNullOrEmpty(detailsFilter) || o.Details.StartsWith(detailsFilter)))))
-
                 .OrderByDescending(t => t.Id)
-                .Skip(perPage * (pageNumber - 1))
-                .Take(perPage)
                 .Include(o => o.Patients)
-                .ToListAsync();
+                .Skip(perPage * (pageNumber - 1));
+
+            if(perPage >= 0)
+            {
+                query = query.Take(perPage);
+            }
+
+            List<Owner> list = await query.ToListAsync();
 
             int totalRecords = await _context.Owners
                  .Where(o => ((string.IsNullOrEmpty(nameFilter) || o.Name.StartsWith(nameFilter))

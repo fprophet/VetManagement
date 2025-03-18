@@ -100,10 +100,10 @@ namespace VetManagement.ViewModels
 
         public CreateTreatmentViewModel CreateTreatmentViewModel { get; } 
 
-        public CreateRegistryRecordViewModel(NavigationStore navigationStore, Action<RegistryRecord> OnCreateRegistryRecord)
+        public CreateRegistryRecordViewModel(NavigationStore navigationStore, Action<RegistryRecord> onCreateRegistryRecord)
         {
             _navigationStore = navigationStore;
-            OnCreateRegistryRecord += OnCreateRegistryRecord;
+            OnCreateRegistryRecord += onCreateRegistryRecord;
 
             CreateTreatmentViewModel = new CreateTreatmentViewModel(_navigationStore,OnTreatmentCreated, null, "livestock");
 
@@ -161,7 +161,7 @@ namespace VetManagement.ViewModels
                     Observations = Observations,
                 };
 
-                if ( !Validate(registryRecord))
+                if (!Validate(registryRecord))
                 {
                     string message = "Completați câmpurile necesare pentru Registru!\n";
 
@@ -185,7 +185,7 @@ namespace VetManagement.ViewModels
                 registryRecord = await new BaseRepository<RegistryRecord>().Add(registryRecord);
 
 
-                if( registryRecord == null)
+                if (registryRecord == null)
                 {
                     return;
 
@@ -205,12 +205,13 @@ namespace VetManagement.ViewModels
                 registryRecord.RecipeNumber = recipe.Id;
                 await new BaseRepository<RegistryRecord>().Update(registryRecord);
 
+                registryRecord.Treatment = _treatment;
 
                 OnCreateRegistryRecord?.Invoke(registryRecord);
                 var res = Boxes.InfoBox("Tratamentul a fost adăugat în registru cu success!");
 
-                NotificationService.SendNotification("new-recipe","A fost creată rețeta cu numărul:" + recipe.Id, "", "user");
-
+                SendRecipeNotification(recipe.Id);
+              
                 if (res == MessageBoxResult.OK)
                 {
                     new CloseWindowCommand<CreateRegistryRecordViewModel>
@@ -223,8 +224,20 @@ namespace VetManagement.ViewModels
                 Boxes.ErrorBox("Tratamentul nu a putut fi creat!\n" + e.ToString());
             }
 
+        }
 
+        private void SendRecipeNotification(int id)
+        {
+            Notification Notification = new Notification()
+            {
+                Type = "new-recipe",
+                Title = "A fost creată rețeta cu numărul:" + id,
+                Message = "",
+                SentAt = DateTime.Now,
+                UserType = "user"
+            };
 
+            NotificationService.SendNotification(Notification);
         }
 
     }

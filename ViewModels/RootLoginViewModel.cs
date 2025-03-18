@@ -8,12 +8,14 @@ using System.Windows;
 using VetManagement.Data;
 using Microsoft.Extensions.Logging;
 using VetManagement.Services;
+using VetManagement.ViewModels;
 using System.Diagnostics;
 using VetManagement.Stores;
 using VetManagement.Commands;
 using VetManagement.Views;
+using VetManagement;
 
-namespace VetManagement.ViewModels
+namespace esign_app.ViewModels
 {
     public class RootLoginViewModel : ViewModelBase
     {

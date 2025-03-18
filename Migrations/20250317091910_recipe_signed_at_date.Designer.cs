@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VetManagement.Data;
 
@@ -10,9 +11,11 @@ using VetManagement.Data;
 namespace VetManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250317091910_recipe_signed_at_date")]
+    partial class recipe_signed_at_date
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -370,7 +373,7 @@ namespace VetManagement.Migrations
                     b.Property<bool>("Signed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("SignedAt")
+                    b.Property<DateTime>("SignedAt")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");

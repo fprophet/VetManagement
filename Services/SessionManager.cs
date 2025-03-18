@@ -7,7 +7,7 @@ using VetManagement.Data;
 
 namespace VetManagement.Services
 {
-    class SessionManager
+    public class SessionManager
     {
         private static SessionManager _instance;
         public static SessionManager Instance => _instance ?? (_instance = new SessionManager());

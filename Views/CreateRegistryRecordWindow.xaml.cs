@@ -23,17 +23,7 @@ namespace VetManagement.Views
         public CreateRegistryRecordWindow()
         {
             InitializeComponent();
-            Loaded += CreateRegistryRecordWindow_Loaded;
         }
 
-        private async void CreateRegistryRecordWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            if( DataContext is CreateRegistryRecordViewModel createRegistryRecordViewModel )
-            {
-
-                await createRegistryRecordViewModel.CreateTreatmentViewModel.LoadOwners();
-                await createRegistryRecordViewModel.CreateTreatmentViewModel.LoadMeds();
-            }
-        }
     }
 }

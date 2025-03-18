@@ -60,11 +60,11 @@ namespace VetManagement.Data
         public async Task<T?> LastRecord()
         {
             var property = typeof(T).GetProperty("Id");
+
             if (property == null)
             {
                 return null;
             }
-
 
             return await _context.GetDbSet<T>()
             .OrderByDescending(x => EF.Property<int>(x, "Id")) 

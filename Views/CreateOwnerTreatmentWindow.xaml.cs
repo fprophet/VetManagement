@@ -31,11 +31,10 @@ namespace VetManagement.Views
         private async void CreateTreatmentView_Loaded(object sender, RoutedEventArgs e)
         {
   
-            if (DataContext is CreateOwnerTreatmentViewModel createOwnerTreatmentViewModel)
+            if (DataContext is CreateTreatmentViewModel createTreatmentViewModel)
             {
-                await createOwnerTreatmentViewModel.LoadOwnerPatients();
-                await createOwnerTreatmentViewModel.LoadMeds();
-                await createOwnerTreatmentViewModel.LoadOwner();
+                await createTreatmentViewModel.LoadOwner();
+                await createTreatmentViewModel.LoadOwnerPatients(createTreatmentViewModel.Owner.Id);
             }
         }
 

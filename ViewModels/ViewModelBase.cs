@@ -13,6 +13,7 @@ namespace VetManagement.ViewModels
 
     public class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
     {
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public string PageTitle { get; set; }

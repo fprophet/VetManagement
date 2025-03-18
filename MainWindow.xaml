@@ -7,7 +7,6 @@
         xmlns:views="clr-namespace:VetManagement.Views"
         xmlns:components="clr-namespace:VetManagement.Components"
         xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
-        
         WindowState="Maximized"
         Title="Vet Management" Height="600" Width="1000">
 
@@ -49,8 +48,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-
 
     </Window.Resources>
 

@@ -29,13 +29,16 @@ namespace VetManagement.ViewModels
             set { }
         }
 
-        public ObservableCollection<Med> MedList { get; set; } = new ObservableCollection<Med>();
+        private readonly FilterService _ownerFilterService, _medFilterService;
 
         public ObservableCollection<Patient> Patients { get; set; } = new ObservableCollection<Patient>();
 
-        public ObservableCollection<Owner> Owners { get; set; } = new ObservableCollection<Owner>();
+        public ObservableCollection<Owner> FilteredOwners { get; set; } = new ObservableCollection<Owner>();
+
+        public ObservableCollection<MedWrapper> FilteredMedWrappers { get; set; } = new ObservableCollection<MedWrapper>();
 
         public ObservableCollection<MedWrapper> MedWrappers { get; set; } = new ObservableCollection<MedWrapper>();
+
 
         private Owner _owner;
         public Owner Owner
@@ -48,6 +51,19 @@ namespace VetManagement.ViewModels
                 OnOwnerChanged();
             }
         }
+
+        private MedWrapper _selectedMedWrapper;
+        public MedWrapper SelectedMedWrapper
+        {
+            get => _selectedMedWrapper;
+            set
+            {
+                _selectedMedWrapper = value;
+                OnPropertyChanged(nameof(SelectedMedWrapper));
+                OnMedChanged();
+            }
+        }
+
 
         public ICommand CreateTreatmentCommand { get; }
 
@@ -65,14 +81,14 @@ namespace VetManagement.ViewModels
         private Action<Treatment> _onTreatmentCreateChanged;
 
 
-        private bool _isVisibleForm = false;
-        public bool isVisibleForm
+        private bool _isMedSearching = false;
+        public bool isMedSearching
         {
-            get => _isVisibleForm;
+            get => _isMedSearching;
             set
             {
-                _isVisibleForm = value;
-                OnPropertyChanged(nameof(isVisibleForm));
+                _isMedSearching = value;
+                OnPropertyChanged(nameof(isMedSearching));
             }
         }
 
@@ -98,19 +114,64 @@ namespace VetManagement.ViewModels
             }
         }
 
+        private string _ownerNameSearch;
+        public string OwnerNameSearch
+        {
+            get => _ownerNameSearch;
+
+            set
+            {
+                _ownerNameSearch = value;
+                _ownerFilterService.DebouncePropertyChanged(nameof(OwnerNameSearch));
+            }
+        }
+
+        private bool _isOwnerListDropdownOpen;
+        public bool IsOwnerListDropdownOpen
+        {
+            get => _isOwnerListDropdownOpen;
+            set
+            {
+                _isOwnerListDropdownOpen = value;
+                OnPropertyChanged(nameof(IsOwnerListDropdownOpen));
+            }
+        }
+
+        private string _medNameSearch;
+        public string MedNameSearch
+        {
+            get => _medNameSearch;
+
+            set
+            {
+                _medNameSearch = value;
+                isMedSearching = true;
+                _medFilterService.DebouncePropertyChanged(nameof(MedNameSearch));
+            }
+        }
+
+        private bool _isMedListDropdownOpen;
+        public bool IsMedListDropdownOpen
+        {
+            get => _isMedListDropdownOpen;
+            set
+            {
+                _isMedListDropdownOpen = value;
+                OnPropertyChanged(nameof(IsMedListDropdownOpen));
+            }
+        }
 
         public CreateTreatmentViewModel(NavigationStore navigationStore,Action<Treatment> onTreatmentCreateChanged, int? id, string? patientType)
         {
             _navigationStore = navigationStore;
             _onTreatmentCreateChanged = onTreatmentCreateChanged;
 
+            _ownerFilterService = new FilterService(LoadOwners);
+            _medFilterService = new FilterService(LoadMeds);
+
             RemoveMedCommand = new RelayCommand(RemoveMed);
 
-            CreateTreatmentCommand = new RelayCommand(CreateTreatmentExecute);
-
-            InsertNewMedCommand = new RelayCommand(InsertNewMed);
-
-            ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
+            CreateTreatmentCommand = new RelayCommand(CreateTreatmentExecute, CanCreateTreatment);
 
             if (id.HasValue)
             {
@@ -134,6 +195,19 @@ namespace VetManagement.ViewModels
               (new WindowService<CreateOwnerViewModel>(new NavigationStore(), (_passedId) => new CreateOwnerViewModel(_navigationStore,OnOwnerCreated)), () => new CreateOwnerWindow());
 
         }
+
+        private bool CanCreateTreatment(object parameter)
+        {
+            if (MedWrappers.Count() < 1)
+            {
+                return false;
+            }
+
+            return Validate(false);
+
+        }
+
+
         private void OnPatientCreated(Patient patient)
         {
             Patients.Add(patient);
@@ -153,37 +227,30 @@ namespace VetManagement.ViewModels
 
         private void OnOwnerCreated(Owner owner)
         {
-            Owners.Add(owner);
-
-            var sorted = Owners.OrderByDescending(o => o.DateAdded).ToList();
-
-            Owners.Clear();
-
-            foreach (var sortedOwner in sorted)
-            {
-                Owners.Add(sortedOwner);
-            }
-
             Owner = owner;
-
         }
 
         public async void OnOwnerChanged()
         {
-            await LoadOwnerPatients(Owner.Id);
-          
-        }
+            IsOwnerListDropdownOpen = false;
 
-        private void InsertNewMed(Object sender)
-        {
-            int i = 0;
-
-            while (MedWrappers.FirstOrDefault(m => m.Med == MedList[i]) != null)
-            {
-                i++;
+            if( Owner is Owner)
+            { 
+                await LoadOwnerPatients(Owner.Id);
             }
 
-            MedWrappers.Add(new MedWrapper(MedList[i]));
+        }
+
+        public async void OnMedChanged()
+        {
+            IsMedListDropdownOpen = false;
+
+            if (SelectedMedWrapper is MedWrapper)
+            {
+                MedWrappers.Add(SelectedMedWrapper);
+                SelectedMedWrapper = null;
+            }
+
         }
 
         public async Task LoadOwner()
@@ -200,13 +267,18 @@ namespace VetManagement.ViewModels
         }
 
 
-        public async Task LoadOwnerPatients(int id)
+        public async Task LoadOwnerPatients(int? ownerId)
         {
- 
+            
+            if( ownerId is null)
+            {
+                return;
+            }
+
             try
             {
                 PatientRepository patientRepository = new PatientRepository();
-                var patients = await patientRepository.GetForOwnerByType(id, _patientType);
+                var patients = await patientRepository.GetForOwnerByType((int)ownerId, _patientType);
 
                 Patients.Clear();
                 foreach (var patient in patients)
@@ -222,19 +294,38 @@ namespace VetManagement.ViewModels
 
         public async Task LoadMeds()
         {
+            if( string.IsNullOrEmpty(MedNameSearch))
+            {
+                isMedSearching = false;
+                return;
+            }
+
             try
             {
-                BaseRepository<Med> medRepository = new BaseRepository<Med>();
+                Dictionary<string, object> filters = new Dictionary<string, object>();
 
-                var meds = await medRepository.GetAll();
+                filters.Add("nameFilter", MedNameSearch);
 
-                MedList.Clear();
+                var (meds,totalPages) = await new MedRepository().GetAllFiltered(1, -1, filters);
+
+                isMedSearching = false;
+
+                FilteredMedWrappers.Clear();
 
                 foreach (var med in meds)
                 {
-                    MedList.Add(med);
+                    FilteredMedWrappers.Add(new MedWrapper(med));
                 }
-                MedWrappers.Add(new MedWrapper(MedList[0]));
+
+                if (FilteredMedWrappers.Count() > 0)
+                {
+                    IsMedListDropdownOpen = true;
+                }
+                else
+                {
+                    IsMedListDropdownOpen = false;
+                }
+                //MedWrappers.Add(new MedWrapper(MedList[0]));
 
             }
             catch (Exception e)
@@ -249,13 +340,27 @@ namespace VetManagement.ViewModels
             {
                 BaseRepository<Owner> ownerRepository = new BaseRepository<Owner>();
 
-                var owners = await ownerRepository.GetAll();
+                //var owners = await ownerRepository.GetAll();
+                Dictionary<string, string> filters = new Dictionary<string, string>();
 
-                Owners.Clear();
+                filters.Add("nameFilter", OwnerNameSearch);
+
+                var (owners, totalPages) = await new OwnerRepository().GetFullInfoFiltered(1, -1, filters);
+
+                FilteredOwners.Clear();
 
                 foreach (var owner in owners)
                 {
-                    Owners.Add(owner);
+                    FilteredOwners.Add(owner);
+                }
+
+                if(FilteredOwners.Count() > 0)
+                {
+                    IsOwnerListDropdownOpen = true;
+                }    
+                else
+                {
+                    IsOwnerListDropdownOpen = false;
                 }
 
             }
@@ -285,22 +390,23 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private void ToggleFormVisibility(object sender)
-        {
-            isVisibleForm = !isVisibleForm;
-        }
-
-        private bool Validate()
+        private bool Validate(bool warnUser = true)
         {
             if (Owner == null)
             {
-                Boxes.ErrorBox("Selectați un proprietar înainte de a creea tratamentul!");
+                if(warnUser)
+                {
+                    Boxes.ErrorBox("Selectați un proprietar înainte de a creea tratamentul!");
+                }
                 return false;
             }
 
             if (Patient == null)
             {
-                Boxes.ErrorBox("Selectați un animal înainte de a creea tratamentul!");
+                if (warnUser)
+                {
+                    Boxes.ErrorBox("Selectați un animal înainte de a creea tratamentul!");
+                }
                 return false;
             }
 
@@ -308,13 +414,19 @@ namespace VetManagement.ViewModels
             {
                 if ((decimal)medWrapper.TotalAmount < medWrapper.TreatmentQuantity)
                 {
-                    Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + medWrapper.Name + " este mai mică decât cea din stoc!");
+                    if (warnUser)
+                    {
+                        Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + medWrapper.Name + " este mai mică decât cea din stoc!");
+                    }
                     return false;
                 }
 
                 if( medWrapper.TreatmentQuantity <=0)
                 {
-                    Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + medWrapper.Name + " trebuie să fie mai mare decat 0!");
+                    if (warnUser)
+                    {
+                        Boxes.ErrorBox("Cantitatea de medicament introdusă pentru " + medWrapper.Name + " trebuie să fie mai mare decat 0!");
+                    }
                     return false;
                 }
             }

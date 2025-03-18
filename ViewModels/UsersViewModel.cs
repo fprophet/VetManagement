@@ -80,8 +80,17 @@ namespace VetManagement.ViewModels
 
         private void SendNot(object parameter)
         {
-            SoundService.PlayNotificationSound();
-            //NotificationService.SendNotification("titlu", "mesajul notificarii", "user");
+
+            Notification Notification = new Notification()
+            {
+                Type = "test-type",
+                Title = "test-title",
+                Message = "test-message",
+                SentAt = DateTime.Now,
+                UserType = "test-user-type"
+            };
+
+            NotificationService.SendNotification(Notification);
         }
 
         private void ToggleFormVisibility(object parameter) {

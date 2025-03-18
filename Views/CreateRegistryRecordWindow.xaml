@@ -62,10 +62,6 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
-
-            <Button Grid.Row="2" Margin="0,20" Content="SEMNATURA" Background="#4A90E2" Foreground="White" FontWeight="Bold"
-                Height="30" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Command="{Binding NavigateSignatureCanvasCommand}" />
-            
             <Button Grid.Row="3" Margin="0,20" Content="💾 Salvează tratament" Background="#4A90E2" Foreground="White" FontWeight="Bold"
                 Height="30" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Command="{Binding CreateRegistryRecordCommand}" />
         </Grid>

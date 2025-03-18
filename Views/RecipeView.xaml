@@ -11,9 +11,11 @@
 
       
         <services:BoolToTextConverter x:Key="BoolToTextConverter"/>
+        <services:RecipeStatusBoolToStringConverter x:Key="RecipeStatusBoolToStringConverter"/>
+        <services:RecipeStatusToBackgroundColorConverter x:Key="RecipeStatusToBackgroundColorConverter"/>
     </UserControl.Resources>
 
-    <Grid Margin="20">
+    <Grid>
         <!-- Title -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -22,8 +24,18 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="1">
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
+            <TextBlock Text="Status: " Background="#007ACC" Foreground="White" Padding="10,5" VerticalAlignment="Center" Style="{StaticResource HeaderStyle}"/>
+
+            <TextBlock Text="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusBoolToStringConverter}}"
+                       Background="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusToBackgroundColorConverter}}"
+                       Foreground="White" Padding="10,5" FontSize="17" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Grid.Row="2">
             <TextBlock Text="Detalii Rețetă" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
 
             <!-- Recipe Card -->
@@ -38,28 +50,27 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Numărul #:" Style="{StaticResource LabelStyle}" Grid.Row="0"/>
-                    <TextBlock Text="{Binding Recipe.Id}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.Id}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="140,10,0,2"/>
 
                     <TextBlock Text="Data eliberării:" Style="{StaticResource LabelStyle}" Grid.Row="1"/>
-                    <TextBlock Text="{Binding Recipe.Date}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.Date}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
 
                     <TextBlock Text="Medic:" Style="{StaticResource LabelStyle}" Grid.Row="2"/>
-                    <TextBlock Text="{Binding Recipe.RegistryRecord.MedName }" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.MedName }" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
 
                     <TextBlock Text="Ridicată:" Style="{StaticResource LabelStyle}" Grid.Row="3"/>
-                    <TextBlock Text="{Binding Recipe.Signed, Converter={StaticResource BoolToTextConverter}}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.Signed, Converter={StaticResource BoolToTextConverter}}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="140,10,0,2"/>
     
                     <TextBlock Text="Detalii:" Style="{StaticResource LabelStyle}" Grid.Row="4"/>
-                    <TextBlock Text="{Binding Recipe.RegistryRecord.Treatment.Details}"
+                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Details}"
                             Style="{StaticResource ValueStyle}" Grid.Row="4" TextWrapping="Wrap" Width="400" Margin="140,10,0,2"  HorizontalAlignment="Left"/>
                 </Grid>
             </Border>
         </StackPanel>
         
-        <StackPanel Grid.Row="2">
+        <StackPanel Grid.Row="3">
             <TextBlock Text="Proprietar" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
 
-            <!-- Recipe Card -->
             <Border Style="{StaticResource CardStyle}"  VerticalAlignment="Top" >
                 <Grid>
                     <Grid.RowDefinitions>
@@ -69,22 +80,22 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Proprietar:" Style="{StaticResource LabelStyle}" Grid.Row="0"/>
-                    <TextBlock Text="{Binding Recipe.RegistryRecord.Treatment.Owner.Name}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Name}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="140,10,0,2"/>
 
                     <TextBlock Text="Adresa:" Style="{StaticResource LabelStyle}" Grid.Row="1"/>
-                    <TextBlock Text="{Binding Recipe.RegistryRecord.Treatment.Owner.Address}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Address}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
 
                     <TextBlock Text="Telefon:" Style="{StaticResource LabelStyle}" Grid.Row="2"/>
-                    <TextBlock Text="{Binding Recipe.RegistryRecord.Treatment.Owner.Phone}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Phone}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
                  
                 </Grid>
             </Border>
         </StackPanel>
 
-        <StackPanel Grid.Row="3">
+        <StackPanel Grid.Row="4">
             <TextBlock Text="Animal" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
 
-            <!-- Recipe Card -->
+            <!-- RecipeWrapper Card -->
             <Border Style="{StaticResource CardStyle}"  VerticalAlignment="Top" >
                 <Grid>
                     <Grid.RowDefinitions>
@@ -95,23 +106,22 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Specie:" Style="{StaticResource LabelStyle}" Grid.Row="0"/>
-                    <TextBlock Text="{Binding Recipe.RegistryRecord.Treatment.Patient.Species}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Species}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="140,10,0,2"/>
 
                     <TextBlock Text="Sex:" Style="{StaticResource LabelStyle}" Grid.Row="1"/>
-                    <TextBlock Text="{Binding Recipe.RegistryRecord.Treatment.Patient.Sex}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Sex}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
 
                     <TextBlock Text="Greutate:" Style="{StaticResource LabelStyle}" Grid.Row="2"/>
-                    <TextBlock Text="{Binding Recipe.RegistryRecord.Treatment.Patient.Weight}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Weight}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
 
                     <TextBlock Text="Număr registru consultație:" Style="{StaticResource LabelStyle}" Grid.Row="3"/>
-                    <TextBlock Text="{Binding Recipe.RegistryRecord.Treatment.Patient.Identifier}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="140,10,0,2"/>
+                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Identifier}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="140,10,0,2"/>
 
                 </Grid>
             </Border>
         </StackPanel>
 
-
-        <StackPanel Grid.Row="4">
+        <StackPanel Grid.Row="5">
             <TextBlock Text="Medicamente" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
 
             <Border Background="#007ACC" Padding="10" Margin="20,20,20,0" CornerRadius="5" Style="{StaticResource CardStyle}">
@@ -137,7 +147,7 @@
             <!-- Medication List -->
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <Border Padding="15,0,15,0" >
-                    <ItemsControl ItemsSource="{Binding Recipe.RegistryRecord.Treatment.TreatmentMeds}">
+                    <ItemsControl ItemsSource="{Binding RecipeWrapper.RegistryRecord.Treatment.TreatmentMeds}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="White" Padding="10" Margin="5,5,5,10" CornerRadius="8" BorderBrush="#DDDDDD" BorderThickness="1">
@@ -176,10 +186,25 @@
                 </Border>
             </ScrollViewer>
         </StackPanel>
-        <!-- Action Buttons -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="5">
+
+        <Grid Grid.Row="6" HorizontalAlignment="Stretch" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Data:" FontSize="15"/>
+                <TextBlock Text="{Binding RecipeWrapper.SignedAt}" FontSize="15"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Right" Grid.Column="1">
+                <TextBlock Text="Semnătura Proprietarului:" FontSize="15"/>
+                <Image Source="{Binding RecipeWrapper.SignatureImage}"/>
+            </StackPanel>
+        </Grid>
+        
+        <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="6">
             <Button Content="Eliberează Rețeta" Style="{StaticResource ButtonStyle}" Command="{Binding SignRecipeCommand}" />
-        </StackPanel>
+        </StackPanel>-->
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0">
             <Button Content="🡨 Înapoi" Padding="10,5" Background="#2196F3" Foreground="White"

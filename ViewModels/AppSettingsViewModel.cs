@@ -5,6 +5,7 @@ using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using VetManagement.Commands;
 using VetManagement.Services;
 using VetManagement.Stores;
 
@@ -57,6 +58,17 @@ namespace VetManagement.ViewModels
             }
         }
 
+        private string _siteURL;
+        public string SiteURL
+        {
+            get => _siteURL;
+            set
+            {
+                _siteURL = value;
+                OnPropertyChanged(nameof(SiteURL));
+            }
+        }
+
         public ICommand SaveSettingsCommand { get; set; }
 
 
@@ -80,13 +92,13 @@ namespace VetManagement.ViewModels
                 settings["Database"] = Database;
                 settings["DatabaseUser"] = DatabaseUser;
                 settings["DatabasePassword"] = DatabasePassword;
+                settings["SiteURL"] = SiteURL;
 
                 AppSettings.SaveSettings(settings);
 
                 Boxes.InfoBox("Settings saved!");
             }catch(Exception e)
             {
-
                 Boxes.ErrorBox("Settings could not be saved!\n" + e.Message);
             }
 
@@ -106,6 +118,7 @@ namespace VetManagement.ViewModels
                 Database = settings["Database"] ?? "";
                 DatabaseUser = settings["DatabaseUser"] ?? "";
                 DatabasePassword = settings["DatabasePassword"] ?? "";
+                SiteURL = settings["SiteURL"] ?? "";
 
             }
             catch(Exception e)

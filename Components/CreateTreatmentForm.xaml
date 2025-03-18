@@ -10,6 +10,8 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
+        <services:MedQuantityToBackgroundConverter x:Key="MedQuantityToBackgroundConverter"/>
+        <services:IsObjectToVisibilitConverter x:Key="IsObjectToVisibilitConverter"/>
     </UserControl.Resources>
     
     <Grid Width="900">
@@ -20,18 +22,48 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Padding="10" Background="White" CornerRadius="8" BorderBrush="#CCCCCC" BorderThickness="1" Width="500" HorizontalAlignment="Left">
+        <Border Grid.Row="0" Padding="10" Background="White" CornerRadius="8" BorderBrush="#CCCCCC" BorderThickness="1" Width="600" HorizontalAlignment="Left">
             <StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                    <StackPanel Width="200">
+                    <StackPanel Orientation="Vertical" >
                         <TextBlock Text="Selectează proprietar" FontSize="16" FontWeight="Bold" Foreground="#333"/>
-                        <ComboBox ItemsSource="{Binding Owners}" 
-                       SelectedItem="{Binding Owner}" 
-                       DisplayMemberPath="Name" Margin="0,5"/>
+
+                        <TextBox x:Name="SearchBox"
+                                 Text="{Binding OwnerNameSearch, UpdateSourceTrigger=PropertyChanged}"
+                                Width="200"
+                                 Margin="0,5"
+                                Padding="5"/>
+
+                        <Popup IsOpen="{Binding IsOwnerListDropdownOpen}" 
+                               PlacementTarget="{Binding ElementName=OwnerNameSearch}" 
+                               Placement="Bottom" 
+                               StaysOpen="False"
+                               Width="Auto">
+                            <Border Background="White" BorderBrush="Black" BorderThickness="1" CornerRadius="5">
+
+                                <ListBox ItemsSource="{Binding FilteredOwners}"
+                                    SelectedItem="{Binding Owner, Mode=TwoWay}"
+                                    Visibility="{Binding IsOwnerListDropdownOpen, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    MaxHeight="150" >
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock >
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} - {1}">
+                                                        <Binding Path="Name"/>
+                                                        <Binding Path="Phone"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
+                        </Popup>
                     </StackPanel>
 
-                    <StackPanel HorizontalAlignment="Right" Width="200">
+                    <StackPanel HorizontalAlignment="Right" Width="200" VerticalAlignment="Center">
                         <Label Content="Sau creează" HorizontalAlignment="Right"/>
                         <Button Content="Creează Proprietar ➕"   
                              CommandParameter="{Binding PassedId}"
@@ -40,31 +72,34 @@
                 </StackPanel>
 
                 <Separator/>
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Nume: {0}">
-                            <Binding Path="Owner.Name"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Telefon: {0}">
-                            <Binding Path="Owner.Phone"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Adresă: {0}">
-                            <Binding Path="Owner.Address"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
+                <StackPanel Visibility="{Binding Owner, Converter={StaticResource IsObjectToVisibilitConverter}}">
+
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Nume: {0}">
+                                <Binding Path="Owner.Name"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Telefon: {0}">
+                                <Binding Path="Owner.Phone"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Adresă: {0}">
+                                <Binding Path="Owner.Address"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="1" Padding="10" Background="White" CornerRadius="8" BorderBrush="#CCCCCC" BorderThickness="1" Margin="0,10" Width="500" HorizontalAlignment="Left">
+        <Border Grid.Row="1" Padding="10" Background="White" CornerRadius="8" BorderBrush="#CCCCCC" BorderThickness="1" Margin="0,10" Width="600" HorizontalAlignment="Left">
             <StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -98,48 +133,50 @@
                 </StackPanel>
 
                 <Separator/>
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Nume: {0}">
-                            <Binding Path="Patient.Name"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Specie: {0}">
-                            <Binding Path="Patient.Species"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Rasă: {0}">
-                            <Binding Path="Patient.Race"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Vârstă: {0}">
-                            <Binding Path="Patient.Age"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Greutate: {0}">
-                            <Binding Path="Patient.Weight"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}Sex: {0}">
-                            <Binding Path="Patient.Sex"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
+                <StackPanel Visibility="{Binding Patient, Converter={StaticResource IsObjectToVisibilitConverter}}">
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Nume: {0}">
+                                <Binding Path="Patient.Name"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Specie: {0}">
+                                <Binding Path="Patient.Species"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Rasă: {0}">
+                                <Binding Path="Patient.Race"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Vârstă: {0}">
+                                <Binding Path="Patient.Age"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Greutate: {0}">
+                                <Binding Path="Patient.Weight"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Sex: {0}">
+                                <Binding Path="Patient.Sex"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
         </Border>
 
@@ -152,11 +189,58 @@
                     <TextBlock Text="Diagnostic/Detalii" FontWeight="Bold" Margin="0,5"/>
                     <TextBox Text="{Binding Details, UpdateSourceTrigger=PropertyChanged}" Grid.Row="4" Height="50"/>
                 </StackPanel>
-
+ 
                 <StackPanel Orientation="Vertical">
 
-                    <Button Height="25" Padding="5,0" Margin="0,0,0,10" Background="Green" Foreground="White" Content="➕ Adaugă medicament" 
-                    HorizontalAlignment="Left" Command="{Binding InsertNewMedCommand}"/>
+                    <StackPanel Margin="0,20,0,10" Orientation="Horizontal">
+                        
+                        <!--<Button Height="25" Padding="5,0" Margin="0,0,20,0" Background="Green" Foreground="White" Content="➕ Adaugă medicament" 
+                            HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding InsertNewMedCommand}"/>-->
+
+                        <StackPanel Orientation="Vertical" >
+
+                            <StackPanel>
+                                <TextBlock Text="Caută medicament"/>
+                                
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Width="200"  Padding="5" HorizontalAlignment="Left"
+                                        Text="{Binding MedNameSearch, UpdateSourceTrigger=PropertyChanged}" />
+                                    <ProgressBar x:Name="LoadingIndicator" HorizontalAlignment="Left" Margin="10,0" VerticalAlignment="Bottom" Width="100" Height="10" 
+                                             IsIndeterminate="True" Visibility="{Binding isMedSearching, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                </StackPanel>
+                                
+                            </StackPanel>
+
+                            <Popup IsOpen="{Binding IsMedListDropdownOpen}" 
+                                   PlacementTarget="{Binding ElementName=MedSearchBox}" 
+                                   Placement="Bottom" 
+                                   StaysOpen="False"
+                                   Width="Auto">
+                                <Border Background="White" BorderBrush="Black" BorderThickness="1" CornerRadius="5">
+                                    <ListBox ItemsSource="{Binding FilteredMedWrappers}"
+                                     SelectedItem="{Binding SelectedMedWrapper, Mode=TwoWay}"
+                                     MaxHeight="150">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock>
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0} - {1} - {2} - În stoc: {3} {4}">
+                                                            <Binding Path="Name"/>
+                                                            <Binding Path="LotID"/>
+                                                            <Binding Path="PerPieceAndUnit"/>
+                                                            <Binding Path="TotalAmount"/>
+                                                            <Binding Path="MeasurmentUnit"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Border>
+                            </Popup>
+                        </StackPanel>
+
+                    </StackPanel>
 
                     <DataGrid ItemsSource="{Binding MedWrappers}" AutoGenerateColumns="False" HorizontalAlignment="Left" Style="{StaticResource CreateTreatmentGrid}" >
                         <DataGrid.Columns>
@@ -173,35 +257,8 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Width="200">
-                                <DataGridTemplateColumn.Header>
-                                    <TextBlock Text="Medicament"/>
-                                </DataGridTemplateColumn.Header>
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <ComboBox  
-                                            SelectedItem="{Binding Med, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            ItemsSource="{Binding DataContext.MedList, RelativeSource={RelativeSource AncestorType=DataGrid}}">
-                                                <ComboBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock>
-                                                            <TextBlock.Text>
-                                                                <MultiBinding StringFormat="{}{0} - {1} - {2}" >
-                                                                    <Binding Path="Name"/>
-                                                                    <Binding Path="LotID"/>
-                                                                    <Binding Path="Provider"/>
-                                                                </MultiBinding>
-                                                            </TextBlock.Text>
-                                                        </TextBlock>
-                                                    </DataTemplate>
-                                                </ComboBox.ItemTemplate>
-                                            </ComboBox>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-
+                            <DataGridTextColumn Header="Nume" Width="200" 
+                                Binding="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
                             <DataGridTextColumn  Width="150">
                                 <DataGridTextColumn.Header>
                                     <TextBlock Text="Cantitate/Bucată"/>
@@ -232,6 +289,19 @@
                                 Binding="{Binding WaitingTime, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                             <DataGridTemplateColumn Header="Doza Administrată" Width="170">
+                                <DataGridTemplateColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="Background">
+                                            <Setter.Value>
+                                                <MultiBinding Converter="{StaticResource MedQuantityToBackgroundConverter}">
+                                                    <Binding Path="QuantityString"/>
+                                                    <Binding Path="TotalAmount"/>
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                       
+                                    </Style>
+                                </DataGridTemplateColumn.CellStyle>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -245,7 +315,7 @@
                                 <DataGridTemplateColumn.CellEditingTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Text="{Binding QuantityString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80" />
+                                            <TextBox Focusable="True" Text="{Binding QuantityString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80" />
                                             <TextBlock Text=" " />
                                             <TextBlock Text="{Binding MeasurmentUnit}" Foreground="Gray" />
                                         </StackPanel>

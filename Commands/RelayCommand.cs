@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Windows.Input;
 
-public class RelayCommand : ICommand
+namespace VetManagement.Commands
 {
-    private readonly Action<object> _execute;
-    private readonly Predicate<object>? _canExecute;
 
-    public RelayCommand(Action<object> execute, Predicate<object>? canExecute = null!)
+    public class RelayCommand : ICommand
     {
-        _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-        _canExecute = canExecute;
-    }
+        private readonly Action<object> _execute;
+        private readonly Predicate<object>? _canExecute;
 
-    public bool CanExecute(object parameters) => _canExecute == null || _canExecute(parameters);
-    public void Execute(object parameters) => _execute(parameters);
+        public RelayCommand(Action<object> execute, Predicate<object>? canExecute = null!)
+        {
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
 
-    public event EventHandler CanExecuteChanged
-    {
-        add { CommandManager.RequerySuggested += value; }
-        remove { CommandManager.RequerySuggested -= value; }
+        public bool CanExecute(object parameters) => _canExecute == null || _canExecute(parameters);
+        public void Execute(object parameters) => _execute(parameters);
+
+        public event EventHandler CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
     }
 }

@@ -13,6 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <TextBlock Text="Server"/>
@@ -28,13 +29,18 @@
             <TextBlock Text="Database User"/>
             <TextBox Text="{Binding DatabaseUser}"/>
         </StackPanel>
-        
+
         <StackPanel Grid.Row="3">
             <TextBlock Text="Database Password"/>
             <TextBox Text="{Binding DatabasePassword}"/>
         </StackPanel>
-        
-        <Button Grid.Row="4" Width="200" Margin="0,10"
+
+        <StackPanel Grid.Row="4">
+            <TextBlock Text="Site URL"/>
+            <TextBox Text="{Binding SiteURL}"/>
+        </StackPanel>
+
+        <Button Grid.Row="5" Width="200" Margin="0,10"
                 Content="Save" Command="{Binding SaveSettingsCommand}"/>
     </Grid>
 </UserControl>

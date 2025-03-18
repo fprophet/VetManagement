@@ -11,6 +11,7 @@ using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.Services;
 using VetManagement.Stores;
+using System.Text.Json;
 
 namespace VetManagement.ViewModels
 {
@@ -214,8 +215,9 @@ namespace VetManagement.ViewModels
             OnPropertyChanged(nameof(PageTitle));
         }
 
-        private async void UpdateNotifications(string message)
+        private async void UpdateNotifications()
         {
+
             Notification notification = await NotificationService.GetLastNotification();
 
             if( notification == null)
@@ -231,9 +233,41 @@ namespace VetManagement.ViewModels
             Notifications.Add(notification);
         }
 
+        private void HandleNotification(string result)
+        {
+            SoundService.PlayNotificationSound();
+
+          
+            Notification notification = JsonSerializer.Deserialize<Notification>(result);
+
+
+            if (notification is null)
+            {
+                //HandleNotification
+                return;
+            }
+            else
+            {
+                if (notification.Type != null && notification.Type == "recipe-signed")
+                {
+                    if (CurrentViewModel.GetType().Name == typeof(RecipeViewModel).Name)
+                    {
+
+                        (CurrentViewModel as RecipeViewModel)?.OnRecipeSigned?.Invoke(notification.Message);
+                    }
+                   
+                }
+                else
+                {
+                    UpdateNotifications();
+                }
+                //Trace.WriteLine(notif["message"]);
+            }
+        }
+
         public async Task ListenForNotifications()
         {
-            NotificationService notificationService = new NotificationService(UpdateNotifications);
+            NotificationService notificationService = new NotificationService(HandleNotification);
 
             await notificationService.StartListening();
         }

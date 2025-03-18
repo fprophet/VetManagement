@@ -50,8 +50,8 @@ namespace VetManagement.ViewModels
             NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
 
-            NavigateCreateTreatment = new NavigateWindowCommand<CreateOwnerTreatmentViewModel>
-                (new WindowService<CreateOwnerTreatmentViewModel>(_navigationStore, (id) => new CreateOwnerTreatmentViewModel(_navigationStore,OnTreatmentCreated, id) ), () => new CreateOwnerTreatmentWindow());
+            NavigateCreateTreatment = new NavigateWindowCommand<CreateTreatmentViewModel>
+                (new WindowService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(_navigationStore,OnTreatmentCreated, id, "pet") ), () => new CreateOwnerTreatmentWindow());
 
         }
 
@@ -84,7 +84,11 @@ namespace VetManagement.ViewModels
 
         private void OnTreatmentCreated( Treatment treatment)
         {
-            Treatments.Add(treatment);
+            if (treatment is null)
+            {
+                return;
+            }
+                Treatments.Add(treatment);
             var sortedTreatments = Treatments.OrderByDescending(t => t.DateAdded).ToList();
 
             Treatments.Clear();

@@ -10,6 +10,8 @@ namespace VetManagement.Data
     {
         public DateTime Date { get; set; }
 
+        public DateTime? SignedAt { get; set; }
+
         public int RegistryNumber { get; set; }
 
         public string MedName { get; set; }

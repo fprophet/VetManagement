@@ -20,16 +20,21 @@ namespace VetManagement.Data
             var valabilityFilter = filters.ContainsKey("valabilityFilter") ? filters["valabilityFilter"] : null;
             var lotFilter = filters.ContainsKey("lotFilter") ? filters["lotFilter"].ToString() : string.Empty;
 
-            List<Med> list = await _context.Meds
+            var query = _context.Meds
                 .Where(m => (string.IsNullOrEmpty(nameFilter) || m.Name.StartsWith(nameFilter))
                     && (string.IsNullOrEmpty(typeFilter) || m.Type == typeFilter)
                     && (string.IsNullOrEmpty(lotFilter) || m.LotID.StartsWith(lotFilter))
                     && (dateAddedFilter == null || m.DateAdded.Date == ((DateTime)dateAddedFilter).Date)
                     && (valabilityFilter == null || m.Valability.Date == ((DateTime)valabilityFilter).Date))
                 .OrderByDescending(m => m.Id)
-                .Skip(perPage * (pageNumber - 1))
-                .Take(perPage)
-                .ToListAsync();
+                .Skip(perPage * (pageNumber - 1));
+            
+            if(perPage >= 0 )
+            {
+                query = query.Take(perPage);
+            }
+
+            List<Med> list = await query.ToListAsync();
 
             int totalRecords = await _context.Meds
                 .Where(m => (string.IsNullOrEmpty(nameFilter) || m.Name.StartsWith(nameFilter))

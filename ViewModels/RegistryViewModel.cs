@@ -135,7 +135,17 @@ namespace VetManagement.ViewModels
             { 
                 RegistryRecord newRegistryRecord = await DuplicateObjectService.DuplicateRegistryRecord(registryRecord);
                 UpdateRegistryRecords(newRegistryRecord);
-                NotificationService.SendNotification("new-recipe", "A fost creată rețeta cu numărul:" + registryRecord.RecipeNumber, "", "user");
+
+                Notification Notification = new Notification()
+                {
+                    Type = "new-recipe",
+                    Title = "A fost creată rețeta cu numărul:" + newRegistryRecord.RecipeNumber,
+                    Message = "",
+                    SentAt = DateTime.Now,
+                    UserType = "user"
+                };
+
+                NotificationService.SendNotification(Notification);
 
             }
             catch (Exception e)
@@ -147,7 +157,6 @@ namespace VetManagement.ViewModels
 
         private void UpdateRegistryRecords(RegistryRecord registryRecord)
         {
-
             if(registryRecord == null)
             {
                 return;
