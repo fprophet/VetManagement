@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VetManagement.Data;
 
@@ -10,9 +11,11 @@ using VetManagement.Data;
 namespace VetManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250319092633_med_last_used")]
+    partial class med_last_used
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,7 +155,7 @@ namespace VetManagement.Migrations
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("DateUpdated")
+                    b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
@@ -161,7 +164,7 @@ namespace VetManagement.Migrations
                     b.Property<int>("InvoiceNumber")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("LastUsed")
+                    b.Property<DateTime>("LastUsed")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("LotID")
@@ -286,9 +289,6 @@ namespace VetManagement.Migrations
                         .HasColumnType("varchar(15)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name", "Phone")
-                        .IsUnique();
 
                     b.ToTable("Owners");
                 });

@@ -21,50 +21,33 @@ namespace vet_management
 
             base.OnStartup(e);
 
-            bool settingsFileFreshCreated;
-
-            AppSettings.CheckFile(out settingsFileFreshCreated);
+            AppSettings.CheckFileAndCreate();
 
             NavigationStore navigationStore = new NavigationStore();
 
             navigationStore.CurrentViewModel = new HomeViewModel(navigationStore);
 
-            navigationStore.PageTitle = "🏠 Acasă" ;
+            navigationStore.PageTitle = "🏠 Acasă " + DateTime.Now.ToString("yyyy-MM-dd");
 
-            if (settingsFileFreshCreated)
+            if (SessionManager.Instance.isIsLoggedIn())
             {
-                Boxes.InfoBox("Settings file was not found! It has been freshly created and needs configuration. Root access only!");
-            
-
-                MainWindow = new RootLoginWindow()
+                MainWindow = new UserLogin()
                 {
-                    DataContext = new RootLoginViewModel(navigationStore)
+                    DataContext = new UserLoginViewModel(navigationStore)
                 };
                 navigationStore.Windows[MainWindow] = typeof(MainViewModel).Name;
 
             }
             else
             {
-                if (SessionManager.Instance.isIsLoggedIn())
+
+                MainWindow = new MainWindow()
                 {
-                    MainWindow = new UserLogin()
-                    {
-                        DataContext = new UserLoginViewModel(navigationStore)
-                    };
-                    navigationStore.Windows[MainWindow] = typeof(MainViewModel).Name;
-
-                }
-                else
-                {
-
-                    MainWindow = new MainWindow()
-                    {
-                        DataContext = new MainViewModel(navigationStore)
-                    };
-                    navigationStore.Windows[MainWindow] = typeof(MainViewModel).Name;
+                    DataContext = new MainViewModel(navigationStore)
+                };
+                navigationStore.Windows[MainWindow] = typeof(MainViewModel).Name;
 
 
-                }
             }
 
             MainWindow.Show();

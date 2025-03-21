@@ -9,6 +9,7 @@ using System.Windows.Input;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
+using VetManagement.Migrations;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.ViewModels;
@@ -40,6 +41,8 @@ namespace VetManagement.ViewModels
 
         public RecipeViewModel(NavigationStore navigationStore, int? id)
         {
+            OnLoadedCommand = new RelayCommand(OnLoad);
+
             _navigationStore = navigationStore;
 
             SignRecipeCommand = new RelayCommand(SignRecipe, (object sender) => RecipeWrapper != null && RecipeWrapper.Signed == false );
@@ -56,6 +59,21 @@ namespace VetManagement.ViewModels
             else
             {
                 _passedId = -1;
+            }
+
+            MarkNotificationAsRead();
+
+        }
+
+        private void MarkNotificationAsRead()
+        {
+            try 
+            {
+                new NotificationRepository().UpdateNotificationForRecipe(_passedId);
+            }
+            catch(Exception e)
+            {
+                Logger.LogError("Error", e.ToString());
             }
         }
 
@@ -97,19 +115,15 @@ namespace VetManagement.ViewModels
 
         private async void SignRecipe( object sender)
         {
-            RecipeWrapper.Signed = true;
-            RecipeWrapper.OwnerSignature = "longsignatruestringrepresentingabinaryimage";
-
-            try
+            Notification notification = new Notification() 
             {
-                await new BaseRepository<Recipe>().Update(RecipeWrapper.Recipe);
-                Boxes.InfoBox("Reteta a fost semnată!");
-
-            }
-            catch (Exception e)
-            {
-                Boxes.ErrorBox("Probleme in semnarea rețetei!\n" + e.Message);
-            }
+                Type = "to-sign",
+                Title = RecipeWrapper.Id.ToString(),
+                Message = "",
+            };
+            
+            NotificationService.SendNotification(notification);
+          
         }
 
         public async Task LoadRecipe()
@@ -130,6 +144,12 @@ namespace VetManagement.ViewModels
             {
                 Boxes.ErrorBox("Reteta nu a fost găsită\n" + e.Message);
             }
+        }
+
+        public async void OnLoad(object parameter)
+        {
+            await LoadRecipe();
+
         }
 
     }

@@ -107,6 +107,11 @@ namespace VetManagement.Data
                .WithOne(t => t.Owner)
                .HasForeignKey(t => t.OwnerId)
                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Owner>()
+                .HasIndex(o => new {o.Name, o.Phone})
+                .IsUnique();
+
 
             modelBuilder.Entity<Med>()
              .HasOne(m => m.Invoice)

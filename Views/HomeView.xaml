@@ -3,17 +3,341 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VetManagement.Views"
+             xmlns:local="clr-namespace:VetManagement.Views" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:services="clr-namespace:VetManagement.Services"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical" >
-            <Button Content="Inventar Clinică" Width="200" Height="50" Command="{Binding NavigateInventoryCommand}" />
-            <Button Content="Stapâni" Width="200" Height="50" Command="{Binding NavigateOwnersCommand}" />
-            <Button Content="Tratamente" Width="200" Height="50" Command="{Binding NavigateTreatmentsCommand}"/>
-            <Button Content="Utilizatori" Width="200" Height="50" Command="{Binding NavigateUsersCommand}" />
-            <Button Content="Log Out" Width="200" Height="50" />
+    <UserControl.Resources>
+        <services:TreatmentMedListToFirstItemQuantityConverter x:Key="TreatmentMedListToFirstItemQuantityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <ItemsPanelTemplate x:Key="HorizontalPanelTemplate">
+            <StackPanel Orientation="Horizontal"/>
+        </ItemsPanelTemplate>
+
+        <Style x:Key="ListStyleDataGrid" TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="RowBackground" Value="Transparent"/>
+            <Setter Property="AlternatingRowBackground" Value="#f9f9f9"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+            <Setter Property="RowHeight" Value="40"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+
+            <!-- Modify Column Header -->
+            <Setter Property="ColumnHeaderStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="LightGray"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="5"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="Gray"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+
+            <!-- Modify Row Style -->
+            <Setter Property="CellStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="5,2"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Button" x:Key="HomeCard">
+            <Setter Property="Background" Value="#FF90CAF9"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Margin="20" VerticalAlignment="Stretch">
+
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Loaded">
+                <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <UniformGrid Grid.Row="0" Rows="1" Columns="5" HorizontalAlignment="Stretch" Margin="0,0,0,20">
+            <Button Background="#FF90CAF9" Style="{StaticResource HomeCard}" Command="{Binding ToggleGridCommand}" CommandParameter="PT">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Tratamente animale mici" FontSize="14" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding PetTreatments.Count}" FontSize="22" TextAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Background="#FF64B5F6" Style="{StaticResource HomeCard}" Command="{Binding ToggleGridCommand}" CommandParameter="LT">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Tratamente animale mari" FontSize="14" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding LivestockTreatments.Count}" FontSize="22" TextAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Background="#FF4FC3F7" Style="{StaticResource HomeCard}" Command="{Binding ToggleGridCommand}" CommandParameter="SR">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Rețete semnate" FontSize="14" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding SignedRecipes.Count}" FontSize="22" TextAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Background="#FF29B6F6" Style="{StaticResource HomeCard}" Command="{Binding ToggleGridCommand}" CommandParameter="NM">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Medicamente noi" FontSize="14" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding NewMeds.Count}" FontSize="22" TextAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button Background="#FF03A9F4" Style="{StaticResource HomeCard}" Command="{Binding ToggleGridCommand}">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Medicamente folosite" FontSize="14" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding UsedMeds.Count}" FontSize="22" TextAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </UniformGrid>
+
+
+        <!-- Expanders for Details -->
+        <StackPanel Grid.Row="1">
+            <StackPanel Visibility="{Binding PTVisibility, Converter={StaticResource BoolToVisibilityConverter}}">
+                <TextBlock Text="Tratamente animale mici" FontSize="16" FontWeight="Bold" Margin="0,10,0,0"/>
+                <DataGrid Style="{StaticResource ListStyleDataGrid}" ItemsSource="{Binding PetTreatments}" MaxHeight="300">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Ora" Binding="{Binding DateAdded, StringFormat='hh:mm:ss'}" Width="200" />
+                        <DataGridTextColumn Header="Proprietar" Binding="{Binding Owner.Name}" Width="200" />
+                        <DataGridTextColumn Header="Animal" Binding="{Binding Patient.Species}" Width="200" />
+                        <DataGridTemplateColumn Header="Tratament" Width="400">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <ListView ItemsSource="{Binding TreatmentMeds}">
+                                            <ListView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ListView.ItemsPanel>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="White" Padding="10,0" BorderBrush="Gray" BorderThickness="0,0,1,0">
+                                                        <TextBlock>
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0} - {1}{2}">
+                                                                    <Binding Path="Med.Name"/>
+                                                                    <Binding Path="Quantity"/>
+                                                                    <Binding Path="Med.MeasurmentUnit"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="" Width="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii" Command="{Binding NavigatePetTreatmentCommand}" CommandParameter="{Binding Owner.Id}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding LTVisibility, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,20,0">
+                <TextBlock Text="Tratamente animale mari" FontSize="16" FontWeight="Bold" Margin="0,10,0,0"/>
+                <DataGrid Style="{StaticResource ListStyleDataGrid}" ItemsSource="{Binding LivestockTreatments}" MaxHeight="300">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Ora" Binding="{Binding DateAdded, StringFormat='hh:mm:ss'}" Width="200" />
+                        <DataGridTextColumn Header="Proprietar" Binding="{Binding Owner.Name}" Width="200" />
+                        <DataGridTextColumn Header="Animal" Binding="{Binding Patient.Species}" Width="200" />
+                        <DataGridTemplateColumn Header="Tratament" Width="400">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <ListView ItemsSource="{Binding TreatmentMeds}">
+                                            <ListView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ListView.ItemsPanel>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="White" Padding="10,0" BorderBrush="Gray" BorderThickness="0,0,1,0">
+                                                        <TextBlock>
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0} - {1}{2}">
+                                                                    <Binding Path="Med.Name"/>
+                                                                    <Binding Path="Quantity"/>
+                                                                    <Binding Path="Med.MeasurmentUnit"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="" Width="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding SRVisibility, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,20,0">
+                <TextBlock Text="Rețete semnate" FontSize="16" FontWeight="Bold" Margin="0,10,0,0"/>
+                <DataGrid Style="{StaticResource ListStyleDataGrid}" ItemsSource="{Binding SignedRecipes}" MaxHeight="300">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Ora" Binding="{Binding SignedAt, StringFormat='hh:mm:ss'}" Width="200" />
+                        <DataGridTextColumn Header="Proprietar" Binding="{Binding RegistryRecord.Treatment.Owner.Name}" Width="200" />
+                        <DataGridTextColumn Header="Animal" Binding="{Binding RegistryRecord.Treatment.Patient.Species}" Width="200" />
+                        <DataGridTemplateColumn Header="Tratament" Width="400">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <ListView ItemsSource="{Binding RegistryRecord.Treatment.TreatmentMeds}">
+                                            <ListView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ListView.ItemsPanel>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="White" Padding="10,0" BorderBrush="Gray" BorderThickness="0,0,1,0">
+                                                        <TextBlock>
+                                                            <TextBlock.Text>
+                                                                <MultiBinding StringFormat="{}{0} - {1}{2}">
+                                                                    <Binding Path="Med.Name"/>
+                                                                    <Binding Path="Quantity"/>
+                                                                    <Binding Path="Med.MeasurmentUnit"/>
+                                                                </MultiBinding>
+                                                            </TextBlock.Text>
+                                                        </TextBlock>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="" Width="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding NMVisibility, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,20,0">
+                <TextBlock Text="Medicamente noi" FontSize="16" FontWeight="Bold" Margin="0,10,0,0"/>
+                <DataGrid Style="{StaticResource ListStyleDataGrid}" ItemsSource="{Binding NewMeds}" MaxHeight="300">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Ora" Binding="{Binding DateAdded, StringFormat='hh:mm:ss'}" Width="200" />
+                        <DataGridTextColumn Header="Denumire produs" Binding="{Binding Name}" Width="200" />
+                        <DataGridTextColumn Header="Serie Lot" Binding="{Binding LotID}" Width="200" />
+                        <DataGridTextColumn Header="Număr factura" Binding="{Binding InvoiceNumber}" Width="200" />
+                        <DataGridTextColumn Header="Furnizor" Binding="{Binding Provider}" Width="200" />
+                        <DataGridTemplateColumn Header="" Width="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+
+            <StackPanel Visibility="Hidden" Margin="0,0,20,0">
+                <TextBlock Text="Medicamente folosite" FontSize="16" FontWeight="Bold" Margin="0,10,0,0"/>
+                <DataGrid Style="{StaticResource ListStyleDataGrid}" ItemsSource="{Binding AllTreatments}" MaxHeight="300">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Ora" Binding="{Binding DateAdded, StringFormat='hh:mm:ss'}" Width="200" />
+                        <DataGridTextColumn Header="Denumire produs" Binding="{Binding Med.Name}" Width="200" />
+                        <DataGridTextColumn Header="Serie Lot" Binding="{Binding Med.LotID}" Width="200" />
+                        <DataGridTextColumn Header="Cantitate folosită" Binding="{Binding TreatmentMeds}" Width="200" />
+                        <DataGridTextColumn Header="Furnizor" Binding="{Binding Med.Provider}" Width="200" />
+                        <DataGridTemplateColumn Header="" Width="140">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+            
         </StackPanel>
+ 
+        <Image Source="C:\Users\eduar\Desktop\vet.jpg" Height="300" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,0,20" Grid.Row="2"/>
+
     </Grid>
 </UserControl>
 

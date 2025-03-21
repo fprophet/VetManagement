@@ -6,7 +6,8 @@
         xmlns:viewmodels="clr-namespace:VetManagement.ViewModels" 
         xmlns:views="clr-namespace:VetManagement.Views"
         xmlns:components="clr-namespace:VetManagement.Components"
-        xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
+        xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf" 
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         WindowState="Maximized"
         Title="Vet Management" Height="600" Width="1000">
 
@@ -53,6 +54,12 @@
 
     <DockPanel LastChildFill="True">
 
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Loaded">
+                <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        
         <Menu DockPanel.Dock="Top" Background="#2C3E50" Foreground="White">
             <MenuItem Header="Home" Command="{Binding NavigateHomeCommand}" />
             <MenuItem Header="Stăpâni" Command="{Binding NavigateOwnersCommand}" />

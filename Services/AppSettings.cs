@@ -24,9 +24,18 @@ namespace VetManagement.Services
         private static readonly string _rootUser = "45QIOaMeCRUOuy8GZJNGgRChVyYYzhEQaOL0kg89D3I=";
         private static readonly string _rootPassword = "K5CgXPDn+gfioZs6tNNtz7PmvbWc4zIc12hIwi4WhD8=";
 
-        public static void CheckFile(out bool created)
+        public static string RootUser
         {
-            created = false;
+            get => _rootUser;
+        }
+        public static string RootPassword
+        {
+            get => _rootPassword;
+        }
+
+        public static void CheckFileAndCreate()
+        {
+            
             if (!Directory.Exists(SettingsDirectory) || !File.Exists(SettingsFile))
             {
                 try
@@ -40,8 +49,8 @@ namespace VetManagement.Services
                     settings["Database"] = "";
                     settings["DatabaseUser"] = "";
                     settings["DatabasePassword"] = "";
-                    settings["RootUser"] = _rootUser;
-                    settings["RootPassword"] = _rootPassword;
+                    //settings["RootUser"] = _rootUser;
+                    //settings["RootPassword"] = _rootPassword;
 
                     string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
 
@@ -50,7 +59,6 @@ namespace VetManagement.Services
                         writer.Write(json);
                     }
 
-                    created = true;
                 }
                 catch (Exception e)
                 {
@@ -62,8 +70,7 @@ namespace VetManagement.Services
 
         public static void SaveSettings(Dictionary<string, string> settings)
         {
-            bool created;
-            CheckFile(out created);
+            CheckFileAndCreate();
 
             settings["RootUser"] = _rootUser;
             settings["RootPassword"] = _rootPassword;
@@ -79,7 +86,8 @@ namespace VetManagement.Services
 
             if ( !File.Exists(SettingsFile))
             {
-                throw new Exception("Settings file was not found!" + SettingsFile);
+                Boxes.ErrorBox("Settings file was not found!\n" + SettingsFile );
+                return null;
             }
 
             string contents = File.ReadAllText(SettingsFile);

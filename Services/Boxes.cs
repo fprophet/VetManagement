@@ -24,5 +24,10 @@ namespace VetManagement.Services
         {
            return MessageBox.Show(message,"Info",MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        public static MessageBoxResult Warning(string message)
+        {
+            return MessageBox.Show(message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
     }
 }

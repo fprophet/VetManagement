@@ -102,6 +102,8 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.PageTitle = "📖 Registru animale mari";
 
+            OnLoadedCommand = new RelayCommand(async (object parameter) => await LoadRegistryRecords());
+
             _filterService = new FilterService(() => LoadRegistryRecords());
 
             RepeatTreatmentCommand = new RelayCommand(RepeatTreatment);
@@ -134,6 +136,12 @@ namespace VetManagement.ViewModels
             try 
             { 
                 RegistryRecord newRegistryRecord = await DuplicateObjectService.DuplicateRegistryRecord(registryRecord);
+
+                if( newRegistryRecord is null)
+                {
+                    return;
+                }
+
                 UpdateRegistryRecords(newRegistryRecord);
 
                 Notification Notification = new Notification()

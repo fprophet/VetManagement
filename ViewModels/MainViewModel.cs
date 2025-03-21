@@ -12,6 +12,7 @@ using VetManagement.Data;
 using VetManagement.Services;
 using VetManagement.Stores;
 using System.Text.Json;
+using System.Windows;
 
 namespace VetManagement.ViewModels
 {
@@ -99,6 +100,23 @@ namespace VetManagement.ViewModels
             _navigationStore.CurrentViewModelChanged += OnCurrentViewModelChanged;
             _navigationStore.PageTitleChanged += OnPageTitleChanged;
 
+            OnLoadedCommand = new RelayCommand(async (object p) =>
+            {
+                try
+                {
+                    Thread receiverThread = new Thread(ListenForNotifications);
+                    receiverThread.IsBackground = true;
+                    receiverThread.Start();
+                }
+                catch (Exception e)
+                {
+                    Boxes.ErrorBox("Could not start a new thread!\n" + e.Message);
+                    //Logger.LogError("Errors", e.ToString());
+                }
+
+                await LoadNotifications();
+            });
+
             Notifications.CollectionChanged += (sender, e) =>
             {
                 OnPropertyChanged(nameof(NotificationCount));
@@ -168,7 +186,7 @@ namespace VetManagement.ViewModels
 
             var type = (string)values[0];
             var title = (string)values[1];
-           
+
             if( type == "new-recipe")
             {
                 NavigationService<RecipeViewModel> NavService = new NavigationService<RecipeViewModel>(_navigationStore, (id) => new RecipeViewModel(_navigationStore,id));
@@ -177,7 +195,6 @@ namespace VetManagement.ViewModels
                 if (id > 0)
                 {
                     NavService.Navigate(id);
-
                     SetNotificationAsRead(title);
                 }
                 else 
@@ -207,6 +224,7 @@ namespace VetManagement.ViewModels
 
         private void OnCurrentViewModelChanged()
         {
+
             OnPropertyChanged(nameof(CurrentViewModel));
         }
 
@@ -230,7 +248,11 @@ namespace VetManagement.ViewModels
                 return;
             }
 
-            Notifications.Add(notification);
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Notifications.Add(notification);
+            });
         }
 
         private void HandleNotification(string result)
@@ -265,11 +287,11 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public async Task ListenForNotifications()
+        public void ListenForNotifications()
         {
             NotificationService notificationService = new NotificationService(HandleNotification);
 
-            await notificationService.StartListening();
+             notificationService.StartListening();
         }
 
         public async Task LoadNotifications()

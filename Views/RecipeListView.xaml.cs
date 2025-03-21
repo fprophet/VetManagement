@@ -24,15 +24,6 @@ namespace VetManagement.Views
         public RecipeListView()
         {
             InitializeComponent();
-            Loaded += RecipeListView_Loaded;
-        }
-
-        private async void RecipeListView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if( DataContext is RecipeListViewModel recipeListViewModel)
-            {
-                await recipeListViewModel.LoadRecipes();
-            }
         }
     }
 }

@@ -100,6 +100,10 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.PageTitle = _pageTitle;
 
+            OnLoadedCommand = new RelayCommand(async (object parameter) =>
+            {
+                await LoadOwners();
+            });
 
             _filterService = new FilterService(() => LoadOwners());
 

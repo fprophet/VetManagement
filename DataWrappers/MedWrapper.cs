@@ -181,6 +181,16 @@ namespace VetManagement.DataWrappers
             }
         }
 
+        public DateTime? LastUsed
+        {
+            get => _med.LastUsed;
+            set
+            {
+                _med.LastUsed = value;
+                OnPropertyChanged(nameof(LastUsed));
+            }
+        }
+
         public string? Description
         {
             get => _med.Description;
@@ -201,7 +211,7 @@ namespace VetManagement.DataWrappers
             }
         }
 
-        public DateTime DateUpdated
+        public DateTime? DateUpdated
         {
             get => _med.DateUpdated;
             set

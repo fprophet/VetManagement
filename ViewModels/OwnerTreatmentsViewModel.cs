@@ -42,6 +42,12 @@ namespace VetManagement.ViewModels
                 PassedId = -1;
             }
 
+            OnLoadedCommand = new RelayCommand(async (object parameter) =>
+            {
+                await LoadOwner();
+                await LoadTreatments();
+            });
+
             _navigationStore = navigationStore;
             _navigationStore.PassedId = PassedId;
 

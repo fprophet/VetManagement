@@ -2,13 +2,22 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:VetManagement.Views"
-             xmlns:components="clr-namespace:VetManagement.Components" xmlns:services="clr-namespace:VetManagement.Services">
+             xmlns:components="clr-namespace:VetManagement.Components"
+             xmlns:services="clr-namespace:VetManagement.Services" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
     </UserControl.Resources>
     
     <Grid Width="1100">
+        
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Loaded">
+                <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -17,9 +26,7 @@
                     FontWeight="Bold" BorderThickness="0" Cursor="Hand" Grid.Row="0"
                     Command="{Binding NavigateCreateUserWindow}" /> 
         
-        <Button Content="TRIMITE NOTIFICARE" Padding="10,5" Background="#4CAF50" Foreground="White" Width="200" HorizontalAlignment="Left"
-                    FontWeight="Bold" BorderThickness="0" Cursor="Hand" Grid.Row="0"
-                    Command="{Binding SendNotificationCommand}" />
+       
 
         <DataGrid ItemsSource="{Binding Users}" Grid.Row="1"
             MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}" Margin="0,10"

@@ -93,6 +93,12 @@ namespace VetManagement.ViewModels
             NavigateInventoryCommand = new NavigateCommand<InventoryViewModel>
                 (new NavigationService<InventoryViewModel>(navigationStore, (id) => new InventoryViewModel(navigationStore)));
 
+            OnLoadedCommand = new RelayCommand(async (object parameter) =>
+            {
+                await LoadMed();
+                await LoadMedTreatments();
+            });
+
             if (id.HasValue)
             {
                 _passedId = id.Value;

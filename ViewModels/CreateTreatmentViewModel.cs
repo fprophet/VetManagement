@@ -169,6 +169,12 @@ namespace VetManagement.ViewModels
             _ownerFilterService = new FilterService(LoadOwners);
             _medFilterService = new FilterService(LoadMeds);
 
+            OnLoadedCommand = new RelayCommand(async (object param) =>
+            {
+                await LoadOwner();
+                await LoadOwnerPatients(_passedId);
+            });
+
             RemoveMedCommand = new RelayCommand(RemoveMed);
 
             CreateTreatmentCommand = new RelayCommand(CreateTreatmentExecute, CanCreateTreatment);
@@ -461,6 +467,8 @@ namespace VetManagement.ViewModels
 
                         //update the medWrapper.Med directly to avoid triggering propchange event
                         medWrapper.Med.Pieces = (int)Math.Ceiling(medWrapper.TotalAmount / medWrapper.PerPiece);
+
+                        medWrapper.Med.LastUsed = DateTime.Now;
 
                         await new BaseRepository<Med>().Update(medWrapper.Med);
 

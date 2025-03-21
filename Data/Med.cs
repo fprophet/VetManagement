@@ -49,7 +49,9 @@ namespace VetManagement.Data
 
         public DateTime DateAdded { get; set; }
 
-        public DateTime DateUpdated { get; set; }
+        public DateTime? DateUpdated { get; set; }
+
+        public DateTime? LastUsed { get; set; }
 
         public string? Description { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,15 +25,7 @@ namespace VetManagement.Views
         public RecipeView()
         {
             InitializeComponent();
-            Loaded += RecipeView_Loaded;
         }
 
-        private async void RecipeView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if(DataContext is RecipeViewModel recipeViewModel)
-            {
-                await recipeViewModel.LoadRecipe();
-            }
-        }
     }
 }

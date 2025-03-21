@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using VetManagement.Stores;
 
 namespace VetManagement.ViewModels
@@ -13,6 +14,7 @@ namespace VetManagement.ViewModels
 
     public class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorInfo
     {
+        public ICommand OnLoadedCommand { get; protected set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

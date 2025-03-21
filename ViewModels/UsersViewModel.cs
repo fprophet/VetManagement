@@ -64,7 +64,9 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _userRepository = new BaseRepository<User>();
             _navigationStore.PageTitle = "🔐 Utilizatori înregistrați";
-   
+
+            OnLoadedCommand = new RelayCommand(async (object parameter) => await LoadUsers());
+
             ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
             DeleteUserCommand = new RelayCommand(DeleteUser);
             EditUserCommand = new RelayCommand(EditUser);

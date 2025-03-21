@@ -24,15 +24,6 @@ namespace VetManagement.Views
         public InventoryView()
         {
             InitializeComponent();
-            Loaded += InventoryView_Loaded;
-        }
-
-        private async void InventoryView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if( DataContext is InventoryViewModel inventoryViewModel)
-            {
-                await inventoryViewModel.LoadMeds();
-            }
         }
     }
 }

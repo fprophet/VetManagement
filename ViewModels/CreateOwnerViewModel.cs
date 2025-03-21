@@ -146,8 +146,18 @@ namespace VetManagement.ViewModels
             }
             catch (Exception e)
             {
-                Boxes.ErrorBox("Pacientul nu a putut fi înregistrat!\n" + e.Message);
-                Logger.LogError("Error", e.ToString());
+
+                if (e.InnerException?.Message.ToLower().StartsWith("duplicate entry") == true)
+                {
+                    Boxes.ErrorBox("Un proprietar cu numele sau numărul de telefon introdus există deja in sistem!");
+                        
+                }
+                else
+                {
+                    Boxes.ErrorBox("Proprietarul nu a putut fi înregistrat!\n" + e.Message);
+                    Logger.LogError("Error", e.ToString());
+                }
+          
             }
         }
     }

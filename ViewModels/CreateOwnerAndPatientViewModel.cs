@@ -73,7 +73,7 @@ namespace VetManagement.ViewModels
                 await patientRepository.Add(patient);
 
                 _updateOwnersList?.Invoke(owner);
-                var res = Boxes.InfoBox("Pacientul a fost adăugat cu succes!");
+                var res = Boxes.InfoBox("Proprietarul si pacientul au fost adăugați cu succes!");
 
 
                 if (res == MessageBoxResult.OK)
@@ -85,8 +85,15 @@ namespace VetManagement.ViewModels
             }
             catch (Exception ex)
             {
-                Boxes.ErrorBox("Pacientul nu a putut fi înregistrat!\n" + ex.Message);
-                Logger.LogError("Error", ex.ToString());
+                if (ex.InnerException?.Message.ToLower().StartsWith("duplicate entry") == true)
+                {
+                    Boxes.ErrorBox("Un proprietar cu numele sau numărul de telefon introdus există deja in sistem!");
+                }
+                else
+                {
+                    Boxes.ErrorBox("Proprietarul si pacientul nu au putut fi înregistrați!\n" + ex.Message);
+                    Logger.LogError("Error", ex.ToString());
+                }
 
             }
 

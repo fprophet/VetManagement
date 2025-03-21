@@ -58,17 +58,17 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private string _patientNameFilter = "";
-        public string PatientNameFilter
+        private string _patientSpeciesFilter = "";
+        public string PatientSpeciesFilter
         {
-            get => _patientNameFilter;
+            get => _patientSpeciesFilter;
             set
             {
-                _patientNameFilter = value;
+                _patientSpeciesFilter = value;
                 isLoading = true;
                 Treatments.Clear();
                 PaginationService.PageNumber = 1;
-                _filterService.DebouncePropertyChanged(nameof(PatientNameFilter));
+                _filterService.DebouncePropertyChanged(nameof(PatientSpeciesFilter));
 
             }
         }
@@ -96,6 +96,8 @@ namespace VetManagement.ViewModels
             _navigationStore.PageTitle = _pageTitle;
 
             _filterService = new FilterService(() => LoadTreatments());
+
+            OnLoadedCommand = new RelayCommand(async (object parameter) => await LoadTreatments());
 
             PaginationService = new PaginationService(() => LoadTreatments(), () => LoadTreatments());
 
@@ -162,7 +164,7 @@ namespace VetManagement.ViewModels
                 Dictionary<string, object> filters = new Dictionary<string, object>();
 
                 filters["ownerName"] = OwnerNameFilter;
-                filters["patientName"] = PatientNameFilter;
+                filters["patientSpecies"] = PatientSpeciesFilter;
                 filters["medName"] = MedNameFilter;
                 filters["patientType"] = "pet";
                 var (treatments, totalRecords) = await new TreatmentRepository().GetFullTreatments(PaginationService.PageNumber, PaginationService.PerPage, filters);

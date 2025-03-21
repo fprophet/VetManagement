@@ -25,16 +25,6 @@ namespace VetManagement.Views
         public OwnersView()
         {
             InitializeComponent();
-            Loaded += OwnersView_Loaded;
-        }
-
-        private async void OwnersView_Loaded(object sender, RoutedEventArgs e)
-        {
-
-            if ( DataContext is OwnersViewModel ownersViewModel)
-            {
-                await ownersViewModel.LoadOwners();
-            }
         }
     }
 }

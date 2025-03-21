@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
 using MySqlX.XDevAPI;
 using VetManagement.Data;
 
@@ -15,6 +16,8 @@ namespace VetManagement.Services
     public class NotificationService
     {
 
+        private static readonly int Port = 8888;
+
         private readonly Action<string>? _onMessageRecieved;
 
         public NotificationService(Action<string>? OnMessageRecieved)
@@ -22,34 +25,54 @@ namespace VetManagement.Services
             _onMessageRecieved = OnMessageRecieved;
         }
 
-        public async Task StartListening()
+        public  void StartListening()
         {
-            UdpClient client = new UdpClient(9999);
-            while (true)
+            try
             {
-                var result = await client.ReceiveAsync();
-                //string message = Encoding.UTF8.GetString(result.Buffer);
+                UdpClient client = new UdpClient(Port);
 
-                //extract the first 16 bytes represnting the IV
-                byte[] IV = new byte[16];
-                byte[] encryptedMessage = new byte[result.Buffer.Length - 16];
+                IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, Port);
 
-                Array.Copy(result.Buffer, 0, IV, 0, 16);
+                while (true)
+                {
+                    Trace.WriteLine(IPAddress.Any);
 
-                Array.Copy(result.Buffer, 16, encryptedMessage, 0, result.Buffer.Length - 16);
 
-                string decrypted = EncryptionService.Decrypt(encryptedMessage, EncryptionService.Key, IV);
+                    //var result = await client.ReceiveAsync();
 
-                
-                _onMessageRecieved?.Invoke(decrypted);
+                    byte[] receivedBytes = client.Receive(ref remoteEndPoint);
+
+                    string receivedMessage = Encoding.UTF8.GetString(receivedBytes);
+                    //string message = Encoding.UTF8.GetString(result.Buffer);
+
+                    //extract the first 16 bytes represnting the IV
+                    byte[] IV = new byte[16];
+                    byte[] encryptedMessage = new byte[receivedBytes.Length - 16];
+
+                    Array.Copy(receivedBytes, 0, IV, 0, 16);
+
+                    Array.Copy(receivedBytes, 16, encryptedMessage, 0, receivedBytes.Length - 16);
+
+                    string decrypted = EncryptionService.Decrypt(encryptedMessage, EncryptionService.Key, IV);
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        _onMessageRecieved?.Invoke(decrypted);
+                        // Perform data binding operation here
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                Boxes.ErrorBox("Error receiving message: " + e.Message);
+                Logger.LogError("Error", e.ToString());
             }
         }
 
         public static async void SendNotification(Notification notification)
         {
-            UdpClient client = new UdpClient();
           
-            if (!string.IsNullOrEmpty(notification.Type) && notification.Type != "recipe-signed")
+            if (!string.IsNullOrEmpty(notification.Type) && notification.Type != "recipe-signed" && notification.Type != "to-sign")
             {
                 CreateNotification(notification);
             }
@@ -70,7 +93,15 @@ namespace VetManagement.Services
 
             Array.Copy(encrypted, 0, data,IV.Length, encrypted.Length);
 
-            client.Send(data, data.Length, new IPEndPoint(IPAddress.Broadcast, 9999));
+            UdpClient client = new UdpClient();
+
+            int total = client.Send(data, data.Length, new IPEndPoint(IPAddress.Broadcast, Port));
+
+            Boxes.InfoBox("AU fost trimisi:" + total + " biti");
+
+            Trace.WriteLine(IPAddress.Broadcast);
+            Trace.WriteLine("UDP signal broadcasted!");
+
 
         }
 
@@ -102,7 +133,6 @@ namespace VetManagement.Services
             string[] parts = title.Split(":");
 
             string last = parts.Last();
-            Trace.WriteLine(last);
             if (int.TryParse(parts.Last(), out int id))
             {
                 return id;

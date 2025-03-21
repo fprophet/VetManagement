@@ -21,6 +21,19 @@ namespace VetManagement.Data
                 .ToListAsync();
         }
 
+        public async Task<List<TreatmentMed>> GetTodaysUsedMeds()
+        {
+            var today = DateTime.Today.AddDays(-1).Date;
+
+            return await _context.TreatmentMed
+                .Where(tm => tm.Med.LastUsed.Value.Date == today)  // Filter by today's date
+                .Include(tm => tm.Med)  // Include Med details
+                .GroupBy(tm => tm.Med.Name) // Group by Med Name
+                .Select(g => g.First())  // Pick the first treatment for each Med Name
+                .ToListAsync();
+
+        }
+
 
     }
 }

@@ -46,7 +46,7 @@ namespace esign_app.ViewModels
         public RootLoginViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
-            LoginCommand = new RelayCommand(AuthenticateRoot);
+            LoginCommand = new RelayCommand(AuthenticateRoot, (object sender) => !string.IsNullOrEmpty(RootUser) && !string.IsNullOrEmpty(RootPassword));
         }
 
         private async void AuthenticateRoot(object parameter)
@@ -54,10 +54,9 @@ namespace esign_app.ViewModels
 
             try
             {
-                Dictionary<string, string> settings = AppSettings.GetSettings();
 
-                bool verifiedPassword = PasswordHelper.VerifyPassword(RootPassword, settings["RootPassword"]);
-                bool verifiedUser = PasswordHelper.VerifyPassword(RootUser, settings["RootUser"]);
+                bool verifiedPassword = PasswordHelper.VerifyPassword(RootPassword, AppSettings.RootPassword);
+                bool verifiedUser = PasswordHelper.VerifyPassword(RootUser, AppSettings.RootUser);
 
                 if( verifiedPassword && verifiedUser)
                 {

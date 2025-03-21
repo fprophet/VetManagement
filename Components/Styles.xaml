@@ -99,6 +99,10 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="TextBox.TextWrapping" Value="Wrap"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+
         <Setter Property="MaxWidth">
             <Setter.Value>
                 <MultiBinding Converter="{StaticResource AddPixelConverter}">
@@ -169,7 +173,20 @@
         </Style.Triggers>
     </Style>
 
-
+    <Style TargetType="DataGridColumnHeader" x:Key="ExpandedColumnHeaderRecipeList">
+        <Setter Property="BorderBrush" Value="LightGray"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="#007ACC"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Height" Value="50"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#004D40"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
     <Style TargetType="TextBlock" x:Key="CenterTextBlock">
         <Setter Property="TextAlignment" Value="Center"/>

@@ -16,21 +16,20 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Login" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+        <TextBlock Text="Root Login" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
         <StackPanel Grid.Row="1" Margin="0,10">
-            <TextBlock Text="Username:"/>
+            <TextBlock Text="Username:" HorizontalAlignment="Center"/>
             <TextBox Width="250" Text="{Binding RootUser, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Margin="0,10">
-            <TextBlock Text="Password:"/>
-            <components:BindablePasswordBox x:Name="Password" Password="{Binding RootPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBlock Text="Password:" HorizontalAlignment="Center"/>
+            <components:BindablePasswordBox Width="250" x:Name="Password" Password="{Binding RootPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20">
             <Button Content="Login" Width="100" Margin="5" Command="{Binding LoginCommand}"/>
-            <Button Content="Cancel" Width="100" Margin="5" />
         </StackPanel>
     </Grid>
 </Window>

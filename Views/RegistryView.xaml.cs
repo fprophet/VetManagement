@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,15 +25,6 @@ namespace VetManagement.Views
         public RegistryView()
         {
             InitializeComponent();
-            Loaded += RegistryView_Loaded;
-        }
-
-        private async void RegistryView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if( DataContext is RegistryViewModel registryViewModel)
-            {
-                await registryViewModel.LoadRegistryRecords();
-            }
         }
     }
 }

@@ -109,16 +109,17 @@ namespace VetManagement.ViewModels
             try
             {
                 Dictionary<string,string> settings = AppSettings.GetSettings();
+
                 if ( settings.Count == 0)
                 {
                     return;
                 }
 
-                Server = settings["Server"] ?? "";
-                Database = settings["Database"] ?? "";
-                DatabaseUser = settings["DatabaseUser"] ?? "";
-                DatabasePassword = settings["DatabasePassword"] ?? "";
-                SiteURL = settings["SiteURL"] ?? "";
+                Server = settings.ContainsKey("Server") ? settings["Server"] : "";
+                Database = settings.ContainsKey("Database") ? settings["Database"] : "";
+                DatabaseUser = settings.ContainsKey("DatabaseUser") ? settings["DatabaseUser"] : "";
+                DatabasePassword = settings.ContainsKey("DatabasePassword") ? settings["DatabasePassword"] : "";
+                SiteURL = settings.ContainsKey("SiteURL")  ? settings["SiteURL"] : "";
 
             }
             catch(Exception e)

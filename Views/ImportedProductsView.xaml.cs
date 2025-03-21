@@ -24,15 +24,6 @@ namespace VetManagement.Views
         public ImportedProductsView()
         {
             InitializeComponent();
-            Loaded += ImportedProductsView_Loaded; ;
-        }
-
-        private async void ImportedProductsView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if( DataContext is ImportedProductsViewModel importedProductsViewModel)
-            {
-                await importedProductsViewModel.LoadImportedProducts();
-            }
         }
     }
 }

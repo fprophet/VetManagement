@@ -18,6 +18,12 @@
     </Window.Resources>
     <ScrollViewer>
         <Grid Margin="10" Width="900">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>

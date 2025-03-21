@@ -27,20 +27,20 @@ namespace VetManagement.Data
         public async Task<(List<RegistryRecord>, int)> GetRegistryRecordsFiltered(int pageNumber, int perPage, Dictionary<string, string> filters)
         {
 
-            var ownerNameFilter = filters.ContainsKey("ownerNameFilter") ? filters["ownerNameFilter"] : string.Empty;
-            var patientSpeciesFilter = filters.ContainsKey("patientSpeciesFilter") ? filters["patientSpeciesFilter"] : string.Empty;
-            var medNameFilter = filters.ContainsKey("medNameFilter") ? filters["medNameFilter"] : string.Empty;
-            var identifierFilter = filters.ContainsKey("identifierFilter") ? filters["identifierFilter"] : string.Empty;
+            string ownerNameFilter = filters.ContainsKey("ownerNameFilter") ? Convert.ToString(filters["ownerNameFilter"]).ToLower() : string.Empty;
+            string patientSpeciesFilter = filters.ContainsKey("patientSpeciesFilter") ? Convert.ToString(filters["patientSpeciesFilter"]).ToLower() : string.Empty;
+            string medNameFilter = filters.ContainsKey("medNameFilter") ? Convert.ToString(filters["medNameFilter"]).ToLower() : string.Empty;
+            string identifierFilter = filters.ContainsKey("identifierFilter") ? Convert.ToString(filters["identifierFilter"]) : string.Empty;
 
 
             List<RegistryRecord> list = await _context.RegistryRecords
 
                  .Where(rr =>
                         rr.Treatment.Patient.Type == "livestock"
-                    && (string.IsNullOrEmpty(ownerNameFilter) || rr.Treatment.Owner.Name.StartsWith(ownerNameFilter))
-                    && (string.IsNullOrEmpty(patientSpeciesFilter) || rr.Treatment.Patient.Species.StartsWith(patientSpeciesFilter))
-                    && (string.IsNullOrEmpty(identifierFilter) || rr.Treatment.Patient.Identifier.ToString().StartsWith(identifierFilter))
-                    && (string.IsNullOrEmpty(medNameFilter) || rr.Treatment.TreatmentMeds.Any(tm => tm.Med.Name.StartsWith(medNameFilter))))
+                    && (string.IsNullOrEmpty(ownerNameFilter) || rr.Treatment.Owner.Name.ToLower().StartsWith(ownerNameFilter))
+                    && (string.IsNullOrEmpty(patientSpeciesFilter) || rr.Treatment.Patient.Species.ToLower().StartsWith(patientSpeciesFilter))
+                    && (string.IsNullOrEmpty(identifierFilter) || rr.Treatment.Patient.Identifier.ToString().ToLower().StartsWith(identifierFilter))
+                    && (string.IsNullOrEmpty(medNameFilter) || rr.Treatment.TreatmentMeds.Any(tm => tm.Med.Name.ToLower().StartsWith(medNameFilter))))
                 .OrderByDescending(rr => rr.Id)
                 .Skip(perPage * (pageNumber - 1))
                 .Take(perPage)

@@ -50,8 +50,8 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private int _recipeNumberFilter ;
-        public int RecipeNumberFilter
+        private string _recipeNumberFilter ;
+        public string RecipeNumberFilter
         {
             get => _recipeNumberFilter;
             set
@@ -82,6 +82,12 @@ namespace VetManagement.ViewModels
         {
             _navigationStore = navigtionStore;
             _navigationStore.PageTitle = "📝 Rețete";
+
+            OnLoadedCommand = new RelayCommand(async (object parameter) =>
+            {
+                await LoadRecipes();
+
+            });
 
             _filterService = new FilterService(() => LoadRecipes());
 

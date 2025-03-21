@@ -42,7 +42,7 @@ namespace VetManagement.Stores
             get => _passedId;
             set
             {
-                if (_passedId != null)
+                if (value != null)
                 {
                     _passedId = value;
                 }
@@ -56,23 +56,9 @@ namespace VetManagement.Stores
             set
             {
                 _currentViewModel = value;
-                OnCurrentViewModelChanged();
-
+                CurrentViewModelChanged?.Invoke();
             }
 
-        }
-
-        private void OnCurrentViewModelChanged()
-
-        {
-            CurrentViewModelChanged?.Invoke();
-
-        }
-
-        private void OnPageTitleChanged()
-        {
-            Trace.WriteLine(_currentViewModel.PageTitle);
-            PageTitleChanged?.Invoke();
         }
     }
 }

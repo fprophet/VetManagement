@@ -24,17 +24,6 @@ namespace VetManagement.Views
         public OwnerTreatmentsView()
         {
             InitializeComponent();
-            Loaded += OwnerTreatmentsView_Loaded;
         }
-
-        private async void OwnerTreatmentsView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if( DataContext is OwnerTreatmentsViewModel ownerTreatmentsViewModel)
-            {
-                await ownerTreatmentsViewModel.LoadOwner();
-                await ownerTreatmentsViewModel.LoadTreatments();
-            }
-        }
-
     }
 }

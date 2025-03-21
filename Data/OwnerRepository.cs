@@ -19,16 +19,14 @@ namespace VetManagement.Data
         public async Task<(List<Owner>,int)> GetFullInfoFiltered(int pageNumber, int perPage, Dictionary<string,string>? filters)
         {
 
-
-
-            var nameFilter = filters.ContainsKey("nameFilter") ? filters["nameFilter"] : string.Empty;
-            var patientNameFilter = filters.ContainsKey("patientNameFilter") ? filters["patientNameFilter"] : string.Empty;
-            var detailsFilter = filters.ContainsKey("detailsFilter") ? filters["detailsFilter"] : string.Empty;
+            string nameFilter = filters.ContainsKey("nameFilter") ? Convert.ToString(filters["nameFilter"]).ToLower() : string.Empty;
+            string patientNameFilter = filters.ContainsKey("patientNameFilter") ? Convert.ToString(filters["patientNameFilter"]).ToLower() : string.Empty;
+            string detailsFilter = filters.ContainsKey("detailsFilter") ? Convert.ToString(filters["detailsFilter"]).ToString() : string.Empty;
 
             var query = _context.Owners
-                 .Where(o => ((string.IsNullOrEmpty(nameFilter) || o.Name.StartsWith(nameFilter))
-                    && (string.IsNullOrEmpty(patientNameFilter) || o.Patients.Any(p => p.Name.StartsWith(patientNameFilter))
-                    && (string.IsNullOrEmpty(detailsFilter) || o.Details.StartsWith(detailsFilter)))))
+                 .Where(o => ((string.IsNullOrEmpty(nameFilter) || o.Name.ToLower().StartsWith(nameFilter))
+                    && (string.IsNullOrEmpty(patientNameFilter) || o.Patients.Any(p => p.Name.ToLower().StartsWith(patientNameFilter))
+                    && (string.IsNullOrEmpty(detailsFilter) || o.Details.ToLower().StartsWith(detailsFilter)))))
                 .OrderByDescending(t => t.Id)
                 .Include(o => o.Patients)
                 .Skip(perPage * (pageNumber - 1));

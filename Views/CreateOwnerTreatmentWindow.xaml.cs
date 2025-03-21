@@ -25,18 +25,6 @@ namespace VetManagement.Views
         public CreateOwnerTreatmentWindow()
         {
             InitializeComponent();
-            Loaded += CreateTreatmentView_Loaded;
         }
-
-        private async void CreateTreatmentView_Loaded(object sender, RoutedEventArgs e)
-        {
-  
-            if (DataContext is CreateTreatmentViewModel createTreatmentViewModel)
-            {
-                await createTreatmentViewModel.LoadOwner();
-                await createTreatmentViewModel.LoadOwnerPatients(createTreatmentViewModel.Owner.Id);
-            }
-        }
-
     }
 }

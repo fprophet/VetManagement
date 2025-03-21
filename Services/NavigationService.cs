@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using VetManagement.Stores;
 using VetManagement.ViewModels;
 
@@ -32,10 +33,15 @@ namespace VetManagement.Services
             var viewModel = _createViewModel(id);
 
             //avoid reloading page. reloading page this way does not trigger the window load event therefore not loading data
-            if (_navigationStore.CurrentViewModel.GetType().Name != viewModel.GetType().Name)
+            //if (_navigationStore.CurrentViewModel.GetType().Name != viewModel.GetType().Name || renewView)
+            //{
+            _navigationStore.CurrentViewModel = null;
+            Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 _navigationStore.CurrentViewModel = viewModel;
-            }
+
+            }, DispatcherPriority.Background);  
+            //}
         }
     }
 }

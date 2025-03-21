@@ -119,6 +119,8 @@ namespace VetManagement.ViewModels
             _navigationStore.PageTitle = "📦 Produse Importate";
             _importedProductsFileHelper = new ImportedProductsFileHelper(UpdateProgress);
 
+            OnLoadedCommand = new RelayCommand(async (object parameter) => await LoadImportedProducts());
+
             PaginationService = new PaginationService(() => LoadImportedProducts(), () => LoadImportedProducts(),20);
 
 

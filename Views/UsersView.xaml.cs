@@ -24,15 +24,6 @@ namespace VetManagement.Views
         public UsersView()
         {
             InitializeComponent();
-            Loaded += UsersView_Loaded;
-        }
-
-        private async void UsersView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if( DataContext is UsersViewModel usersViewModel)
-            {
-                await usersViewModel.LoadUsers();
-            }
         }
     }
 }

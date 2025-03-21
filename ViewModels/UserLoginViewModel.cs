@@ -82,10 +82,9 @@ namespace VetManagement.ViewModels
         {
             try
             {
-                Dictionary<string, string> settings = AppSettings.GetSettings();
 
-                bool verifiedPassword = PasswordHelper.VerifyPassword(Password, settings["RootPassword"]);
-                bool verifiedUser = PasswordHelper.VerifyPassword(Username, settings["RootUser"]);
+                bool verifiedPassword = PasswordHelper.VerifyPassword(Password, AppSettings.RootPassword);
+                bool verifiedUser = PasswordHelper.VerifyPassword(Username, AppSettings.RootUser);
 
                 if (verifiedPassword && verifiedUser)
                 {
@@ -97,7 +96,7 @@ namespace VetManagement.ViewModels
                 }
                 else
                 {
-                    Boxes.ErrorBox("Incorrect username/password!");
+                    Boxes.Warning("Incorrect username/password!");
 
                 }
             }
@@ -108,42 +107,38 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private async  void AuthenticateUser()
+        private async void AuthenticateUser()
         {
             UserRepository userRepository = new UserRepository();
+            User user = null;
             try
             {
-                var user = await userRepository.GetByUsername(Username);
-                if (user != null)
-                {
-
-                    if (PasswordHelper.VerifyPassword(Password, user.Password))
-                    {
-                        SessionManager.Instance.LogUser(user.Id, user.Username, user.Role);
-
-                        new NavigateWindowCommand<MainViewModel>
-                            (new WindowService<MainViewModel>(_navigationStore, (id) => new MainViewModel(_navigationStore)), () => new MainWindow(), true, true);
-
-                    }
-                    else
-                    {
-                        MessageBox.Show("Nume sau parola greșită!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    }
-
-                    //}
-                }
-                else
-                {
-                    MessageBox.Show("Nume sau parola greșită!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                }
+                user = await userRepository.GetByUsername(Username);
             }
             catch (Exception e)
             {
-                MessageBox.Show("Utilizatorul nu a putut fi verificat!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
+                Boxes.ErrorBox("Eroare la conectare baza de date!");
                 Logger.LogError("Database", e.Message);
+                return;
+            }
+            if (user != null)
+            {
+                if (PasswordHelper.VerifyPassword(Password, user.Password))
+                {
+                    SessionManager.Instance.LogUser(user.Id, user.Username, user.Role);
+                    new NavigateWindowCommand<MainViewModel>
+                        (new WindowService<MainViewModel>(_navigationStore, (id) => new MainViewModel(_navigationStore)), () => new MainWindow(), true, true);
+                }
+                else
+                {
+                    Boxes.Warning("Nume sau parola greșită!");
+                    return;
+                }
+            }
+            else
+            {
+                Boxes.Warning("Nume sau parola greșită!");
+                return;
             }
         }
 

@@ -138,6 +138,8 @@ namespace VetManagement.ViewModels
 
             _filterService = new FilterService(() => LoadMeds());
 
+            OnLoadedCommand = new RelayCommand(async (object parameter) => LoadMeds());
+
             PaginationService = new PaginationService(() =>  LoadMeds(), () =>  LoadMeds(),20);
 
             DeleteMedCommand = new RelayCommand(DeleteMed);

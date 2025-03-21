@@ -23,21 +23,25 @@ namespace VetManagement.Data
         }
 
 
+
         public async Task<(List<Treatment>, int)> GetFullTreatments(int pageNumber, int perPage, Dictionary<string, object> filters)
         {
-            var ownerNameFilter = filters.ContainsKey("ownerName") ? (string)filters["ownerName"] : string.Empty;
-            var patientNameFilter = filters.ContainsKey("patientName") ? (string)filters["patientName"] : string.Empty;
-            var medNameFilter = filters.ContainsKey("medName") ? (string)filters["medName"] : string.Empty;
-            var dateFilter = filters.ContainsKey("dateFilter") ? filters["dateFilter"] : null;
-            var patientType = filters.ContainsKey("patientType") ? filters["patientType"] : null;
+            string ownerNameFilter = filters.ContainsKey("ownerName") ? Convert.ToString(filters["ownerName"]).ToLower() : string.Empty;
+            string patientSpeciesFilter = filters.ContainsKey("patientSpecies") ? Convert.ToString(filters["patientSpecies"]).ToLower() : string.Empty;
+            string medNameFilter = filters.ContainsKey("medName") ? Convert.ToString(filters["medName"]).ToLower() : string.Empty;
+
+            DateTime? dateFilter = filters.ContainsKey("dateFilter") && filters["dateFilter"]  != null 
+                    ? Convert.ToDateTime(filters["dateFilter"]).Date : null;
+
+            string patientType = filters.ContainsKey("patientType") ? Convert.ToString(filters["patientType"]).ToLower() : null;
 
             List<Treatment> list = await _context.Treatments
                 .Where(t =>
                        (patientType == null || t.Patient.Type == patientType)
-                    && (string.IsNullOrEmpty(ownerNameFilter) || t.Owner.Name.StartsWith(ownerNameFilter))
-                    && (dateFilter == null || t.DateAdded.Date == ((DateTime)dateFilter).Date)
-                    && (string.IsNullOrEmpty(patientNameFilter) || t.Patient.Name.StartsWith(patientNameFilter))
-                    && (string.IsNullOrEmpty(medNameFilter) || t.TreatmentMeds.Any(tm => tm.Med.Name.StartsWith(medNameFilter))))
+                    && (string.IsNullOrEmpty(ownerNameFilter) || t.Owner.Name.ToLower().StartsWith(ownerNameFilter))
+                    && (dateFilter == null || t.DateAdded.Date == dateFilter)
+                    && (string.IsNullOrEmpty(patientSpeciesFilter) || t.Patient.Species.ToLower().StartsWith(patientSpeciesFilter))
+                    && (string.IsNullOrEmpty(medNameFilter) || t.TreatmentMeds.Any(tm => tm.Med.Name.ToLower().StartsWith(medNameFilter))))
 
                 .OrderByDescending(t => t.Id)
                 .Skip(perPage * (pageNumber - 1))
@@ -51,7 +55,7 @@ namespace VetManagement.Data
             int totalRecords = await _context.Treatments
                 .Where(t => t.Patient.Type == "pet"
                     && (string.IsNullOrEmpty(ownerNameFilter) || t.Owner.Name.StartsWith(ownerNameFilter))
-                    && (string.IsNullOrEmpty(patientNameFilter) || t.Patient.Name.StartsWith(patientNameFilter))
+                    && (string.IsNullOrEmpty(patientSpeciesFilter) || t.Patient.Name.StartsWith(patientSpeciesFilter))
                     && (string.IsNullOrEmpty(medNameFilter) || t.TreatmentMeds.Any(tm => tm.Med.Name.StartsWith(medNameFilter))))
                 .CountAsync();
 
@@ -64,7 +68,7 @@ namespace VetManagement.Data
             return await _context.Treatments
                 .Include(t => t.Patient) 
                 .Include(t => t.TreatmentMeds) 
-                .ThenInclude(tm => tm.Med)
+                    .ThenInclude(tm => tm.Med)
                 .Where(t => t.OwnerId == id)
                 .ToListAsync();
         }
@@ -74,9 +78,20 @@ namespace VetManagement.Data
             return await _context.Treatments
                 .Include(t => t.Patient)
                 .Include(t => t.TreatmentMeds)
-                .ThenInclude(tm => tm.Med)
+                    .ThenInclude(tm => tm.Med)
                 .Include(t => t.Owner)
                 .Where(t => t.TreatmentMeds.Any(tm => tm.Med.Name.IndexOf(medName.Trim()) == 0 ))
+                .ToListAsync();
+        }
+
+        public async Task<List<Treatment>> GetTodaysPetTreatments(string patientType)
+        {
+            return await _context.Treatments
+                .Where(t => t.DateAdded.Date == DateTime.Now.AddDays(-2).Date && t.Patient.Type == patientType)
+                .Include(t => t.Patient)
+                .Include(t => t.Owner)
+                .Include(t => t.TreatmentMeds)
+                    .ThenInclude(tm => tm.Med)
                 .ToListAsync();
         }
 
