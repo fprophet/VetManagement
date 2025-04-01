@@ -12,6 +12,11 @@ namespace VetManagement.Data
     {
         public async Task<List<Recipe>> GetUnsigned()
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
             return await _context.Recipes
                 .Include(r => r.RegistryRecord)
                     .ThenInclude(rr => rr.Treatment)
@@ -22,8 +27,13 @@ namespace VetManagement.Data
                 .Where(r => !r.Signed).ToListAsync();
         }    
         
-        public async Task<List<Recipe>> GetAll()
+        public new async Task<List<Recipe>> GetAll()
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
             return await _context.Recipes
                 .Include(r => r.RegistryRecord)
                     .ThenInclude(rr => rr.Treatment)
@@ -36,11 +46,15 @@ namespace VetManagement.Data
 
         public async Task<(List<Recipe>,int)> GetAllFiltered( int pageNumber, int perPage, Dictionary<string,object>? filters)
         {
-            string ownerNameFilter = filters.ContainsKey("ownerNameFilter") ? ((string)filters["ownerNameFilter"]).ToLower() : string.Empty;
-            int? recipeNumberFilter = filters.ContainsKey("recipeNumberFilter") && filters["recipeNumberFilter"] != null ? Convert.ToInt32(filters["recipeNumberFilter"]) : null;
-            var onlyUnsignedFilter = filters.ContainsKey("onlyUnsignedFilter") ? filters["onlyUnsignedFilter"] : true;
-   
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
 
+            string ownerNameFilter = filters != null && filters.ContainsKey("ownerNameFilter") ? ((string)filters["ownerNameFilter"]).ToLower() : string.Empty;
+            int? recipeNumberFilter = filters != null && filters.ContainsKey("recipeNumberFilter") && filters["recipeNumberFilter"] != null ? Convert.ToInt32(filters["recipeNumberFilter"]) : null;
+            var onlyUnsignedFilter = filters != null &&  filters.ContainsKey("onlyUnsignedFilter") ? filters["onlyUnsignedFilter"] : true;
+   
             List<Recipe> list = await _context.Recipes
                 .Where( r => 
                     (recipeNumberFilter == null || r.Id == (int)recipeNumberFilter)
@@ -75,8 +89,13 @@ namespace VetManagement.Data
             return (list, totalRecords);
         }
 
-        public async Task<Recipe> GetById( int id)
+        public new async Task<Recipe> GetById( int id)
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
             return await _context.Recipes
                 .Include(r => r.RegistryRecord)
                     .ThenInclude(rr => rr.Treatment)
@@ -86,15 +105,20 @@ namespace VetManagement.Data
                         .ThenInclude(t => t.Patient)
                   .Include(r => r.RegistryRecord)
                     .ThenInclude(rr => rr.Treatment)
-                        .ThenInclude(t => t.TreatmentMeds)
-                            .ThenInclude(tm => tm.Med)
+                        .ThenInclude(t => t.TreatmentImportedMeds)
+                            .ThenInclude(tm => tm.ImportedMed)
                 .Where(r => r.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<List<Recipe>> GetTodaysSignedRecipes()
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
             return await _context.Recipes
-                .Where(r => r.Signed == true && r.SignedAt.HasValue && r.SignedAt.Value.Date == DateTime.Today.AddDays(-2).Date)
+                .Where(r => r.Signed == true && r.SignedAt.HasValue && r.SignedAt.Value.Date == DateTime.Today.Date)
                 .Include(r => r.RegistryRecord)
                     .ThenInclude(rr => rr.Treatment)
                         .ThenInclude(t => t.Owner)
@@ -103,8 +127,8 @@ namespace VetManagement.Data
                         .ThenInclude(t => t.Patient)
                 .Include(r => r.RegistryRecord)
                     .ThenInclude(rr => rr.Treatment)
-                        .ThenInclude(t => t.TreatmentMeds)
-                            .ThenInclude(tm => tm.Med)
+                        .ThenInclude(t => t.TreatmentImportedMeds)
+                            .ThenInclude(tm => tm.ImportedMed)
                 .ToListAsync();
         }
 

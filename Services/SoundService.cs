@@ -19,7 +19,6 @@ namespace VetManagement.Services
 
         public static async Task PlayNotificationSound()
         {
-            int baseFrequency = 800;  // Starting frequency (Hz)
             Beep(600, 200);
             await Task.Delay(25);
             Beep(750, 200);

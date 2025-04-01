@@ -23,7 +23,7 @@ namespace VetManagement.ViewModels
 
         public DateTime CurrentDate { get; } = DateTime.Now.Date;
         public ObservableCollection<Treatment> PetTreatments { get; } = new ObservableCollection<Treatment>();
-        public ObservableCollection<Treatment> LivestockTreatments { get; } = new ObservableCollection<Treatment>();
+        public ObservableCollection<RegistryRecord> LivestockTreatments { get; } = new ObservableCollection<RegistryRecord>();
         public ObservableCollection<Recipe> SignedRecipes { get; } = new ObservableCollection<Recipe>();
         public ObservableCollection<Med> NewMeds { get; } = new ObservableCollection<Med>();
         public ObservableCollection<TreatmentMed> UsedMeds { get; } = new ObservableCollection<TreatmentMed>();
@@ -31,6 +31,9 @@ namespace VetManagement.ViewModels
 
         public ICommand ToggleGridCommand { get; }
         public ICommand NavigatePetTreatmentCommand { get; }
+        public ICommand NavigateRecipeViewCommand { get; }
+        public ICommand NavigateMedViewCommand { get; }
+        public ICommand NavigateLivestockTreatmentCommand { get; }
 
         public bool PTVisibility
         {
@@ -85,11 +88,11 @@ namespace VetManagement.ViewModels
             {
                 try
                 {
-                    await GetTodaysTreatments("pet");
-                    await GetTodaysTreatments("livestock");
-                    await GetTodaysSignedRecipes();
-                    await GetTodaysNewMeds();
-                    await GetTodaysUsedMeds();
+                    //await GetTodaysPetTreatments();
+                    //await GetTodaysLivestockTreatments();
+                    //await GetTodaysSignedRecipes();
+                    //await GetTodaysNewMeds();
+                    //await GetTodaysUsedMeds();
 
                 }
                 catch(Exception e)
@@ -99,6 +102,18 @@ namespace VetManagement.ViewModels
                 }
                 
             });
+
+            NavigatePetTreatmentCommand = new NavigateCommand<TreatmentViewModel>
+                (new NavigationService<TreatmentViewModel>(_navigationStore, (id) => new TreatmentViewModel(_navigationStore, id)));
+
+            NavigateLivestockTreatmentCommand = new NavigateCommand<RegistryRecordViewModel>
+                (new NavigationService<RegistryRecordViewModel>(_navigationStore, (id) => new RegistryRecordViewModel(_navigationStore, id)));
+
+            NavigateRecipeViewCommand = new NavigateCommand<RecipeViewModel>
+                (new NavigationService<RecipeViewModel>(_navigationStore, (id) => new RecipeViewModel(_navigationStore, id)));
+            
+            NavigateMedViewCommand = new NavigateCommand<MedViewModel>
+                (new NavigationService<MedViewModel>(_navigationStore, (id) => new MedViewModel(_navigationStore, id)));
         }
 
         private void ToggleGrid(object parameter)
@@ -126,22 +141,26 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private async Task GetTodaysTreatments(string patientType)
+        private async Task GetTodaysPetTreatments()
         {
-            var treatments = await new TreatmentRepository().GetTodaysPetTreatments(patientType);
+            var treatments = await new TreatmentRepository().GetTodaysTreatments();
             foreach( Treatment treatment in treatments)
             {
-                if( patientType == "pet")
-                {
-                    PetTreatments.Add(treatment);
-                }
-                else
-                {
-                    LivestockTreatments.Add(treatment);
-                }
+                 PetTreatments.Add(treatment);
             }
 
         }
+         private async Task GetTodaysLivestockTreatments()
+        {
+            var treatments = await new RegistryRecordRepository().GetTodaysLivestockTreatments();
+            foreach(RegistryRecord treatment in treatments)
+            {
+                LivestockTreatments.Add(treatment);
+            }
+
+        }
+
+
 
         private async Task GetTodaysSignedRecipes()
         {

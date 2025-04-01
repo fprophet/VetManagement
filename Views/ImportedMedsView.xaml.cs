@@ -17,11 +17,11 @@ using VetManagement.ViewModels;
 namespace VetManagement.Views
 {
     /// <summary>
-    /// Interaction logic for ImportedProductsView.xaml
+    /// Interaction logic for ImportedMedsView.xaml
     /// </summary>
-    public partial class ImportedProductsView : UserControl
+    public partial class ImportedMedsView : UserControl
     {
-        public ImportedProductsView()
+        public ImportedMedsView()
         {
             InitializeComponent();
         }

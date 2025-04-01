@@ -14,6 +14,12 @@ namespace VetManagement.Data
     {
         public async Task<(List<Med>, int)> GetAllFiltered(int pageNumber, int perPage, Dictionary<string, object> filters)
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
+
             string nameFilter = filters.ContainsKey("nameFilter") ? Convert.ToString(filters["nameFilter"]).ToLower() : string.Empty;
             string typeFilter = filters.ContainsKey("typeFilter") ? Convert.ToString(filters["typeFilter"]).ToLower() : string.Empty;
             
@@ -53,13 +59,16 @@ namespace VetManagement.Data
 
         public async Task<List<Med>> GetTodaysNewMeds()
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
             var today = DateTime.Today.Date;
             return await _context.Meds
-                .Where(m => m.DateAdded.Date == today.AddDays(-1).Date)
+                .Where(m => m.DateAdded.Date == today.Date)
                 .ToListAsync();
         }
-        
-   
 
     }
 }

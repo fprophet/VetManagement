@@ -136,11 +136,11 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.PageTitle = _pageTitle;
 
-            _filterService = new FilterService(() => LoadMeds());
+            _filterService = new FilterService(LoadMeds);
 
-            OnLoadedCommand = new RelayCommand(async (object parameter) => LoadMeds());
+            OnLoadedCommand = new RelayCommand(async (object parameter) => await LoadMeds());
 
-            PaginationService = new PaginationService(() =>  LoadMeds(), () =>  LoadMeds(),20);
+            PaginationService = new PaginationService(LoadMeds,LoadMeds,20);
 
             DeleteMedCommand = new RelayCommand(DeleteMed);
             EditItemCommand = new RelayCommand(UpdateMed);

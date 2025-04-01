@@ -22,10 +22,12 @@
             </i:EventTrigger>
         </i:Interaction.Triggers>
                 
-        <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="7*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
 
             <StackPanel Grid.Row="0">
@@ -57,7 +59,6 @@
                 </Expander>
             </StackPanel>
 
-            <StackPanel Grid.Row="1">
                     <DataGrid Grid.Row="1" Margin="0,10,0,0" ItemsSource="{Binding RegistryRecords}"
                           Style="{StaticResource DataGridExpanded}" 
                           HorizontalAlignment="Left" 
@@ -70,11 +71,11 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button  Height="25" Margin="10,0" 
-                                             CommandParameter="{Binding Id}"
-                                             Command="{Binding DataContext.RepeatTreatmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}">
-                                            <TextBlock Text="Repetă"
-                                           TextWrapping="Wrap"
-                                           TextAlignment="Center"/>
+                                              CommandParameter="{Binding Id}"
+                                              Command="{Binding DataContext.NavigateRegistryRecordViewCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}">
+                                            <TextBlock Text="Vezi detalii"
+                                                TextWrapping="Wrap"
+                                                TextAlignment="Center"/>
                                         </Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -257,14 +258,14 @@
                                 </DataGridTemplateColumn.Header>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <DataGrid  Width="700" ItemsSource="{Binding Treatment.TreatmentMeds}" VerticalAlignment="Stretch"
+                                        <DataGrid  Width="700" ItemsSource="{Binding Treatment.TreatmentImportedMeds}" VerticalAlignment="Stretch"
                                                Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
                                             <DataGrid.Columns>
                                                 <DataGridTemplateColumn Width="4*">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate>
                                                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                                <TextBlock Text="{Binding Med.Name}"/>
+                                                                <TextBlock Text="{Binding ImportedMed.Denumire}"/>
                                                             </Border>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
@@ -288,17 +289,9 @@
                                                         <DataTemplate>
                                                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
                                                                 <StackPanel>
-                                                                    <TextBlock>
-                                                                        <TextBlock.Text>
-                                                                            <MultiBinding StringFormat="{}{0} {1}">
-                                                                                <Binding Path="Quantity"/>
-                                                                                <Binding Path="Med.MeasurmentUnit"/>
-                                                                            </MultiBinding>
-                                                                        </TextBlock.Text>
-                                                                    </TextBlock>
+                                                                    <TextBlock Text="{Binding Quantity}"/>
                                                                     <TextBlock Text="{Binding Administration}"/>
                                                                 </StackPanel>
-
                                                             </Border>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
@@ -406,10 +399,11 @@
 
                         </DataGrid.Columns>
                     </DataGrid>
+                
             <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="2" Margin="0,20"
                 Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
-            <components:PaginationMenu HorizontalAlignment="Stretch"/>
 
-            </StackPanel>
+            <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Row="2"/>
+
         </Grid>
 </UserControl>

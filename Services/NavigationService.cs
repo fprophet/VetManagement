@@ -28,20 +28,16 @@ namespace VetManagement.Services
             _createViewModel = createViewModel ?? throw new ArgumentNullException(nameof(createViewModel));
         }
 
-        public void Navigate(int? id = null)
+        public  void Navigate(int? id = null)
         {
             var viewModel = _createViewModel(id);
 
-            //avoid reloading page. reloading page this way does not trigger the window load event therefore not loading data
-            //if (_navigationStore.CurrentViewModel.GetType().Name != viewModel.GetType().Name || renewView)
-            //{
-            _navigationStore.CurrentViewModel = null;
-            Application.Current.Dispatcher.InvokeAsync(() =>
+            _navigationStore.CurrentViewModel = new ViewModelBase();
+
+             Application.Current.Dispatcher.Invoke(() =>
             {
                 _navigationStore.CurrentViewModel = viewModel;
-
-            }, DispatcherPriority.Background);  
-            //}
+            }, DispatcherPriority.Background);
         }
     }
 }

@@ -63,7 +63,7 @@ namespace VetManagement.ViewModels
         }
 
 
-        private async void LogUser(object parameter)
+        private void LogUser(object parameter)
         {
 
             if (_loginAsRoot)
@@ -110,7 +110,7 @@ namespace VetManagement.ViewModels
         private async void AuthenticateUser()
         {
             UserRepository userRepository = new UserRepository();
-            User user = null;
+            User? user;
             try
             {
                 user = await userRepository.GetByUsername(Username);

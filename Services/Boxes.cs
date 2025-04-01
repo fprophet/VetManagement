@@ -16,7 +16,7 @@ namespace VetManagement.Services
 
         public static MessageBoxResult ConfirmBox(string message)
         {
-            return MessageBox.Show(message, "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            return MessageBox.Show(message, "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
         }
 

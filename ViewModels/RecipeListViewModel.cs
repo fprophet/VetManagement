@@ -89,9 +89,9 @@ namespace VetManagement.ViewModels
 
             });
 
-            _filterService = new FilterService(() => LoadRecipes());
+            _filterService = new FilterService(LoadRecipes);
 
-            PaginationService = new PaginationService(() => LoadRecipes(), () => LoadRecipes(),20);
+            PaginationService = new PaginationService(LoadRecipes, LoadRecipes,20);
 
             NavigateRecipeCommand =  new NavigateCommand<RecipeViewModel>
                 (new NavigationService<RecipeViewModel>(_navigationStore, (id) => new RecipeViewModel(_navigationStore, id)));

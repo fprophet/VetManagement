@@ -14,8 +14,6 @@ namespace VetManagement.Stores
 
         public event Action? CurrentViewModelChanged;
 
-        public event Action? ItemIdChanged;
-
         public event Action? PageTitleChanged;
 
         private ViewModelBase _currentViewModel;
@@ -24,7 +22,7 @@ namespace VetManagement.Stores
 
         public string PageTitle
         {
-            get => _currentViewModel.PageTitle;
+            get => _currentViewModel?.PageTitle;
             set
             {
                 if (_currentViewModel != null)
@@ -42,10 +40,7 @@ namespace VetManagement.Stores
             get => _passedId;
             set
             {
-                if (value != null)
-                {
-                    _passedId = value;
-                }
+                _passedId = value;
             }
 
         }

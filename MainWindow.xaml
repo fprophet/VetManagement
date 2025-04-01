@@ -64,9 +64,13 @@
             <MenuItem Header="Home" Command="{Binding NavigateHomeCommand}" />
             <MenuItem Header="Stăpâni" Command="{Binding NavigateOwnersCommand}" />
             <MenuItem Header="Inventar" Command="{Binding NavigateInventoryCommand}" />
-            <MenuItem Header="Tratamente" Command="{Binding NavigateTreatmentsCommand}" />
-            <MenuItem Header="Registru mare" Command="{Binding NavigateRegistryCommand}" />
+            <MenuItem Header="Produse Importate" Command="{Binding NavigateImportedMedsCommand}" />
+            <MenuItem Header="Registru animale mici" Command="{Binding NavigateTreatmentsCommand}" />
+            <MenuItem Header="Registru animale mari" Command="{Binding NavigateRegistryCommand}" />
+            <MenuItem Header="Rapoarte" Command="{Binding NavigateMedReportsCommand}" />
+            <MenuItem Header="Rețete" Command="{Binding NavigateRecipeListCommand}" />
             <MenuItem Header="Utilizatori" Command="{Binding NavigateUsersCommand}" />
+            <MenuItem Header="Settings" Visibility="{Binding IsRoot, Converter={StaticResource BoolToVisibilityConverter}}" Command="{Binding NavigateAppSettingsCommand}" />
         </Menu>
 
         <Grid>
@@ -93,9 +97,9 @@
                                 <emoji:TextBlock Text="📦 Inventar" />
                             </MenuItem.Header>
                         </MenuItem>
-                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateImportedProductsCommand}">
+                        <MenuItem Style="{StaticResource MenuItem}" Command="{Binding NavigateImportedMedsCommand}">
                             <MenuItem.Header>
-                                <emoji:TextBlock Text="📦 Produse Importate" />
+                                <emoji:TextBlock Text="📦 Medicamente Importate" />
                             </MenuItem.Header>
                         </MenuItem>
                         <MenuItem MinWidth="400" Style="{StaticResource MenuItem}" Command="{Binding NavigateTreatmentsCommand}">
@@ -192,8 +196,14 @@
                             <DataTemplate DataType="{x:Type viewmodels:RecipeViewModel}" >
                                 <views:RecipeView />
                             </DataTemplate>
-                            <DataTemplate DataType="{x:Type viewmodels:ImportedProductsViewModel}" >
-                                <views:ImportedProductsView />
+                            <DataTemplate DataType="{x:Type viewmodels:ImportedMedsViewModel}" >
+                                <views:ImportedMedsView />
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:RegistryRecordViewModel}" >
+                                <views:RegistryRecordView />
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type viewmodels:TreatmentViewModel}" >
+                                <views:TreatmentView />
                             </DataTemplate>
                         </ContentControl.Resources>
                     </ContentControl>

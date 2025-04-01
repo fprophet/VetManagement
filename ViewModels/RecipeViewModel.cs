@@ -29,6 +29,7 @@ namespace VetManagement.ViewModels
             {
                 _recipeWrapper = value;
                 OnPropertyChanged(nameof(RecipeWrapper));
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
@@ -38,6 +39,7 @@ namespace VetManagement.ViewModels
 
         public ICommand SignRecipeCommand { get; }
         public ICommand NavigateBackCommand { get; }
+        public ICommand PrintRecipeCommand { get; }
 
         public RecipeViewModel(NavigationStore navigationStore, int? id)
         {
@@ -46,6 +48,7 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
 
             SignRecipeCommand = new RelayCommand(SignRecipe, (object sender) => RecipeWrapper != null && RecipeWrapper.Signed == false );
+            PrintRecipeCommand = new RelayCommand(PrintRecipe, (object sender) => RecipeWrapper != null && RecipeWrapper.Signed == true );
 
             OnRecipeSigned += RecipeSigned;
 
@@ -65,6 +68,11 @@ namespace VetManagement.ViewModels
 
         }
 
+        private void PrintRecipe(object parameter)
+        {
+
+        }
+
         private void MarkNotificationAsRead()
         {
             try 
@@ -79,7 +87,7 @@ namespace VetManagement.ViewModels
 
         private async void RecipeSigned(string signatureData)
         {
-            Dictionary<string, string> data = JsonSerializer.Deserialize<Dictionary<string, string>>(signatureData);
+            Dictionary<string, string>? data = JsonSerializer.Deserialize<Dictionary<string, string>>(signatureData);
 
             if (data == null || !data.ContainsKey("recipe") || !data.ContainsKey("signature") || string.IsNullOrEmpty(data["signature"]))
             {
@@ -113,7 +121,7 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private async void SignRecipe( object sender)
+        private void SignRecipe( object sender)
         {
             Notification notification = new Notification() 
             {
@@ -134,8 +142,12 @@ namespace VetManagement.ViewModels
 
                 if(recipe != null)
                 {
+
                     RecipeWrapper = new RecipeWrapper( recipe);
-                    _navigationStore.PageTitle = "📝 Rețeta cu numărul: " + RecipeWrapper.Id;
+                    if(_navigationStore != null)
+                    {
+                        _navigationStore.PageTitle = "📝 Rețeta cu numărul: " + RecipeWrapper.Id;
+                    }
 
                 }
 

@@ -12,17 +12,17 @@ using VetManagement.Data;
 
 namespace VetManagement.Services
 {
-    public class ImportedProductsFileHelper
+    public class ImportedMedsFileHelper
     {
 
         public Action<int,int,string> OnProgressChanged;
 
-        public ImportedProductsFileHelper(Action<int, int, string> onProgressChanged)
+        public ImportedMedsFileHelper(Action<int, int, string> onProgressChanged)
         {
             OnProgressChanged = onProgressChanged;
         }
 
-        public async Task<bool> ImportProducts(string path)
+        public async Task<bool> ImportMeds(string path, CancellationToken cancellationToken)
         {
             //path = "C:\\Users\\eduar\\Desktop\\produse.xls";
 
@@ -32,7 +32,7 @@ namespace VetManagement.Services
                 return false;
             }
 
-            List<string> importedProductProperties = ObjectHelper.GetPropertiesAsStrings(typeof(ImportedProduct));
+            List<string> importedMedProperties = ObjectHelper.GetPropertiesAsStrings(typeof(ImportedMed));
 
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -43,12 +43,12 @@ namespace VetManagement.Services
 
                 var collCount = firstRow.LastCellNum;
 
-                if (collCount != importedProductProperties.Count())
+                if (collCount != importedMedProperties.Count() -1)
                 {
                     Boxes.InfoBox("Fișierul nu coincide cu șablonul de bază!");
-                    Logger.LogError("Error", "IMPORTED PRODUCTS ERROR: Column count not matching!\n" +
+                    Logger.LogError("Error", "IMPORTED MEDS ERROR: Column count not matching!\n" +
                         "File:" + collCount + "\n" +
-                        "Database: " + importedProductProperties.Count());
+                        "Database: " + importedMedProperties.Count());
                     return false;
                 }
 
@@ -56,30 +56,35 @@ namespace VetManagement.Services
                 {
                     var cell = firstRow.GetCell(i);
 
-                    if (cell.ToString() != importedProductProperties[i])
+                    if (cell.ToString() != importedMedProperties[i])
                     {
                         Boxes.InfoBox("Fișierul nu coincide cu șablonul de bază!");
                         Logger.LogError("Error", "IMPORTED PRODUCTS ERROR: Column count not matching!\n" +
                            "File column:" + cell.ToString() + "\n" +
-                           "Database column: " + importedProductProperties[i]);
+                           "Database column: " + importedMedProperties[i]);
                         return false;
                     }
                 }
 
                 for (int i = 1; i < sheet.LastRowNum; i++)
                 {
+                    if(cancellationToken.IsCancellationRequested)
+                    {
+                        return false;   
+                    }
+
                     var row = sheet.GetRow(i);
-                    var importedProduct = new ImportedProduct();
+                    var importedMed = new ImportedMed();
 
                     for (int j = 0; j < row.LastCellNum; j++)
                     {
-                        var propertyName = importedProductProperties[j];
+                        var propertyName = importedMedProperties[j];
                         var propertyValue = row.GetCell(j).ToString();
-                        var property = typeof(ImportedProduct).GetProperty(propertyName);
+                        var property = typeof(ImportedMed).GetProperty(propertyName);
 
-                        if( string.IsNullOrEmpty(propertyValue))
+                        if( string.IsNullOrEmpty(propertyValue) && property != null)
                         {
-                            property.SetValue(importedProduct, null);
+                            property.SetValue(importedMed, null);
                             continue;
                         }
 
@@ -87,13 +92,13 @@ namespace VetManagement.Services
                         {
                             var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                             var safeValue = (propertyValue == null) ? null : Convert.ChangeType(propertyValue, targetType);
-                            property.SetValue(importedProduct, safeValue);
+                            property.SetValue(importedMed, safeValue);
                         }
-                        
                     }
-                    OnProgressChanged?.Invoke(sheet.LastRowNum + 1, i, importedProduct.Denumire);
 
-                    await new BaseRepository<ImportedProduct>().Add(importedProduct);
+                    OnProgressChanged?.Invoke(sheet.LastRowNum + 1, i, importedMed.Denumire);
+
+                    await new ImportedMedRepository().AddIfNotExists(importedMed);
                 }
 
                 var rowCount = sheet.PhysicalNumberOfRows;

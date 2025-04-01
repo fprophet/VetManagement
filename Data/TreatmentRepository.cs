@@ -13,6 +13,11 @@ namespace VetManagement.Data
 
         public async Task<List<Treatment>> GetFullTreatments_old()
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
             return await _context.Treatments
                 .Include(t => t.Patient) 
                 .Include(t => t.TreatmentMeds) 
@@ -26,14 +31,19 @@ namespace VetManagement.Data
 
         public async Task<(List<Treatment>, int)> GetFullTreatments(int pageNumber, int perPage, Dictionary<string, object> filters)
         {
-            string ownerNameFilter = filters.ContainsKey("ownerName") ? Convert.ToString(filters["ownerName"]).ToLower() : string.Empty;
-            string patientSpeciesFilter = filters.ContainsKey("patientSpecies") ? Convert.ToString(filters["patientSpecies"]).ToLower() : string.Empty;
-            string medNameFilter = filters.ContainsKey("medName") ? Convert.ToString(filters["medName"]).ToLower() : string.Empty;
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
+            string? ownerNameFilter = filters.ContainsKey("ownerName") && filters["ownerName"] != null ? Convert.ToString(filters["ownerName"]).ToLower() : string.Empty;
+            string? patientSpeciesFilter = filters.ContainsKey("patientSpecies") ? Convert.ToString(filters["patientSpecies"]).ToLower() : string.Empty;
+            string? medNameFilter = filters.ContainsKey("medName") ? Convert.ToString(filters["medName"]).ToLower() : string.Empty;
 
             DateTime? dateFilter = filters.ContainsKey("dateFilter") && filters["dateFilter"]  != null 
                     ? Convert.ToDateTime(filters["dateFilter"]).Date : null;
 
-            string patientType = filters.ContainsKey("patientType") ? Convert.ToString(filters["patientType"]).ToLower() : null;
+            string? patientType = filters.ContainsKey("patientType") ? Convert.ToString(filters["patientType"]).ToLower() : null;
 
             List<Treatment> list = await _context.Treatments
                 .Where(t =>
@@ -55,7 +65,7 @@ namespace VetManagement.Data
             int totalRecords = await _context.Treatments
                 .Where(t => t.Patient.Type == "pet"
                     && (string.IsNullOrEmpty(ownerNameFilter) || t.Owner.Name.StartsWith(ownerNameFilter))
-                    && (string.IsNullOrEmpty(patientSpeciesFilter) || t.Patient.Name.StartsWith(patientSpeciesFilter))
+                    && (string.IsNullOrEmpty(patientSpeciesFilter) || (t.Patient.Name != null && t.Patient.Name.StartsWith(patientSpeciesFilter)))
                     && (string.IsNullOrEmpty(medNameFilter) || t.TreatmentMeds.Any(tm => tm.Med.Name.StartsWith(medNameFilter))))
                 .CountAsync();
 
@@ -65,6 +75,12 @@ namespace VetManagement.Data
 
         public async Task<List<Treatment>> GetFullTreatmentsForOwner( int id)
         {
+
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
             return await _context.Treatments
                 .Include(t => t.Patient) 
                 .Include(t => t.TreatmentMeds) 
@@ -75,6 +91,12 @@ namespace VetManagement.Data
 
         public async Task<List<Treatment>> GetByMedName(string medName)
         {
+
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
             return await _context.Treatments
                 .Include(t => t.Patient)
                 .Include(t => t.TreatmentMeds)
@@ -84,15 +106,35 @@ namespace VetManagement.Data
                 .ToListAsync();
         }
 
-        public async Task<List<Treatment>> GetTodaysPetTreatments(string patientType)
+        public async Task<List<Treatment>> GetTodaysTreatments()
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
             return await _context.Treatments
-                .Where(t => t.DateAdded.Date == DateTime.Now.AddDays(-2).Date && t.Patient.Type == patientType)
+                .Where(t => t.DateAdded.Date == DateTime.Now.Date && t.Patient.Type == "pet")
                 .Include(t => t.Patient)
                 .Include(t => t.Owner)
                 .Include(t => t.TreatmentMeds)
                     .ThenInclude(tm => tm.Med)
                 .ToListAsync();
+        }
+
+        public new async Task<Treatment> GetById(int id)
+        {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+
+            return await _context.Treatments
+                .Include(t => t.Owner)
+                .Include(t => t.Patient)
+                .Include(t => t.TreatmentMeds)
+                   .ThenInclude(tm => tm.Med)
+                .Where(t => t.Id == id).FirstOrDefaultAsync();
         }
 
 

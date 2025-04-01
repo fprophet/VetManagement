@@ -52,8 +52,8 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private MedWrapper _selectedMedWrapper;
-        public MedWrapper SelectedMedWrapper
+        private MedWrapper? _selectedMedWrapper;
+        public MedWrapper? SelectedMedWrapper
         {
             get => _selectedMedWrapper;
             set
@@ -247,7 +247,7 @@ namespace VetManagement.ViewModels
 
         }
 
-        public async void OnMedChanged()
+        public void OnMedChanged()
         {
             IsMedListDropdownOpen = false;
 
@@ -342,6 +342,10 @@ namespace VetManagement.ViewModels
 
         public async Task LoadOwners()
         {
+            if (string.IsNullOrEmpty(OwnerNameSearch))
+            {
+                return;
+            }
             try
             {
                 BaseRepository<Owner> ownerRepository = new BaseRepository<Owner>();
@@ -472,7 +476,7 @@ namespace VetManagement.ViewModels
 
                         await new BaseRepository<Med>().Update(medWrapper.Med);
 
-                        TreatmentMed treatmentMed = new TreatmentMed()
+                        TreatmentMed? treatmentMed = new TreatmentMed()
                         {
                             MedId = medWrapper.Id,
                             TreatmentId = treatment.Id,

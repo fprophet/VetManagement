@@ -22,8 +22,6 @@ namespace VetManagement.ViewModels
 
         private readonly int _passedId;
 
-        private readonly string _pageTitle;
-
         private bool _hasStartedPiece = false;
 
         public bool HasStartedPiece

@@ -41,7 +41,7 @@ namespace VetManagement.Data
 
         public DbSet<Notification> Notifications { get; set; }
 
-        public DbSet<ImportedProduct> ImportedProducts { get; set; }
+        public DbSet<ImportedMed> ImportedMeds { get; set; }
 
 
         //private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlserver";
@@ -50,7 +50,6 @@ namespace VetManagement.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         
-
             CreateConnectionString();
             //base.OnConfiguring(optionsBuilder);
             try { 
@@ -60,12 +59,39 @@ namespace VetManagement.Data
             }
         }
 
+        public async Task<bool> CheckConnection()
+        {
+            bool response = false;  
+            await Task.Run(() =>
+            {
+                try
+                {
+                    response = Database.CanConnect();
+
+                    if (!response)
+                    {
+                        Boxes.ErrorBox("Eroare la conectare la baza de date!");
+                        return false;
+                    }
+                    return true;
+                }
+
+                catch (Exception e)
+                {
+                    Logger.LogError("Error", e.ToString());
+                    Boxes.ErrorBox("Eroare la conectare la baza de date!\n" + e.Message);
+                    return false;
+                }
+            });
+            return response;
+        }
+
         private void CreateConnectionString()
         {
             try
             {
                 Dictionary<string, string> settings = AppSettings.GetSettings();
-                _dbConnectionString = $"Server={settings["Server"]};Database={settings["Database"]};Uid={settings["DatabaseUser"]};Password={settings["DatabasePassword"]}";
+                _dbConnectionString = $"Server={settings["Server"]};Database={settings["Database"]};Uid={settings["DatabaseUser"]};Password={settings["DatabasePassword"]};Connection Timeout=3;";
             }
             catch (Exception e)
             {
@@ -101,7 +127,21 @@ namespace VetManagement.Data
                 .HasOne(tm => tm.Med)
                 .WithMany(m => m.TreatmentMeds)
                 .HasForeignKey(tm => tm.MedId);
-            
+
+            //treatment - imported meds many to many 
+            modelBuilder.Entity<TreatmentImportedMed>()
+                .HasKey(tmm => new { tmm.TreatmentId, tmm.ImportedMedId });
+
+            modelBuilder.Entity<TreatmentImportedMed>()
+                .HasOne(tmm => tmm.Treatment)
+                .WithMany(t => t.TreatmentImportedMeds)
+                .HasForeignKey(tmm => tmm.TreatmentId);
+
+            modelBuilder.Entity<TreatmentImportedMed>()
+                .HasOne(tmm => tmm.ImportedMed)
+                .WithMany(m => m.TreatmentImportedMeds)
+                .HasForeignKey(tmm => tmm.ImportedMedId);
+
             modelBuilder.Entity<Owner>()
                .HasMany(p => p.Patients)
                .WithOne(t => t.Owner)

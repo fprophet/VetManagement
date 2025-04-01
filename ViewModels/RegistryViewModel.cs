@@ -96,7 +96,7 @@ namespace VetManagement.ViewModels
 
         public ICommand NavigateCreateRegisterRecordWindowCommand { get; set; }
 
-        public ICommand RepeatTreatmentCommand { get; set; }
+        public ICommand NavigateRegistryRecordViewCommand { get; set; }
         
         public RegistryViewModel(NavigationStore navigationStore) {
             _navigationStore = navigationStore;
@@ -106,62 +106,15 @@ namespace VetManagement.ViewModels
 
             _filterService = new FilterService(() => LoadRegistryRecords());
 
-            RepeatTreatmentCommand = new RelayCommand(RepeatTreatment);
-
             PaginationService = new PaginationService(() => LoadRegistryRecords(), () => LoadRegistryRecords());
+
+            NavigateRegistryRecordViewCommand = new NavigateCommand<RegistryRecordViewModel>
+                (new NavigationService<RegistryRecordViewModel>(_navigationStore, (id) => new RegistryRecordViewModel(navigationStore, id)));
 
             NavigateCreateRegisterRecordWindowCommand = new NavigateWindowCommand<CreateRegistryRecordViewModel>
                 (new WindowService<CreateRegistryRecordViewModel>
                     (_navigationStore, (id) => new CreateRegistryRecordViewModel(_navigationStore, UpdateRegistryRecords)), () => new CreateRegistryRecordWindow());
         }
-
-        private async void RepeatTreatment(object parameter)
-        {
-
-
-            if (parameter is not int)
-            {
-                Boxes.InfoBox("Tratamentul nu a putut fi repetat!");
-                return;
-            }
-            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa repetați tratementul cu numărul: " + parameter + "?");
-
-            if( result == System.Windows.MessageBoxResult.No )
-            {
-                return;
-            }
-
-            RegistryRecord registryRecord = RegistryRecords.FirstOrDefault(rr => rr.Id == (int)parameter);
-
-            try 
-            { 
-                RegistryRecord newRegistryRecord = await DuplicateObjectService.DuplicateRegistryRecord(registryRecord);
-
-                if( newRegistryRecord is null)
-                {
-                    return;
-                }
-
-                UpdateRegistryRecords(newRegistryRecord);
-
-                Notification Notification = new Notification()
-                {
-                    Type = "new-recipe",
-                    Title = "A fost creată rețeta cu numărul:" + newRegistryRecord.RecipeNumber,
-                    Message = "",
-                    SentAt = DateTime.Now,
-                    UserType = "user"
-                };
-
-                NotificationService.SendNotification(Notification);
-
-            }
-            catch (Exception e)
-            {
-                Logger.LogError("Error", e.ToString());
-            }
-        }
-
 
         private void UpdateRegistryRecords(RegistryRecord registryRecord)
         {

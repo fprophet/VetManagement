@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:VetManagement.Components"
              xmlns:services="clr-namespace:VetManagement.Services"
             xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
-             
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -25,16 +25,15 @@
                         Grid.Row="0"/>
                 </StackPanel>
 
-                <StackPanel HorizontalAlignment="Right">
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                     <ToggleButton x:Name="NotificationButton"
-                          Width="40" Height="40"
                           HorizontalAlignment="Right"
                           VerticalAlignment="Top"
-                          Margin="10"
+                          Margin="10,0"
                           Background="Transparent"
                           BorderThickness="0">
                         <Grid>
-                            <TextBlock Text="🔔" FontSize="28" />
+                            <svgc:SvgViewbox Height="55" Width="55" Source="pack://application:,,,/Resources/bell.svg"/>
 
                             <Border Background="Red" Width="20" Height="20"
                                 CornerRadius="10"
@@ -49,14 +48,32 @@
                                    VerticalAlignment="Center"/>
                             </Border>
                         </Grid>
+                 
+                    </ToggleButton>
+                    
+                    <ToggleButton x:Name="SmallMenuButton"
+                            BorderThickness="0"
+                            Background="Transparent">
+                        <TextBlock Text="☰" FontSize="28"/>
                     </ToggleButton>
 
-                    <!-- Notification Popup -->
+                    <Popup IsOpen="{Binding ElementName=SmallMenuButton, Path=IsChecked}"
+                         PlacementTarget="{Binding ElementName=SmallMenuButton}"
+                         Placement="Bottom"
+                         StaysOpen="False">
+                        <Border Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="5">
+                            <StackPanel HorizontalAlignment="Stretch">
+                                <Button Content="🔴 Ieșire" Padding="20" Command="{Binding ExtiApplicationCommand}" Margin="5,15" Style="{StaticResource ExitButtonStyle}"/>
+                                <Button Content="🔐 Delogare" Command="{Binding LoggoutCommand}"  Style="{StaticResource LogoutButtonStyle}"/>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
+
+                        <!-- Notification Popup -->
                     <Popup IsOpen="{Binding ElementName=NotificationButton, Path=IsChecked}"
                            PlacementTarget="{Binding ElementName=NotificationButton}"
                            Placement="Bottom"
                            StaysOpen="False"
-                           
                            Width="300">
                         <Border Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="5">
                             <StackPanel HorizontalAlignment="Stretch">

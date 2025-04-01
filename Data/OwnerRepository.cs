@@ -12,13 +12,20 @@ namespace VetManagement.Data
     {
         public async Task<List<Owner>> GetFullInfo()
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
             return await _context.GetDbSet<Owner>().Include(p => p.Patients).ToListAsync();
 
         }
 
         public async Task<(List<Owner>,int)> GetFullInfoFiltered(int pageNumber, int perPage, Dictionary<string,string>? filters)
         {
-
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
             string nameFilter = filters.ContainsKey("nameFilter") ? Convert.ToString(filters["nameFilter"]).ToLower() : string.Empty;
             string patientNameFilter = filters.ContainsKey("patientNameFilter") ? Convert.ToString(filters["patientNameFilter"]).ToLower() : string.Empty;
             string detailsFilter = filters.ContainsKey("detailsFilter") ? Convert.ToString(filters["detailsFilter"]).ToString() : string.Empty;

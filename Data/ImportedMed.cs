@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VetManagement.Data
 {
-    public class ImportedProduct
+    public class ImportedMed
     {
         // Properties are nullable because the data from the Excel file might be missing
         //id is string because it won't be incremented in the database and some numbers are listed with commas
@@ -71,5 +71,8 @@ namespace VetManagement.Data
         public bool? VizibilComandaAndroid { get; set; }
 
         public decimal? PretEuro { get; set; }
+
+        public List<TreatmentImportedMed> TreatmentImportedMeds { get; set; } = new List<TreatmentImportedMed>();
+
     }
 }

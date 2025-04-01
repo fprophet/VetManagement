@@ -20,7 +20,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
         <Button Content="➕ Creează utilizator nou" Padding="10,5" Background="#4CAF50" Foreground="White" Width="200" HorizontalAlignment="Left"
                     FontWeight="Bold" BorderThickness="0" Cursor="Hand" Grid.Row="0"
@@ -62,8 +62,6 @@
 
             </DataGrid.Columns>
         </DataGrid>
-
-
     </Grid>
     
 </UserControl>

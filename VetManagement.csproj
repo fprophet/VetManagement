@@ -9,9 +9,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\AlgerianRegular.ttf" />
+	  <None Remove="Resources\spinner.gif" />
+	  <None Remove="Resources\vet.jpg" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Emoji.Wpf" Version="0.3.4" />
 		<PackageReference Include="EPPlus" Version="7.6.1" />
 		<PackageReference Include="Handlebars.Net" Version="2.1.6" />
+		<PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,10 +31,26 @@
 		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
 		<PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.2" />
 		<PackageReference Include="NPOI" Version="2.7.2" />
+		<PackageReference Include="SharpVectors" Version="1.8.4.2" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Migrations\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Resources\AlgerianRegular.ttf">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\bell.svg">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\spinner.gif">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Resources\vet.jpg">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -37,10 +60,16 @@
 	  <Compile Update="Views\CreateOwnerTreatmentWindow.xaml.cs">
 	    <SubType>Code</SubType>
 	  </Compile>
+	  <Compile Update="Views\RecipeViewOld.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Page Update="Views\CreateOwnerTreatmentWindow.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	  <Page Update="Views\RecipeViewOld.xaml">
 	    <SubType>Designer</SubType>
 	  </Page>
 	</ItemGroup>

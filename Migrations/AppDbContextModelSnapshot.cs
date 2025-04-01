@@ -19,7 +19,7 @@ namespace VetManagement.Migrations
                 .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("VetManagement.Data.ImportedProduct", b =>
+            modelBuilder.Entity("VetManagement.Data.ImportedMed", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -116,7 +116,7 @@ namespace VetManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ImportedProducts");
+                    b.ToTable("ImportedMeds", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.Invoice", b =>
@@ -140,7 +140,7 @@ namespace VetManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.Med", b =>
@@ -208,7 +208,7 @@ namespace VetManagement.Migrations
 
                     b.HasIndex("InvoiceNumber");
 
-                    b.ToTable("Meds");
+                    b.ToTable("Meds", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.Notification", b =>
@@ -248,7 +248,7 @@ namespace VetManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.Owner", b =>
@@ -257,10 +257,8 @@ namespace VetManagement.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                    b.Property<string>("County")
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime(6)");
@@ -285,12 +283,25 @@ namespace VetManagement.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("varchar(15)");
 
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("StreetNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Town")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name", "Phone")
                         .IsUnique();
 
-                    b.ToTable("Owners");
+                    b.ToTable("Owners", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.Patient", b =>
@@ -350,7 +361,7 @@ namespace VetManagement.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Patients");
+                    b.ToTable("Patients", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.Recipe", b =>
@@ -381,7 +392,7 @@ namespace VetManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recipes");
+                    b.ToTable("Recipes", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.RegistryRecord", b =>
@@ -422,7 +433,7 @@ namespace VetManagement.Migrations
 
                     b.HasIndex("TreatmentId");
 
-                    b.ToTable("RegistryRecords");
+                    b.ToTable("RegistryRecords", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.Treatment", b =>
@@ -452,7 +463,30 @@ namespace VetManagement.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Treatments");
+                    b.ToTable("Treatments", (string)null);
+                });
+
+            modelBuilder.Entity("VetManagement.Data.TreatmentImportedMed", b =>
+                {
+                    b.Property<int>("TreatmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImportedMedId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Administration")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Quantity")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("TreatmentId", "ImportedMedId");
+
+                    b.HasIndex("ImportedMedId");
+
+                    b.ToTable("TreatmentImportedMed", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.TreatmentMed", b =>
@@ -477,7 +511,7 @@ namespace VetManagement.Migrations
 
                     b.HasIndex("MedId");
 
-                    b.ToTable("TreatmentMed");
+                    b.ToTable("TreatmentMed", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.User", b =>
@@ -515,7 +549,7 @@ namespace VetManagement.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("VetManagement.Data.Med", b =>
@@ -576,6 +610,25 @@ namespace VetManagement.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("VetManagement.Data.TreatmentImportedMed", b =>
+                {
+                    b.HasOne("VetManagement.Data.ImportedMed", "ImportedMed")
+                        .WithMany("TreatmentImportedMeds")
+                        .HasForeignKey("ImportedMedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VetManagement.Data.Treatment", "Treatment")
+                        .WithMany("TreatmentImportedMeds")
+                        .HasForeignKey("TreatmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ImportedMed");
+
+                    b.Navigation("Treatment");
+                });
+
             modelBuilder.Entity("VetManagement.Data.TreatmentMed", b =>
                 {
                     b.HasOne("VetManagement.Data.Med", "Med")
@@ -593,6 +646,11 @@ namespace VetManagement.Migrations
                     b.Navigation("Med");
 
                     b.Navigation("Treatment");
+                });
+
+            modelBuilder.Entity("VetManagement.Data.ImportedMed", b =>
+                {
+                    b.Navigation("TreatmentImportedMeds");
                 });
 
             modelBuilder.Entity("VetManagement.Data.Invoice", b =>
@@ -625,6 +683,8 @@ namespace VetManagement.Migrations
 
             modelBuilder.Entity("VetManagement.Data.Treatment", b =>
                 {
+                    b.Navigation("TreatmentImportedMeds");
+
                     b.Navigation("TreatmentMeds");
                 });
 #pragma warning restore 612, 618

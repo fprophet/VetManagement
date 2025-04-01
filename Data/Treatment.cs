@@ -24,6 +24,7 @@ namespace VetManagement.Data
         public string? Details { get; set; }
 
         public List<TreatmentMed> TreatmentMeds{ get; set; } = new List<TreatmentMed>();
+        public List<TreatmentImportedMed> TreatmentImportedMeds { get; set; } = new List<TreatmentImportedMed>();
 
     }
 }

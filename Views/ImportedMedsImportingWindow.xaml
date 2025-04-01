@@ -1,0 +1,34 @@
+﻿<Window x:Class="VetManagement.Views.ImportedMedsImportingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VetManagement.Views"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        mc:Ignorable="d"
+        Title="Importare produse" Height="250" Width="800">
+    <Grid>
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Loaded">
+                <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+
+        <StackPanel  Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,0,20">
+            <TextBlock Text="Se importă produsele..." FontSize="16" Margin="0,20"/>
+            <StackPanel   HorizontalAlignment="Left" Orientation="Horizontal" MaxWidth="300">
+                <TextBlock Text="Produsul:"/>
+                <TextBlock Text="{Binding CurrentMedName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            </StackPanel>
+            <StackPanel   HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock Text="{Binding CurrentMedIndex,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <TextBlock Text="/"/>
+                <TextBlock Text="{Binding TotalMeds,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            </StackPanel>
+            <ProgressBar  Minimum="0" Maximum="100" Height="30" Width="300"
+                          Value="{Binding ProgressFiller,UpdateSourceTrigger=PropertyChanged}" />
+            
+            <Button Content="Cancel" Width="100" Margin="20" Command="{Binding CancelImportCommand}"/>
+        </StackPanel>
+    </Grid>
+</Window>

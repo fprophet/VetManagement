@@ -24,9 +24,9 @@
         </i:Interaction.Triggers>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="7*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" >
@@ -69,90 +69,88 @@
         </StackPanel>
 
     
-        <StackPanel Grid.Row="1" Margin="0,10,0,0">
-            <DataGrid ItemsSource="{Binding Meds}"
-                      ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
-                      MaxHeight="700"
-                      Style="{StaticResource DataGridExpanded}" BorderThickness="1"  HorizontalAlignment="Left">
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Meds}"
+                    ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
+                    MaxHeight="700"
+                    Style="{StaticResource DataGridExpanded}" BorderThickness="1"  HorizontalAlignment="Left">
                 
-                <DataGrid.Columns>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAdded, Mode=OneWay, StringFormat='yyyy-MM-dd'}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding Valability, Mode=OneWay,StringFormat='yyyy-MM-dd'}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Denumire Produs" Binding="{Binding Name}" Width="200"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Furnizor" Binding="{Binding Provider}" Width="150"/>
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Serie Lot" Binding="{Binding LotID}" Width="150"/>
-                    <!--<DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="În stoc(bucăți)" Binding="{Binding Pieces}" Width="150"/>-->
+            <DataGrid.Columns>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAdded, Mode=OneWay, StringFormat='yyyy-MM-dd'}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding Valability, Mode=OneWay,StringFormat='yyyy-MM-dd'}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Denumire Produs" Binding="{Binding Name}" Width="200"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Furnizor" Binding="{Binding Provider}" Width="150"/>
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Serie Lot" Binding="{Binding LotID}" Width="150"/>
+                <!--<DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="În stoc(bucăți)" Binding="{Binding Pieces}" Width="150"/>-->
 
-                    <DataGridTemplateColumn Header="Bucăți" Width="170">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding Pieces}"  />
-                                    <TextBlock Text=" " />
-                                    <TextBlock Text="{Binding PieceType}" Foreground="Gray" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
+                <DataGridTemplateColumn Header="Bucăți" Width="170">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding Pieces}"  />
+                                <TextBlock Text=" " />
+                                <TextBlock Text="{Binding PieceType}" Foreground="Gray" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
 
-                        <DataGridTemplateColumn.CellEditingTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBox Text="{Binding Pieces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80" />
-                                    <TextBlock Text=" " />
-                                    <TextBlock Text="{Binding PieceType}" Foreground="Gray" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellEditingTemplate>
-                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox Text="{Binding Pieces, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80" />
+                                <TextBlock Text=" " />
+                                <TextBlock Text="{Binding PieceType}" Foreground="Gray" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
 
 
-                    <DataGridTemplateColumn Header="Cantitate" Width="150" IsReadOnly="True">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0}  {1}" Mode="OneWay">
-                                            <Binding Path="TotalAmount"/>
-                                            <Binding Path="MeasurmentUnit"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Cantitate" Width="150" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0}  {1}" Mode="OneWay">
+                                        <Binding Path="TotalAmount"/>
+                                        <Binding Path="MeasurmentUnit"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-                    <!--<DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Cantitate/Bucată" Binding="{Binding UnitPerPiece, Mode=OneWay}" Width="150"/>-->
-                    <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Număr Factură" Binding="{Binding InvoiceNumber, Mode=OneWay}" Width="150"/>
+                <!--<DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Cantitate/Bucată" Binding="{Binding UnitPerPiece, Mode=OneWay}" Width="150"/>-->
+                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Număr Factură" Binding="{Binding InvoiceNumber, Mode=OneWay}" Width="150"/>
 
-                    <DataGridTemplateColumn  >
-                        <DataGridTemplateColumn.Header>
-                            <TextBlock Text="Actions"/>
-                        </DataGridTemplateColumn.Header>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Content="✏ Modifică" Style="{StaticResource EditButtonStyle}"
-                                            Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            CommandParameter="{Binding}" />
-                                    <Button Content="Detalii" Style="{StaticResource DetailsButtonStyle}"
-                                            Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                                    <Button Content="Șterge" Style="{StaticResource DeleteButtonStyle}"
-                                            Command="{Binding DataContext.DeleteMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                <DataGridTemplateColumn  >
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Actions"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="✏ Modifică" Style="{StaticResource EditButtonStyle}"
+                                        Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}" />
+                                <Button Content="Detalii" Style="{StaticResource DetailsButtonStyle}"
+                                        Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
+                                <Button Content="Șterge" Style="{StaticResource DeleteButtonStyle}"
+                                        Command="{Binding DataContext.DeleteMedCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-                </DataGrid.Columns>
-            </DataGrid>
+            </DataGrid.Columns>
+        </DataGrid>
 
-            <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Column="2" Margin="0,20"
-                Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
+        <ProgressBar Grid.Row="2" Height="15" Width="200" IsIndeterminate="True"  Margin="0,20"
+            Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-            <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Column="2" Margin="0,10"/>
+        <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Row="2" Margin="0,10"/>
 
-        </StackPanel>
     </Grid>
 </UserControl>

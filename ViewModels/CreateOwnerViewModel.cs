@@ -22,6 +22,10 @@ namespace VetManagement.ViewModels
         private string _name = string.Empty;
         private string _email = string.Empty;
         private string _address = string.Empty;
+        private string _town = string.Empty;
+        private string _street = string.Empty;
+        private string _streetNumber = string.Empty;
+        private string _county = string.Empty;
         private string _phone = string.Empty;
         private string _details = string.Empty;
         private Action<Owner> _onOwnerCreated;
@@ -36,13 +40,42 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public string Address
+        public string Town
         {
-            get => _address;
+            get => _town;
             set
             {
-                _address = value;
-                OnPropertyChanged(nameof(Address));
+                _town = value;
+                OnPropertyChanged(nameof(Town));
+            }
+        }
+        public string Street
+        {
+            get => _street;
+            set
+            {
+                _street = value;
+                OnPropertyChanged(nameof(Street));
+            }
+        }
+        
+        public string StreetNumber
+        {
+            get => _streetNumber;
+            set
+            {
+                _streetNumber = value;
+                OnPropertyChanged(nameof(StreetNumber));
+            }
+        }
+        
+        public string County
+        {
+            get => _county;
+            set
+            {
+                _county = value;
+                OnPropertyChanged(nameof(County));
             }
         }
 
@@ -105,7 +138,18 @@ namespace VetManagement.ViewModels
 
         public Owner RetrieveOwner()
         {
-            Owner owner = new Owner() { Name = Name, Address = Address, Phone = Phone, Details = Details, Email = Email, DateAdded = DateTime.Now };
+            Owner owner = new Owner() 
+            {
+                Name = Name,
+                Town = Town,
+                Street = Street,
+                StreetNumber = StreetNumber,
+                County = County,
+                Phone = Phone,
+                Details = Details,
+                Email = Email,
+                DateAdded = DateTime.Now 
+            };
 
             if (!Validate(owner))
             {
@@ -150,7 +194,6 @@ namespace VetManagement.ViewModels
                 if (e.InnerException?.Message.ToLower().StartsWith("duplicate entry") == true)
                 {
                     Boxes.ErrorBox("Un proprietar cu numele sau numărul de telefon introdus există deja in sistem!");
-                        
                 }
                 else
                 {

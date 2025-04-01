@@ -18,9 +18,6 @@ namespace VetManagement.ViewModels
     {
 
         private readonly int PassedId;
-
-        private readonly string _pageTitle;
-
         public ICommand NavigateOwnersCommand { get; set; }
         public ICommand NavigateCreateTreatment { get; set; }
         public ICommand RepeatTreatmentCommand { get; set; }
@@ -75,7 +72,7 @@ namespace VetManagement.ViewModels
                 return;
             }
 
-            Treatment treatment = Treatments.FirstOrDefault(t => t.Id == (int)parameter);
+            Treatment? treatment = Treatments.FirstOrDefault(t => t.Id == (int)parameter);
 
             try
             {
@@ -109,9 +106,10 @@ namespace VetManagement.ViewModels
         public async Task LoadOwner()
         {
             Owner = await new BaseRepository<Owner>().GetById(PassedId);
-            _navigationStore.PageTitle = "💊 Tratamentele lui " + Owner.Name; 
-
-
+            if (_navigationStore is not null) 
+            { 
+                _navigationStore.PageTitle = "💊 Tratamentele lui " + Owner.Name;
+            }
         }
 
         public async Task LoadTreatments()

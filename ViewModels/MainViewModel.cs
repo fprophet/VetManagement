@@ -13,13 +13,15 @@ using VetManagement.Services;
 using VetManagement.Stores;
 using System.Text.Json;
 using System.Windows;
+using NPOI.SS.Formula.Functions;
+using VetManagement.Views;
+using NPOI.POIFS.Crypt;
 
 namespace VetManagement.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
         private new readonly NavigationStore _navigationStore;
-
 
         public ICommand NavigateHomeCommand { get; }
         public ICommand NavigateUsersCommand { get; }
@@ -31,8 +33,10 @@ namespace VetManagement.ViewModels
         public ICommand NavigateAppSettingsCommand { get; }
         public ICommand NavigateRecipeListCommand { get; }
         public ICommand NavigateNotificationCommand { get; }
-        public ICommand NavigateImportedProductsCommand { get; }
+        public ICommand NavigateImportedMedsCommand { get; }
         public ICommand ToggleSideMenuCommand { get; }
+        public ICommand ExtiApplicationCommand { get; }
+        public ICommand LoggoutCommand { get; }
         public ViewModelBase CurrentViewModel => _navigationStore.CurrentViewModel;
 
         public ObservableCollection<Notification> Notifications { get; } = new ObservableCollection<Notification>();
@@ -102,17 +106,8 @@ namespace VetManagement.ViewModels
 
             OnLoadedCommand = new RelayCommand(async (object p) =>
             {
-                try
-                {
-                    Thread receiverThread = new Thread(ListenForNotifications);
-                    receiverThread.IsBackground = true;
-                    receiverThread.Start();
-                }
-                catch (Exception e)
-                {
-                    Boxes.ErrorBox("Could not start a new thread!\n" + e.Message);
-                    //Logger.LogError("Errors", e.ToString());
-                }
+                //TcpConnection.Instance.SetRecieveCallBack(HandleNotification);
+                //TcpConnection.Instance.ConnectToServer();
 
                 await LoadNotifications();
             });
@@ -156,12 +151,33 @@ namespace VetManagement.ViewModels
             NavigateRecipeListCommand = new NavigateCommand<RecipeListViewModel>
                 (new NavigationService<RecipeListViewModel>(_navigationStore, (id) => new RecipeListViewModel(_navigationStore)));
 
-            NavigateImportedProductsCommand = new NavigateCommand<ImportedProductsViewModel>
-                (new NavigationService<ImportedProductsViewModel>(_navigationStore, (id) => new ImportedProductsViewModel(_navigationStore)));
+            NavigateImportedMedsCommand = new NavigateCommand<ImportedMedsViewModel>
+                (new NavigationService<ImportedMedsViewModel>(_navigationStore, (id) => new ImportedMedsViewModel(_navigationStore)));
 
             NavigateNotificationCommand = new RelayCommand(NavigateNotification);
             ToggleSideMenuCommand = new RelayCommand(ToggleSideMenu);
 
+            ExtiApplicationCommand = new RelayCommand(ExitApplication);
+            LoggoutCommand = new RelayCommand(Loggout);
+        }
+
+        private void Loggout(object parameter)
+        {
+            if (Boxes.ConfirmBox("Sunteți sigur ca doriți să vă delogați?") == MessageBoxResult.Yes)
+            {
+                SessionManager.Instance.LogoutUser();
+                NavigateWindowCommand<UserLoginViewModel> navigateWindowCommand =
+                    new NavigateWindowCommand<UserLoginViewModel>(new WindowService<UserLoginViewModel>
+                    (_navigationStore, (id) => new UserLoginViewModel(_navigationStore)), () => new UserLogin(),true,true);
+            }
+        }
+
+        private void ExitApplication(object parameter)
+        {
+            if(Boxes.ConfirmBox("Sunteți sigur ca doriți să ieșiți din aplicație?") == MessageBoxResult.Yes)
+            {
+                Application.Current.Shutdown();
+            }
         }
 
         private void ToggleSideMenu(object parameter)
@@ -211,12 +227,17 @@ namespace VetManagement.ViewModels
 
         private void SetNotificationAsRead(string title)
         {
-            Notification notification = Notifications.FirstOrDefault(n => n.Title == title);
+            Notification? notification = Notifications.FirstOrDefault(n => n.Title == title);
+
+            if(notification == null)
+            {
+                return;
+            }
 
             notification.Read = true;
             notification.ReadAt = DateTime.Now;
 
-            new BaseRepository<Notification>().Update(notification);
+            _ = new BaseRepository<Notification>().Update(notification);
 
             Notifications.Remove(notification);
 
@@ -224,7 +245,6 @@ namespace VetManagement.ViewModels
 
         private void OnCurrentViewModelChanged()
         {
-
             OnPropertyChanged(nameof(CurrentViewModel));
         }
 
@@ -248,30 +268,38 @@ namespace VetManagement.ViewModels
                 return;
             }
 
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Notifications.Add(notification);
-            });
+            Notifications.Add(notification);
         }
 
         private void HandleNotification(string result)
         {
             SoundService.PlayNotificationSound();
 
-          
-            Notification notification = JsonSerializer.Deserialize<Notification>(result);
+            Notification? notification;
+
+            try
+            {
+                notification = JsonSerializer.Deserialize<Notification>(result);
+            }
+            catch(Exception e)
+            {
+                Logger.LogError("Error", e.ToString());
+                return;
+            }
 
 
             if (notification is null)
             {
-                //HandleNotification
                 return;
             }
+
             else
             {
+
                 if (notification.Type != null && notification.Type == "recipe-signed")
                 {
+               
+
                     if (CurrentViewModel.GetType().Name == typeof(RecipeViewModel).Name)
                     {
 
@@ -285,13 +313,6 @@ namespace VetManagement.ViewModels
                 }
                 //Trace.WriteLine(notif["message"]);
             }
-        }
-
-        public void ListenForNotifications()
-        {
-            NotificationService notificationService = new NotificationService(HandleNotification);
-
-             notificationService.StartListening();
         }
 
         public async Task LoadNotifications()
@@ -311,7 +332,7 @@ namespace VetManagement.ViewModels
             }
             catch(Exception e)
             {
-                Logger.LogError("Errors", e.ToString());
+                Logger.LogError("Error", e.ToString());
             }
         }
     }

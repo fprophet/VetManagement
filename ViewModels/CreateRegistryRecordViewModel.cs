@@ -96,22 +96,17 @@ namespace VetManagement.ViewModels
 
         private Action<RegistryRecord> OnCreateRegistryRecord;
         public ICommand CreateRegistryRecordCommand { get; }
-        public ICommand NavigateSignatureCanvasCommand { get; }
 
-        public CreateTreatmentViewModel CreateTreatmentViewModel { get; } 
+        public CreateRegistryRecordTreatmentViewModel CreateRegistryRecordTreatmentViewModel { get; } 
 
         public CreateRegistryRecordViewModel(NavigationStore navigationStore, Action<RegistryRecord> onCreateRegistryRecord)
         {
             _navigationStore = navigationStore;
             OnCreateRegistryRecord += onCreateRegistryRecord;
 
-            CreateTreatmentViewModel = new CreateTreatmentViewModel(_navigationStore,OnTreatmentCreated, null, "livestock");
+            CreateRegistryRecordTreatmentViewModel = new CreateRegistryRecordTreatmentViewModel(_navigationStore,OnTreatmentCreated, null);
 
             CreateRegistryRecordCommand = new RelayCommand(CreateRegistryRecord);
-
-            NavigateSignatureCanvasCommand = new NavigateWindowCommand<SignatureCanvasViewModel>
-                (new WindowService<SignatureCanvasViewModel>(_navigationStore, (id) => new SignatureCanvasViewModel()), () => new SignatureCanvasWindow());
-
 
         }
 
@@ -172,7 +167,7 @@ namespace VetManagement.ViewModels
                     return;
                 }
 
-                bool treatmentCreated = await CreateTreatmentViewModel.CreateTreatment();
+                bool treatmentCreated = await CreateRegistryRecordTreatmentViewModel.CreateTreatment();
 
                 if (!treatmentCreated)
                 {

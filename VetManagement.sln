@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetManagement", "VetManagem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "esign-app", "..\esign-app\esign-app.csproj", "{10163BBA-3268-4A71-8863-54AC0FF1B30C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpServer", "..\TcpServer\TcpServer.csproj", "{7335F725-91E9-41C1-911F-62F819C06AFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{10163BBA-3268-4A71-8863-54AC0FF1B30C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10163BBA-3268-4A71-8863-54AC0FF1B30C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10163BBA-3268-4A71-8863-54AC0FF1B30C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7335F725-91E9-41C1-911F-62F819C06AFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7335F725-91E9-41C1-911F-62F819C06AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7335F725-91E9-41C1-911F-62F819C06AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7335F725-91E9-41C1-911F-62F819C06AFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

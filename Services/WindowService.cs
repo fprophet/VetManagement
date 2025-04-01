@@ -17,7 +17,7 @@ namespace VetManagement.Services
         private readonly Func<int?, TViewModel> _createViewModel;
 
 
-        public WindowService(NavigationStore navigationStore, Func<int?, TViewModel> createViewModel)
+        public WindowService(NavigationStore navigationStore, Func<int?, TViewModel>? createViewModel)
         {
          
             _createViewModel = createViewModel;
@@ -58,7 +58,7 @@ namespace VetManagement.Services
 
         public void CloseWindow(string ViewModelName)
         {
-            Window window = GetWindowByViewModel(ViewModelName);
+            Window? window = GetWindowByViewModel(ViewModelName);
 
             if( window == null )
             {

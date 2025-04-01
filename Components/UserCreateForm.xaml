@@ -28,7 +28,7 @@
 
         <StackPanel Grid.Row="2" Margin="0,10" Width="250">
             <TextBlock Text="Nume:"/>
-            <TextBox Name="Name" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True }" 
+            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True }" 
                     Validation.ErrorTemplate="{StaticResource TextBoxErrorTemplate}" />
         </StackPanel>
 

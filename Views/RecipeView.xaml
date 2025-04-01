@@ -6,215 +6,419 @@
              xmlns:local="clr-namespace:VetManagement.Views"
              xmlns:services="clr-namespace:VetManagement.Services"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+            xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <services:BoolToTextConverter x:Key="BoolToTextConverter"/>
         <services:RecipeStatusBoolToStringConverter x:Key="RecipeStatusBoolToStringConverter"/>
         <services:RecipeStatusToBackgroundColorConverter x:Key="RecipeStatusToBackgroundColorConverter"/>
-    </UserControl.Resources>
 
-    <Grid>
+        <Style TargetType="DataGrid" x:Key="RecipeMedsTable">
+            <!-- General DataGrid Appearance -->
+            <Setter Property="HorizontalGridLinesBrush" Value="LightGray"/>
+            <Setter Property="VerticalGridLinesBrush" Value="LightGray"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="ColumnHeaderHeight" Value="70"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="CanUserReorderColumns" Value="False"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserSortColumns" Value="True"/>
+            <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="TextBox.TextWrapping" Value="Wrap"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+
+            <Setter Property="MaxWidth">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource AddPixelConverter}">
+                        <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Window}" />
+                        <Binding Path="Width" ElementName="SideMenu"/>
+                        <Binding Path="Margin" ElementName="MainScroller"/>
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
+            
+            <Setter Property="RowStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="BorderBrush" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="0.5"/>
+                        <Style.Triggers>
+                            <!-- Highlight Row on Mouse Hover -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E0F7FA"/>
+                            </Trigger>
+                            <!-- Change Row Background on Selection -->
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#00796B"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="ColumnHeaderStyle" >
+                <Setter.Value>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="BorderBrush" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="0.5"/>
+                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Height" Value="80"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        </Style>
+
+        <Style x:Key="RecipeMedsSubHeader" TargetType="Border">
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="0,0.5,0.5,0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+
+        
+    </UserControl.Resources>
+    <Grid Width="800">
+
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="Loaded">
                 <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
             </i:EventTrigger>
         </i:Interaction.Triggers>
-        <!-- Title -->
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBlock Text="Status: " Background="#007ACC" Foreground="White" Padding="10,5" VerticalAlignment="Center" Style="{StaticResource HeaderStyle}"/>
 
-            <TextBlock Text="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusBoolToStringConverter}}"
-                       Background="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusToBackgroundColorConverter}}"
-                       Foreground="White" Padding="10,5" FontSize="17" VerticalAlignment="Center"/>
-        </StackPanel>
-        <StackPanel Grid.Row="2">
-            <TextBlock Text="Detalii Rețetă" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
+        <Grid Grid.Row="0"  Margin="0,10,0,10">
 
-            <!-- Recipe Card -->
-            <Border Style="{StaticResource CardStyle}"  VerticalAlignment="Top" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+            <!--<Button  Style="{StaticResource BackButton}"  Command="{Binding NavigateBackCommand}" Height="30" />-->
 
-                    <TextBlock Text="Numărul #:" Style="{StaticResource LabelStyle}" Grid.Row="0"/>
-                    <TextBlock Text="{Binding RecipeWrapper.Id}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="140,10,0,2"/>
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Row="1" Orientation="Horizontal" >
+                <TextBlock Text="Status: " Background="#007ACC" FontSize="14" Foreground="White" Padding="10,5" Style="{StaticResource HeaderStyle}"/>
 
-                    <TextBlock Text="Data eliberării:" Style="{StaticResource LabelStyle}" Grid.Row="1"/>
-                    <TextBlock Text="{Binding RecipeWrapper.Date}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
-
-                    <TextBlock Text="Medic:" Style="{StaticResource LabelStyle}" Grid.Row="2"/>
-                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.MedName }" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
-
-                    <TextBlock Text="Ridicată:" Style="{StaticResource LabelStyle}" Grid.Row="3"/>
-                    <TextBlock Text="{Binding RecipeWrapper.Signed, Converter={StaticResource BoolToTextConverter}}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="140,10,0,2"/>
-    
-                    <TextBlock Text="Detalii:" Style="{StaticResource LabelStyle}" Grid.Row="4"/>
-                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Details}"
-                            Style="{StaticResource ValueStyle}" Grid.Row="4" TextWrapping="Wrap" Width="400" Margin="140,10,0,2"  HorizontalAlignment="Left"/>
-                </Grid>
-            </Border>
-        </StackPanel>
-        
-        <StackPanel Grid.Row="3">
-            <TextBlock Text="Proprietar" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
-
-            <Border Style="{StaticResource CardStyle}"  VerticalAlignment="Top" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Text="Proprietar:" Style="{StaticResource LabelStyle}" Grid.Row="0"/>
-                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Name}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="140,10,0,2"/>
-
-                    <TextBlock Text="Adresa:" Style="{StaticResource LabelStyle}" Grid.Row="1"/>
-                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Address}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
-
-                    <TextBlock Text="Telefon:" Style="{StaticResource LabelStyle}" Grid.Row="2"/>
-                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Phone}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
-                 
-                </Grid>
-            </Border>
-        </StackPanel>
-
-        <StackPanel Grid.Row="4">
-            <TextBlock Text="Animal" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
-
-            <!-- RecipeWrapper Card -->
-            <Border Style="{StaticResource CardStyle}"  VerticalAlignment="Top" >
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Text="Specie:" Style="{StaticResource LabelStyle}" Grid.Row="0"/>
-                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Species}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="140,10,0,2"/>
-
-                    <TextBlock Text="Sex:" Style="{StaticResource LabelStyle}" Grid.Row="1"/>
-                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Sex}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
-
-                    <TextBlock Text="Greutate:" Style="{StaticResource LabelStyle}" Grid.Row="2"/>
-                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Weight}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
-
-                    <TextBlock Text="Număr registru consultație:" Style="{StaticResource LabelStyle}" Grid.Row="3"/>
-                    <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Identifier}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="140,10,0,2"/>
-
-                </Grid>
-            </Border>
-        </StackPanel>
-
-        <StackPanel Grid.Row="5">
-            <TextBlock Text="Medicamente" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
-
-            <Border Background="#007ACC" Padding="10" Margin="20,20,20,0" CornerRadius="5" Style="{StaticResource CardStyle}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Text="Denumire produs" Grid.Column="0" Foreground="White" FontWeight="Bold" FontSize="14" />
-                    <TextBlock Text="Formă de prezentare" Grid.Column="1" Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    <TextBlock Text="Valabilitate" Grid.Column="2" Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    <TextBlock Text="Serie Lot" Grid.Column="3" Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    <TextBlock Text="Cantitate" Grid.Column="4" Foreground="White" FontWeight="Bold" FontSize="14"/>
-                    <TextBlock Text="Timp de aștetpare" Grid.Column="5" Foreground="White" FontWeight="Bold" FontSize="14"/>
-                </Grid>
-            </Border>
-
-            <!-- Medication List -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <Border Padding="15,0,15,0" >
-                    <ItemsControl ItemsSource="{Binding RecipeWrapper.RegistryRecord.Treatment.TreatmentMeds}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="White" Padding="10" Margin="5,5,5,10" CornerRadius="8" BorderBrush="#DDDDDD" BorderThickness="1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="1*"/>
-                                            <ColumnDefinition Width="1*"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Text="{Binding Med.Name}" Grid.Column="0" Foreground="#444" FontSize="14"/>
-                                        <TextBlock Text="{Binding Med.PieceType}" Grid.Column="1" Foreground="#444" FontSize="14"/>
-                                        <TextBlock Text="{Binding Med.Valability}" Grid.Column="2" Foreground="#444" FontSize="14"/>
-
-                                        <TextBlock Text="{Binding Med.LotID}" Grid.Column="3" Foreground="#444" FontSize="14"/>
-
-                                        <TextBlock  Grid.Column="4" Foreground="#444" FontSize="14">
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="{}{0} {1}">
-                                                    <Binding Path="Quantity"/>
-                                                    <Binding Path="Med.MeasurmentUnit"/>
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-
-
-                                        <TextBlock Text="{Binding Med.WaitingTime}" Grid.Column="5" Foreground="#444" FontSize="14"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Border>
-            </ScrollViewer>
-        </StackPanel>
-
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="6">
-            <Button Content="Eliberează Rețeta" Style="{StaticResource ButtonStyle}" Command="{Binding SignRecipeCommand}" />
-        </StackPanel>
-        
-        <Grid Grid.Row="7" HorizontalAlignment="Stretch" Margin="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="Data:" FontSize="15"/>
-                <TextBlock Text="{Binding RecipeWrapper.SignedAt}" FontSize="15"/>
+                <TextBlock Text="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusBoolToStringConverter}}"
+                    Background="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusToBackgroundColorConverter}}"
+                    Foreground="White" Padding="10,5" FontSize="14"/>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Right" Grid.Column="1">
-                <TextBlock Text="Semnătura Proprietarului:" FontSize="15"/>
-                <Image Source="{Binding RecipeWrapper.SignatureImage}"/>
+            
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
+                <Button  Style="{StaticResource BasicButton}" Command="{Binding SignRecipeCommand}" >
+                    <emoji:TextBlock Text="Semnează ✏" />
+                </Button>
+                <Button Style="{StaticResource BasicButton}" Command="{Binding PrintRecipeCommand}" Margin="10,0,0,0">
+                    <emoji:TextBlock Text="Printează 📃" />
+                </Button>
             </StackPanel>
         </Grid>
-       
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0">
-            <Button Content="🡨 Înapoi" Padding="10,5" Background="#2196F3" Foreground="White"
-                 FontWeight="Bold" BorderThickness="0" Margin="0,0,0,20" Cursor="Hand" HorizontalAlignment="Left"
-                 Command="{Binding NavigateBackCommand}" />
-        </StackPanel>
+        <Border BorderThickness="1" Grid.Row="2" BorderBrush="LightGray" Width="800" Padding="0,20">
+
+            <Grid HorizontalAlignment="Stretch" Width="1000">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+
+                <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="0" Margin="20,0,150,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="7*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0" Source="pack://application:,,,/Resources/vet.jpg" RenderOptions.BitmapScalingMode="HighQuality" Width="130" Height="130"/>
+
+                    <StackPanel Grid.Column="1" >
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="150,0,0,0">
+                            <TextBlock FontSize="15" FontWeight="Bold" VerticalAlignment="Center" Text="Seria A nr."/>
+                            <TextBlock FontSize="25"  VerticalAlignment="Center" Margin="5,0" Text="50"/>
+                        </StackPanel>
+
+                        <TextBlock Text="Veterinary Clinic" FontSize="30" HorizontalAlignment="Center" FontFamily="pack://application:,,,/Resources/#Algerian"/>
+                        <TextBlock Text="Borșa Maramureș" FontSize="15" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Str. Ion Adameșteanu nr. 2, tel: 0722.470.604," FontSize="15" HorizontalAlignment="Center"/>
+                        <TextBlock Text="CMVRO 8120/2014" FontSize="15" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Grid.Row="1" Margin="20,20,250,0">
+                    <TextBlock Text="1. Deținătorul animalului:" FontSize="15" FontWeight="Bold"/>
+
+                    <Grid Margin="0,5,0,0" >
+                        <TextBlock FontSize="15" Text="Numele și prenumele: . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ." />
+                        <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="170,0,0,0">
+                            <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Name}" FontSize="15"/>
+                        </Border>
+                    </Grid>
+
+                    <Grid Margin="0,5,0,0" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="7*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid  Grid.Column="0">
+                            <TextBlock FontSize="15" Text="Adresa: Str. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."  />
+                            <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="80,0,0,0">
+                                <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Street}" FontSize="15"/>
+                            </Border>
+                        </Grid>
+
+                        <Grid Grid.Column="1" Margin="5,0">
+                            <TextBlock FontSize="15" Text="nr.  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."/>
+                            <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="20,0,0,0">
+                                <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.StreetNumber}" FontSize="15"/>
+                            </Border>
+                        </Grid>
+                    </Grid>
+
+                    <Grid  Margin="0,5,0,0" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0"  Margin="0">
+                            <TextBlock FontSize="15" Text="Localitate. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ., "/>
+                            <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="80,0,0,0">
+                                <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Town}" FontSize="15"/>
+                            </Border>
+                        </Grid>
+
+                        <Grid Grid.Column="1" Margin="5,0" >
+                            <TextBlock FontSize="15" Text="județul.  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."/>
+                            <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="70,0,0,0">
+                                <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.County}" FontSize="15"/>
+                            </Border>
+                        </Grid>
+                    </Grid>
+
+                    <Grid Grid.Column="1"  Margin="0,5,0,0" >
+                        <TextBlock FontSize="15" Text="Tel. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."/>
+                        <Border Padding="10,0" Background="White" HorizontalAlignment="Left" Margin="100,0,0,0">
+                            <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Owner.Phone}" FontSize="15"/>
+                        </Border>
+                    </Grid>
+
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Margin="20,5,250,0">
+                    <TextBlock Text="2. Identificare animal:" FontSize="15" FontWeight="Bold"/>
+
+                    <Grid Margin="0,5,0,0" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6  *"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0">
+                            <TextBlock FontSize="15" Text="Specie. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."/>
+                            <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="50,0,0,0">
+                                <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Species}" FontSize="15"/>
+                            </Border>
+                        </Grid>
+
+                        <Grid Grid.Column="1" Margin="5,0">
+                            <TextBlock FontSize="15" Text="sex. . . . . . . . . . . . . . . . . . . . . . . . . ."/>
+                            <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="20,0,0,0">
+                                <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Sex}" FontSize="15"/>
+                            </Border>
+                        </Grid>
+
+                        <Grid Grid.Column="2" Margin="5,0">
+                            <TextBlock FontSize="15" Text="greutate. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."/>
+                            <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="70,0,0,0">
+                                <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Weight}" FontSize="15"/>
+                            </Border>
+                        </Grid>
+                    </Grid>
+
+                    <Grid Margin="0,5,0,0" >
+                        <TextBlock FontSize="15" Text="Număr registru consultație. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."/>
+                        <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="190,0,0,0">
+                            <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Identifier}" FontSize="15"/>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+
+
+                <StackPanel Grid.Row="3" Margin="20,5,200,0">
+                    <DockPanel  Margin="0,5,0,0" >
+                        <TextBlock Text="3. Diagnostic:" FontSize="15" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Details}" TextWrapping="Wrap"  FontSize="15" Margin="15,0" />
+                    </DockPanel>
+                </StackPanel>
+
+                <DataGrid Grid.Row="4" Margin="20,20,250,0" Style="{StaticResource RecipeMedsTable}" ItemsSource="{Binding RecipeWrapper.RegistryRecord.Treatment.TreatmentImportedMeds}">
+                    <DataGrid.Columns>
+
+                        <DataGridTemplateColumn  Width="1*">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Nr.&#x0a;crt." Style="{StaticResource CenterTextBlock}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="1" Style="{StaticResource CenterTextBlock}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn  Width="2*">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Denumire&#x0a;Produs" Style="{StaticResource CenterTextBlock}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="{Binding ImportedMed.Denumire}" Style="{StaticResource CenterTextBlock}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn  Width="2*">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Forma de&#x0a;prezentare" Style="{StaticResource CenterTextBlock}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="flacon" Style="{StaticResource CenterTextBlock}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn  Width="2*">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="Cantitate" Style="{StaticResource CenterTextBlock}"/>
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="{Binding Quantity}" Style="{StaticResource CenterTextBlock}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn  Width="4*">
+                            <DataGridTemplateColumn.Header>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Border Grid.Row="0" HorizontalAlignment="Stretch" Padding="0,10,0,10">
+                                        <TextBlock Text="Perioada de așteptare"/>
+                                    </Border>
+
+                                    <Grid Grid.Row="1" HorizontalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Style="{StaticResource RecipeMedsSubHeader}" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="carne/&#x0a;organe" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="1" Style="{StaticResource RecipeMedsSubHeader}" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="lapte" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <Border Grid.Column="2" Style="{StaticResource RecipeMedsSubHeader}" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="ouă" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        </Border>
+
+                                    </Grid>
+                                </Grid>
+                            </DataGridTemplateColumn.Header>
+
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="2*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- First Column -->
+                                        <Border Style="{StaticResource DataBorder}" Grid.Column="0" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="15"/>
+                                        </Border>
+
+                                        <!-- Second Column -->
+                                        <Border Style="{StaticResource DataBorder}" Grid.Column="1" HorizontalAlignment="Stretch">
+                                            <StackPanel>
+                                                <TextBlock Text="15"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Third Column -->
+                                        <Border Style="{StaticResource DataBorder}" Grid.Column="2" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="15"/>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+
+
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Grid Grid.Row="5" Margin="20,20,0,0" HorizontalAlignment="Stretch">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="5*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <StackPanel>
+                            <TextBlock FontSize="15" Text="Semătură prioprietar:"/>
+                            <TextBlock FontSize="15" Margin="0,20,0,0" Text="Data"/>
+                            <TextBlock FontSize="15" Margin="0" Text="{Binding RecipeWrapper.SignedAt}"/>
+                        </StackPanel>
+                        <Image Margin="20,0" Source="{Binding RecipeWrapper.SignatureImage}" Width="150" Height="150"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock FontSize="15" Text="Medic veterinar"/>
+                        <TextBlock FontSize="15" Margin="0,20,0,0" Text="{Binding RecipeWrapper.RegistryRecord.MedName}"/>
+                    </StackPanel>
+                </Grid>
+
+            </Grid>
+        </Border>
     </Grid>
+
 </UserControl>

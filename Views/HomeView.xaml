@@ -190,7 +190,9 @@
                         <DataGridTemplateColumn Header="" Width="140">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii" Command="{Binding NavigatePetTreatmentCommand}" CommandParameter="{Binding Owner.Id}"/>
+                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii" 
+                                            Command="{Binding DataContext.NavigatePetTreatmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                            CommandParameter="{Binding Id}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -202,14 +204,14 @@
                 <TextBlock Text="Tratamente animale mari" FontSize="16" FontWeight="Bold" Margin="0,10,0,0"/>
                 <DataGrid Style="{StaticResource ListStyleDataGrid}" ItemsSource="{Binding LivestockTreatments}" MaxHeight="300">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Ora" Binding="{Binding DateAdded, StringFormat='hh:mm:ss'}" Width="200" />
-                        <DataGridTextColumn Header="Proprietar" Binding="{Binding Owner.Name}" Width="200" />
-                        <DataGridTextColumn Header="Animal" Binding="{Binding Patient.Species}" Width="200" />
+                        <DataGridTextColumn Header="Ora" Binding="{Binding Date, StringFormat='hh:mm:ss'}" Width="200" />
+                        <DataGridTextColumn Header="Proprietar" Binding="{Binding Treatment.Owner.Name}" Width="200" />
+                        <DataGridTextColumn Header="Animal" Binding="{Binding Treatment.Patient.Species}" Width="200" />
                         <DataGridTemplateColumn Header="Tratament" Width="400">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel>
-                                        <ListView ItemsSource="{Binding TreatmentMeds}">
+                                        <ListView ItemsSource="{Binding Treatment.TreatmentMeds}">
                                             <ListView.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel Orientation="Horizontal"/>
@@ -238,7 +240,9 @@
                         <DataGridTemplateColumn Header="" Width="140">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii"/>
+                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii" 
+                                         Command="{Binding DataContext.NavigateLivestockTreatmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                         CommandParameter="{Binding Id}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -286,7 +290,9 @@
                         <DataGridTemplateColumn Header="" Width="140">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii"/>
+                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii" 
+                                       Command="{Binding DataContext.NavigateRecipeViewCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                       CommandParameter="{Binding Id}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -306,7 +312,9 @@
                         <DataGridTemplateColumn Header="" Width="140">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii"/>
+                                    <Button Cursor="Hand" Margin="20,0" Content="Vezi Detalii" 
+                                        Command="{Binding DataContext.NavigateMedViewCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding Id}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -335,8 +343,8 @@
             </StackPanel>
             
         </StackPanel>
- 
-        <Image Source="C:\Users\eduar\Desktop\vet.jpg" Height="300" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,0,20" Grid.Row="2"/>
+
+        <Image Source="pack://application:,,,/Resources/vet.jpg" Height="300" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,0,20" Grid.Row="2"/>
 
     </Grid>
 </UserControl>

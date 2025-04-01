@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VetManagement.Data;
 using Microsoft.EntityFrameworkCore;
+using VetManagement.Services;
 
 namespace VetManagement.Data
 {
@@ -12,12 +13,20 @@ namespace VetManagement.Data
     {
         public async Task<List<Notification>> GetForUserType(string userType)
         {
+           
+            if (!await _context.CheckConnection())
+            {
+
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+          
             return await _context.GetDbSet<Notification>().Where(n => n.UserType == userType && !n.Read).ToListAsync();
 
         }
 
-        public async void UpdateNotificationForRecipe(int recipeNumber)
+        public void UpdateNotificationForRecipe(int recipeNumber)
         {
+
             string stringNumber = Convert.ToString(recipeNumber); 
             _context.GetDbSet<Notification>()
                 .Where(n => n.Title.Contains(stringNumber))

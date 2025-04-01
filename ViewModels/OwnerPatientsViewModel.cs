@@ -19,8 +19,6 @@ namespace VetManagement.ViewModels
     {
         private readonly int PassedId;
 
-        private readonly string _pageTitle;
-
         public ICommand NavigateOwnersCommand { get; set; }
 
         public ICommand NavigateCreatePatientWindowCommand { get; set; }
@@ -130,8 +128,10 @@ namespace VetManagement.ViewModels
         public async Task LoadOwner()
         {
             Owner = await new BaseRepository<Owner>().GetById(PassedId);
-            _navigationStore.PageTitle = "🐕 Animalele lui " + Owner.Name;
-
+            if(_navigationStore != null)
+            {
+                _navigationStore.PageTitle = "🐕 Animalele lui " + Owner.Name;
+            }
 
         }
 

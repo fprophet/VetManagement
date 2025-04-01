@@ -1,0 +1,205 @@
+﻿<UserControl x:Class="VetManagement.Views.RegistryRecordView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VetManagement.Views" 
+             xmlns:services="clr-namespace:VetManagement.Services" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <services:BoolToTextConverter x:Key="BoolToTextConverter"/>
+        <services:RecipeStatusBoolToStringConverter x:Key="RecipeStatusBoolToStringConverter"/>
+        <services:RecipeStatusToBackgroundColorConverter x:Key="RecipeStatusToBackgroundColorConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="Loaded">
+                <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="Detalii Tratament" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
+
+            <!-- Recipe Card -->
+            <Border Style="{StaticResource CardStyle}"  VerticalAlignment="Top" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Numărul #:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="0"/>
+                    <TextBlock Text="{Binding RegistryRecord.Id}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="200,10,0,2"/>
+
+                    <TextBlock Text="Data:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="1"/>
+                    <TextBlock Text="{Binding RegistryRecord.Date}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="200,10,0,2"/>
+
+                    <TextBlock Text="Medic:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="2"/>
+                    <TextBlock Text="{Binding RegistryRecord.MedName }" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="200,10,0,2"/>
+
+                    <TextBlock Text="Durata tratamentului:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="3"/>
+                    <TextBlock Text="{Binding RegistryRecord.TreatmentDuration }" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="200,10,0,2"/>
+                    
+                    <TextBlock Text="Simptome:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="4"/>
+                    <TextBlock Text="{Binding RegistryRecord.Treatment.Details}"
+                        Style="{StaticResource ValueStyle}" Grid.Row="4" TextWrapping="Wrap" Width="400" Margin="200,10,0,2"  HorizontalAlignment="Left"/>
+
+                    <TextBlock Text="Rezultat:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="5"/>
+                    <TextBlock Text="{Binding RegistryRecord.Outcome }" Style="{StaticResource ValueStyle}" Grid.Row="5" Margin="200,10,0,2"/>
+
+                    <TextBlock Text="Observatii:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="6"/>
+                    <TextBlock Text="{Binding RegistryRecord.Observations }" Style="{StaticResource ValueStyle}" Grid.Row="6" Margin="200,10,0,2"/>
+
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2">
+            <TextBlock Text="Proprietar" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
+
+            <Border Style="{StaticResource CardStyle}"  VerticalAlignment="Top" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Proprietar:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="0"/>
+                    <TextBlock Text="{Binding RegistryRecord.Treatment.Owner.Name}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="200,10,0,2"/>
+
+                    <TextBlock Text="Adresa:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="1"/>
+                    <TextBlock Text="{Binding RegistryRecord.Treatment.Owner.Address}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="200,10,0,2"/>
+
+                    <TextBlock Text="Telefon:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="2"/>
+                    <TextBlock Text="{Binding RegistryRecord.Treatment.Owner.Phone}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="200,10,0,2"/>
+
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3">
+            <TextBlock Text="Animal" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
+
+            <!-- RegistryRecord Card -->
+            <Border Style="{StaticResource CardStyle}"  VerticalAlignment="Top" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Specie:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="0"/>
+                    <TextBlock Text="{Binding RegistryRecord.Treatment.Patient.Species}" Style="{StaticResource ValueStyle}" Grid.Row="0" Margin="200,10,0,2"/>
+
+                    <TextBlock Text="Sex:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="1"/>
+                    <TextBlock Text="{Binding RegistryRecord.Treatment.Patient.Sex}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="200,10,0,2"/>
+
+                    <TextBlock Text="Greutate:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="2"/>
+                    <TextBlock Text="{Binding RegistryRecord.Treatment.Patient.Weight}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="200,10,0,2"/>
+
+                    <TextBlock Text="Număr registru consultație:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="3"/>
+                    <TextBlock Text="{Binding RegistryRecord.Treatment.Patient.Identifier}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="200,10,0,2"/>
+
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4">
+            <TextBlock Text="Medicamente" Grid.Row="0" Style="{StaticResource HeaderStyle}" />
+
+            <Border Background="#00796B" Padding="10" Margin="20,20,20,0" CornerRadius="5" Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Denumire produs" Grid.Column="0" Foreground="White" FontWeight="Bold" FontSize="14" />
+                    <TextBlock Text="Formă de prezentare" Grid.Column="1" Foreground="White" FontWeight="Bold" FontSize="14"/>
+                    <TextBlock Text="Valabilitate" Grid.Column="2" Foreground="White" FontWeight="Bold" FontSize="14"/>
+                    <TextBlock Text="Serie Lot" Grid.Column="3" Foreground="White" FontWeight="Bold" FontSize="14"/>
+                    <TextBlock Text="Cantitate" Grid.Column="4" Foreground="White" FontWeight="Bold" FontSize="14"/>
+                    <TextBlock Text="Timp de aștetpare" Grid.Column="5" Foreground="White" FontWeight="Bold" FontSize="14"/>
+                </Grid>
+            </Border>
+
+            <!-- Medication List -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Border Padding="15,0,15,0" >
+                    <ItemsControl ItemsSource="{Binding RegistryRecord.Treatment.TreatmentMeds}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="White" Padding="10" Margin="5,5,5,10" CornerRadius="8" BorderBrush="#DDDDDD" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Text="{Binding Med.Name}" Grid.Column="0" Foreground="#444" FontSize="14"/>
+                                        <TextBlock Text="{Binding Med.PieceType}" Grid.Column="1" Foreground="#444" FontSize="14"/>
+                                        <TextBlock Text="{Binding Med.Valability}" Grid.Column="2" Foreground="#444" FontSize="14"/>
+
+                                        <TextBlock Text="{Binding Med.LotID}" Grid.Column="3" Foreground="#444" FontSize="14"/>
+
+                                        <TextBlock  Grid.Column="4" Foreground="#444" FontSize="14">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} {1}">
+                                                    <Binding Path="Quantity"/>
+                                                    <Binding Path="Med.MeasurmentUnit"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+
+
+                                        <TextBlock Text="{Binding Med.WaitingTime}" Grid.Column="5" Foreground="#444" FontSize="14"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </ScrollViewer>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="5">
+            <Button Content="Repetă Tratamentul" Style="{StaticResource TreatmentButtonStyle}" Command="{Binding RepeatTreatmentCommand}" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="0">
+            <Button Content="🡨 Înapoi" Padding="10,5" Background="#2196F3" Foreground="White"
+         FontWeight="Bold" BorderThickness="0" Margin="0,0,0,20" Cursor="Hand" HorizontalAlignment="Left"
+         Command="{Binding NavigateBackCommand}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

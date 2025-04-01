@@ -49,7 +49,7 @@ namespace esign_app.ViewModels
             LoginCommand = new RelayCommand(AuthenticateRoot, (object sender) => !string.IsNullOrEmpty(RootUser) && !string.IsNullOrEmpty(RootPassword));
         }
 
-        private async void AuthenticateRoot(object parameter)
+        private void AuthenticateRoot(object parameter)
         {
 
             try

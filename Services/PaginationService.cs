@@ -18,7 +18,7 @@ namespace VetManagement.Services
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName = null)
+        protected virtual void OnPropertyChanged(string? propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -79,9 +79,9 @@ namespace VetManagement.Services
 
         public bool CanGoNext => PageNumber < TotalPages;
 
-        private readonly Func<Task> PreviousPageCB;
+        private readonly Func<Task>? PreviousPageCB;
         
-        private readonly Func<Task> NextPageCB;
+        private readonly Func<Task>? NextPageCB;
 
         public ObservableCollection<PageItem> PageNumbers { get; set; } = new ObservableCollection<PageItem>();
 
@@ -112,10 +112,12 @@ namespace VetManagement.Services
             }
 
             PageNumber++;
-            await NextPageCB?.Invoke();
-       
-            ChangeNumberStatus();
-            UpdateButtonState();
+            if (NextPageCB != null)
+            {
+                await NextPageCB.Invoke();
+                ChangeNumberStatus();
+                UpdateButtonState();
+            }
 
         }
 
@@ -128,7 +130,12 @@ namespace VetManagement.Services
             }
 
             PageNumber--;
-            await PreviousPageCB?.Invoke();
+            
+            if (PreviousPageCB != null)
+            {
+                await PreviousPageCB.Invoke();
+                UpdateButtonState();
+            }
 
             UpdateButtonState();
         }
@@ -138,9 +145,11 @@ namespace VetManagement.Services
             if (parameter is int)
             {
                 PageNumber = (int)parameter;
-                await NextPageCB?.Invoke();
-
-                UpdateButtonState();
+                if(NextPageCB is not null)
+                {
+                    await NextPageCB.Invoke();
+                    UpdateButtonState();
+                }
             }
         }
 

@@ -18,10 +18,7 @@ namespace VetManagement.Stores
             get => _passedId;
             set
             {
-                if (_passedId != null)
-                {
-                    _passedId = value;
-                }
+                 _passedId = value;
             }
 
         }

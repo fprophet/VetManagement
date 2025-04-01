@@ -13,6 +13,10 @@ namespace VetManagement.Data
 
         public async Task<List<TreatmentMed>> GetTreatmentsForMed(int id)
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
             return await _context.TreatmentMed
                 .Where(tm => tm.MedId == id)
                 .Include(tm => tm.Treatment)
@@ -23,6 +27,10 @@ namespace VetManagement.Data
 
         public async Task<List<TreatmentMed>> GetTodaysUsedMeds()
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
             var today = DateTime.Today.AddDays(-1).Date;
 
             return await _context.TreatmentMed

@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using MySqlX.XDevAPI;
+using NPOI.SS.Formula.Functions;
 using VetManagement.Data;
 
 namespace VetManagement.Services
@@ -16,60 +17,7 @@ namespace VetManagement.Services
     public class NotificationService
     {
 
-        private static readonly int Port = 8888;
-
-        private readonly Action<string>? _onMessageRecieved;
-
-        public NotificationService(Action<string>? OnMessageRecieved)
-        {
-            _onMessageRecieved = OnMessageRecieved;
-        }
-
-        public  void StartListening()
-        {
-            try
-            {
-                UdpClient client = new UdpClient(Port);
-
-                IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, Port);
-
-                while (true)
-                {
-                    Trace.WriteLine(IPAddress.Any);
-
-
-                    //var result = await client.ReceiveAsync();
-
-                    byte[] receivedBytes = client.Receive(ref remoteEndPoint);
-
-                    string receivedMessage = Encoding.UTF8.GetString(receivedBytes);
-                    //string message = Encoding.UTF8.GetString(result.Buffer);
-
-                    //extract the first 16 bytes represnting the IV
-                    byte[] IV = new byte[16];
-                    byte[] encryptedMessage = new byte[receivedBytes.Length - 16];
-
-                    Array.Copy(receivedBytes, 0, IV, 0, 16);
-
-                    Array.Copy(receivedBytes, 16, encryptedMessage, 0, receivedBytes.Length - 16);
-
-                    string decrypted = EncryptionService.Decrypt(encryptedMessage, EncryptionService.Key, IV);
-
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        _onMessageRecieved?.Invoke(decrypted);
-                        // Perform data binding operation here
-                    });
-                }
-            }
-            catch (Exception e)
-            {
-                Boxes.ErrorBox("Error receiving message: " + e.Message);
-                Logger.LogError("Error", e.ToString());
-            }
-        }
-
-        public static async void SendNotification(Notification notification)
+        public static void SendNotification(Notification notification)
         {
           
             if (!string.IsNullOrEmpty(notification.Type) && notification.Type != "recipe-signed" && notification.Type != "to-sign")
@@ -89,18 +37,14 @@ namespace VetManagement.Services
             //create the data array iv + message
             byte[] data = new byte[encrypted.Length + IV.Length];
 
+
             Array.Copy(IV, 0, data,0, IV.Length);
 
             Array.Copy(encrypted, 0, data,IV.Length, encrypted.Length);
 
-            UdpClient client = new UdpClient();
 
-            int total = client.Send(data, data.Length, new IPEndPoint(IPAddress.Broadcast, Port));
-
-            Boxes.InfoBox("AU fost trimisi:" + total + " biti");
-
-            Trace.WriteLine(IPAddress.Broadcast);
-            Trace.WriteLine("UDP signal broadcasted!");
+            TcpConnection.Instance.SendMessage(Encoding.UTF8.GetBytes(json));
+            //TcpConnection.Instance.SendMessage(data);
 
 
         }

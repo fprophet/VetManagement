@@ -14,12 +14,20 @@ namespace VetManagement.Data
 
         public async Task<List<Patient>> GetForOwner( int id)
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
             return await _context.GetDbSet<Patient>().Where(p => p.OwnerId == id).ToListAsync();
 
         }
         
         public async Task<List<Patient>> GetForOwnerByType( int id, string type)
         {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
             return await _context.GetDbSet<Patient>().Where(p => p.OwnerId == id && p.Type == type).ToListAsync();
 
         }

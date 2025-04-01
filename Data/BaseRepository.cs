@@ -29,16 +29,12 @@ namespace VetManagement.Data
 
         public async Task<T> Add(T model)
         {
-
-  
-
-  
-
             _context.GetDbSet<T>().Add(model);
             await _context.SaveChangesAsync();
 
             return model;
         }
+        
 
         public async Task Update(T model)
         {

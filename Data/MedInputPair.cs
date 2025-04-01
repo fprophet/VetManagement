@@ -19,8 +19,6 @@ namespace VetManagement.Data
 
         private float _rank;
 
-        private decimal _stockQuantity;
-
         public MedWrapper MedWrapper
         {
             get => _medWrapper;

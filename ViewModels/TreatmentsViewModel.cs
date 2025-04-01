@@ -6,8 +6,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.Services;
@@ -25,8 +27,7 @@ namespace VetManagement.ViewModels
 
         public ICommand NavigateCreateTreatmentWindowCommand { get; set; }
         
-        public ICommand RepeatTreatmentCommand { get; set; }
-
+        public ICommand NavigateTreatmentViewCommand { get; set; }
 
         public PaginationService PaginationService { get; set; }
 
@@ -101,40 +102,13 @@ namespace VetManagement.ViewModels
 
             PaginationService = new PaginationService(() => LoadTreatments(), () => LoadTreatments());
 
-            RepeatTreatmentCommand = new RelayCommand(RepeatTreatment);
-
             NavigateOwnersCommand = new NavigateCommand<HomeViewModel>(new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore)));
-            
+
+            NavigateTreatmentViewCommand = new NavigateCommand<TreatmentViewModel>
+                (new NavigationService<TreatmentViewModel>(_navigationStore, (id) => new TreatmentViewModel(navigationStore, id)));
+
             NavigateCreateTreatmentWindowCommand = new NavigateWindowCommand<CreateTreatmentViewModel>
                 (new WindowService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(_navigationStore, OnTreatmentCreated, null, null)), () => new CreateTreatmentWindow());
-        }
-
-
-        private async void RepeatTreatment(object parameter)
-        {
-            if (parameter is not int)
-            {
-                Boxes.InfoBox("Tratamentul nu a putut fi repetat!");
-                return;
-            }
-            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa repetați tratementul cu numărul: " + parameter + "?");
-
-            if (result == System.Windows.MessageBoxResult.No)
-            {
-                return;
-            }
-
-            Treatment treatment = Treatments.FirstOrDefault(t => t.Id == (int)parameter);
-
-            try
-            {
-                Treatment newTreatment = await DuplicateObjectService.DuplicateTreatment(treatment);
-                OnTreatmentCreated(newTreatment);
-            }
-            catch (Exception e)
-            {
-                Logger.LogError("Error", e.ToString());
-            }
         }
 
         private void OnTreatmentCreated(Treatment treatment)
@@ -158,6 +132,7 @@ namespace VetManagement.ViewModels
 
         public async Task LoadTreatments()
         {
+            isLoading = true;
             Treatments.Clear();
             try
             {
@@ -167,18 +142,32 @@ namespace VetManagement.ViewModels
                 filters["patientSpecies"] = PatientSpeciesFilter;
                 filters["medName"] = MedNameFilter;
                 filters["patientType"] = "pet";
-                var (treatments, totalRecords) = await new TreatmentRepository().GetFullTreatments(PaginationService.PageNumber, PaginationService.PerPage, filters);
 
-                PaginationService.TotalFound = totalRecords;
-
-                var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
-                
-
-                foreach (var treatment in sortedTreatments)
+                await Task.Run(async () =>
                 {
+                    var (treatments, totalRecords) = await new TreatmentRepository().GetFullTreatments(PaginationService.PageNumber, PaginationService.PerPage, filters);
 
-                    Treatments.Add(treatment);
-                }
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        PaginationService.TotalFound = totalRecords;
+                    });
+
+                    var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
+
+
+                    foreach (var treatment in sortedTreatments)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            Treatments.Add(treatment);
+
+                        }, DispatcherPriority.Background);
+                    }
+                });
+
+
+               
 
             }catch(Exception e)
             {

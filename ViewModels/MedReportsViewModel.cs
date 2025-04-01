@@ -16,8 +16,6 @@ namespace VetManagement.ViewModels
     public class MedReportsViewModel : ViewModelBase
     {
 
-        private readonly NavigationStore _navigationStore;
-
         public  PaginationService PaginationService { get; set; }
 
         private readonly FilterService _filterService;

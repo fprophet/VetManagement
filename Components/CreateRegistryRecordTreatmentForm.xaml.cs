@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace VetManagement.Views
+namespace VetManagement.Components
 {
     /// <summary>
-    /// Interaction logic for SignatureCanvasWindow.xaml
+    /// Interaction logic for CreateRegistryRecordTreatmentForm.xaml
     /// </summary>
-    public partial class SignatureCanvasWindow : Window
+    public partial class CreateRegistryRecordTreatmentForm : UserControl
     {
-        public SignatureCanvasWindow()
+        public CreateRegistryRecordTreatmentForm()
         {
             InitializeComponent();
         }

@@ -143,6 +143,13 @@
                     </TextBlock>
                     <TextBlock>
                         <TextBlock.Text>
+                            <MultiBinding StringFormat="{}Număr identificare: {0}">
+                                <Binding Path="Patient.Identifier"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock>
+                        <TextBlock.Text>
                             <MultiBinding StringFormat="{}Specie: {0}">
                                 <Binding Path="Patient.Species"/>
                             </MultiBinding>
@@ -186,7 +193,7 @@
                 <TextBlock Text="Tratament" FontSize="16" FontWeight="Bold" Foreground="#333"/>
 
                 <StackPanel Orientation="Vertical" Margin="0,10" Width="300" HorizontalAlignment="Left">
-                    <TextBlock Text="Diagnostic/Detalii" FontWeight="Bold" Margin="0,5"/>
+                    <TextBlock Text="Diagnostic/Simptome/Detalii" FontWeight="Bold" Margin="0,5"/>
                     <TextBox Text="{Binding Details, UpdateSourceTrigger=PropertyChanged}" Grid.Row="4" Height="50"/>
                 </StackPanel>
  
@@ -315,7 +322,13 @@
                                 <DataGridTemplateColumn.CellEditingTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Focusable="True" Text="{Binding QuantityString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80" />
+                                            <TextBox Focusable="True" Text="{Binding QuantityString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80" >
+                                                <TextBox.Style>
+                                                    <Style TargetType="TextBox">
+                                                        <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}"/>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
                                             <TextBlock Text=" " />
                                             <TextBlock Text="{Binding MeasurmentUnit}" Foreground="Gray" />
                                         </StackPanel>

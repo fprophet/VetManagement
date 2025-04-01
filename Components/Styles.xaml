@@ -23,6 +23,9 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="TextBox.TextWrapping" Value="Wrap"/>
+        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+
         <Setter Property="MaxWidth">
             <Setter.Value>
                 <MultiBinding Converter="{StaticResource AddPixelConverter}">
@@ -101,7 +104,7 @@
         <Setter Property="TextBox.TextWrapping" Value="Wrap"/>
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
-        <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
 
         <Setter Property="MaxWidth">
             <Setter.Value>
@@ -187,6 +190,8 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    
+    
 
     <Style TargetType="TextBlock" x:Key="CenterTextBlock">
         <Setter Property="TextAlignment" Value="Center"/>
@@ -202,6 +207,19 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
 
+    <Style TargetType="Button" x:Key="BackButton">
+        <Setter Property="Content" Value="🡨 Înapoi"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Background" Value="Gray"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="#FF388E3C"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+    
     <Style TargetType="Button" x:Key="CreateButtonStyle">
         <Setter Property="Background" Value="#FF4CAF50"/>
         <Setter Property="Foreground" Value="White"/>
@@ -418,6 +436,16 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
     </Style>
 
+    <Style x:Key="TreatmentLabelStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="#00796B"/>
+        <Setter Property="Margin" Value="5,10,0,2"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="Width" Value="180"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
     <!-- Value Style -->
     <Style x:Key="ValueStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="14"/>
@@ -438,4 +466,108 @@
         <Setter Property="Width" Value="130"/>
     </Style>
 
+    <Style x:Key="TreatmentButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="#00796B"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Padding" Value="8,5"/>
+        <Setter Property="Margin" Value="10,20,0,0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Width" Value="150"/>
+    </Style>
+
+    <Style x:Key="ExitButtonStyle" TargetType="Button">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="Red"/>
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="DarkRed"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="LogoutButtonStyle" TargetType="Button">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="DarkOrange"/>
+        <Setter Property="Padding" Value="35"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="OrangeRed"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BasicButton" TargetType="Button">
+        <Setter Property="Background" Value="#2196F3"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="30,5"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="DarkGray"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        Padding="10,0"
+                        CornerRadius="5">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#73b7f9"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="#B0B0B0"/>
+                            <Setter Property="Foreground" Value="#808080"/>
+                            <Setter Property="BorderBrush" Value="#A0A0A0"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

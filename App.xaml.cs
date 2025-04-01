@@ -17,8 +17,6 @@ namespace vet_management
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            //await NotificationService.StartListening();
-
             base.OnStartup(e);
 
             AppSettings.CheckFileAndCreate();

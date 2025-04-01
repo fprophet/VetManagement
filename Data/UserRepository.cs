@@ -10,6 +10,7 @@ namespace VetManagement.Data
 {
     public class UserRepository : BaseRepository<User>
     {
+
         public async Task<User> GetByUsername(string username) => await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
 
     }

@@ -23,8 +23,7 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="7*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -48,58 +47,53 @@
                     </StackPanel>
                 </Expander>
             </StackPanel>
-            
-            <StackPanel Grid.Row="1">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="700">
 
-                    <DataGrid Style="{StaticResource DataGridExpanded}" ColumnHeaderStyle="{StaticResource ExpandedColumnHeaderRecipeList}" ItemsSource="{Binding Recipes}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Data"  Binding="{Binding Date}" Width="200"/>
-                            <DataGridTextColumn Header="Numărul"  Binding="{Binding Id}" Width="130"/>
-                            <DataGridTextColumn Header="Stăpân"  Binding="{Binding RegistryRecord.Treatment.Owner.Name}" Width="200"/>
-                            <DataGridTemplateColumn Header="Ridicată" Width="100">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <CheckBox IsChecked="{Binding Signed}" 
-                                          Content=""
-                                          IsEnabled="False"
-                                          Grid.Column="3"
-                                                  HorizontalAlignment="Center"
-                                            Margin="0,5,10,0"
-                                          VerticalAlignment="Center"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Ridicată" Width="100">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <Button Content="Vezi Detalii"
-                                            Padding="5"
-                                            Command="{Binding DataContext.NavigateRecipeCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                            HorizontalAlignment="Right"
-                                            CommandParameter="{Binding Id}"
-                                             Cursor="Hand"
-                                             Background="#007ACC"
-                                             Foreground="White"
-                                             FontWeight="Bold"
-                                             BorderBrush="Transparent"
-                                             Grid.Column="4"
-                                            Margin="0,5,10,0"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </ScrollViewer>
-            </StackPanel>
-            <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="3" Margin="0,20,0,0"
+            <DataGrid Grid.Row="1" Style="{StaticResource DataGridExpanded}" ColumnHeaderStyle="{StaticResource ExpandedColumnHeaderRecipeList}" ItemsSource="{Binding Recipes}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Data"  Binding="{Binding Date}" Width="200"/>
+                    <DataGridTextColumn Header="Numărul"  Binding="{Binding Id}" Width="130"/>
+                    <DataGridTextColumn Header="Stăpân"  Binding="{Binding RegistryRecord.Treatment.Owner.Name}" Width="200"/>
+                    <DataGridTemplateColumn Header="Ridicată" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <CheckBox IsChecked="{Binding Signed}" 
+                                        Content=""
+                                        IsEnabled="False"
+                                        Grid.Column="3"
+                                                HorizontalAlignment="Center"
+                                        Margin="0,5,10,0"
+                                        VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Ridicată" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <Button Content="Vezi Detalii"
+                                        Padding="5"
+                                        Command="{Binding DataContext.NavigateRecipeCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        HorizontalAlignment="Right"
+                                        CommandParameter="{Binding Id}"
+                                            Cursor="Hand"
+                                            Background="White"
+                                            Foreground="Blue"
+                                            BorderBrush="Transparent"
+                                            Grid.Column="4"
+                                        Margin="0,5,10,0"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="2" Margin="0,20,0,0"
                 Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
             
-            <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Row="4"/>
+            <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Row="3"/>
 
         </Grid>
     </Grid>

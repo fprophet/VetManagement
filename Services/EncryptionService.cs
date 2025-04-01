@@ -89,19 +89,28 @@ namespace VetManagement.Services
                 // Create a decryptor to perform the stream transform.
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
-                // Create the streams used for decryption.
-                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                try
                 {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+
+                    // Create the streams used for decryption.
+                    using (MemoryStream msDecrypt = new MemoryStream(cipherText))
                     {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                         {
-                            plaintext = srDecrypt.ReadToEnd();
+                            using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                            {
+                                Trace.WriteLine(cipherText.Length);
+                                plaintext = srDecrypt.ReadToEnd();
 
-                            Trace.WriteLine("IL DECRIPTEZ");
 
+                            }
                         }
                     }
+                }
+                catch(Exception e)
+                {
+                    //Boxes.ErrorBox("Decryption process failed!\n" + e.Message);
+                    Logger.LogError("Error", e.ToString());
                 }
             }
 

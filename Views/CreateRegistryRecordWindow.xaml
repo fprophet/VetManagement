@@ -27,7 +27,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <components:CreateTreatmentForm Grid.Row="0" HorizontalAlignment="Left" DataContext="{Binding CreateTreatmentViewModel}"/>
+            <components:CreateRegistryRecordTreatmentForm Grid.Row="0" HorizontalAlignment="Left" DataContext="{Binding CreateRegistryRecordTreatmentViewModel}"/>
 
             <Border Grid.Row="1" Padding="10" Background="White" CornerRadius="8" BorderBrush="#CCCCCC" BorderThickness="1" HorizontalAlignment="Left">
                 <StackPanel HorizontalAlignment="Stretch"  Grid.Row="2">
