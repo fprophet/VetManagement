@@ -14,41 +14,34 @@ namespace VetManagement.Services
 
         private string _username;
 
-        private string _role;
+        private string _role = "admin";
 
         private int _id = -1;
 
         public string? Username
         {
             get => _username;
-
             set 
-            {
-                _username = value;
-            }
+            {}
         }
 
         public string? Role
         {
             get => _role;
-
             set
-            {
-                _role = value;
-            }
+            {}
         }
 
         public int Id
         {
             get => _id;
-
             set
-            {
-                _id = value;
-            }
+            {}
         }
 
+        public bool MediumLevelPermission(object parameter) => Role == "admin" || Role == "manager" || Role == "farmacist";
 
+        public bool HighLevelPermission(object parameter) => Role == "admin" || Role == "manager";
 
         public void LogUser(int id, string username, string role) 
         { 
@@ -61,7 +54,7 @@ namespace VetManagement.Services
         {
             Id = -1;
             Username = null;
-            Role = null;
+            Role = "";
         }
 
         public bool isIsLoggedIn() =>  _id >= 0;

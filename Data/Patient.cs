@@ -28,7 +28,7 @@ namespace VetManagement.Data
         [Required(ErrorMessage = "Specia animalului este obligatorie!")]
         public string Species { get; set; }
 
-        [Required, AllowedValues("male", "female")]
+        [Required, AllowedValues("Mascul", "Femela")]
         public string Sex { get; set; }
 
         [StringLength(50)]

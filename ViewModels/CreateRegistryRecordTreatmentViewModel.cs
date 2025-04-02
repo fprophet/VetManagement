@@ -191,11 +191,17 @@ namespace VetManagement.ViewModels
 
 
             NavigateCreatePatientWindowCommand = new NavigateWindowCommand<CreatePatientViewModel>
-                (new WindowService<CreatePatientViewModel>(new NavigationStore(), (_passedId) => new CreatePatientViewModel(_navigationStore,OnPatientCreated, _passedId)), () => new CreatePatientWindow());
-           
+              (new WindowService<CreatePatientViewModel>
+                  (new NavigationStore(), (_passedId) => new CreatePatientViewModel(_navigationStore, OnPatientCreated, _passedId)), () => new CreatePatientWindow(), false, false, CanCreatePatient);
+
             NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerViewModel>
               (new WindowService<CreateOwnerViewModel>(new NavigationStore(), (_passedId) => new CreateOwnerViewModel(_navigationStore,OnOwnerCreated)), () => new CreateOwnerWindow());
 
+        }
+
+        public bool CanCreatePatient(object parameter)
+        {
+            return Owner != null;
         }
 
         private bool CanCreateTreatment(object parameter)

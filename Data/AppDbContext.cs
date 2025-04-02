@@ -177,12 +177,16 @@ namespace VetManagement.Data
 
             //modelBuilder.Entity<Patient>()
             //    .Property(p => p.Sex)
-            //    .HasColumnType("ENUM('Male','Female')");
+            //    .HasColumnType("ENUM('Mascul','Femela')");
 
             //modelBuilder.Entity<Med>()
             //    .Property(m => m.Type)
             //    .HasColumnType("ENUM('medicament','vaccin')");
 
+
+            //modelBuilder.Entity<User>()
+            //    .Property(u => u.Role)
+            //    .HasColumnType("ENUM('manager','farmacist','asistent')");
 
         }
 

@@ -5,25 +5,23 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using VetManagement.Data;
 
-namespace VetManagement.Services
+namespace VetManagement.Converters
 {
-    public class TreatmentMedListToFirstItemQuantityConverter : IValueConverter
+    public class IsObjectToVisibilitConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Trace.WriteLine("CONVERTING");
-
-            if (value is List<TreatmentMed> tmList && tmList.Count > 0)
+            if (value is BaseEntity and not null)
             {
-                Trace.WriteLine("AICI Ni");
-                Trace.WriteLine(tmList[0]);
-                return tmList[0].Quantity;
+                Trace.WriteLine(value);
+                return Visibility.Visible;
             }
 
-            return "N/A";
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

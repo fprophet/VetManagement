@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace VetManagement.Services
-{ 
-public class DateToUnixTimestampConverter : IValueConverter
+namespace VetManagement.Converters
+{
+    public class DateToUnixTimestampConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -18,7 +18,7 @@ public class DateToUnixTimestampConverter : IValueConverter
                 return DateTimeOffset.FromUnixTimeSeconds(unixInt).DateTime;
             }
             return DateTime.Now;
-      
+
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

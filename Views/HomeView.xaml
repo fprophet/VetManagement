@@ -6,10 +6,11 @@
              xmlns:local="clr-namespace:VetManagement.Views" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:services="clr-namespace:VetManagement.Services"
+             xmlns:converters="clr-namespace:VetManagement.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <services:TreatmentMedListToFirstItemQuantityConverter x:Key="TreatmentMedListToFirstItemQuantityConverter"/>
+        <converters:TreatmentMedListToFirstItemQuantityConverter x:Key="TreatmentMedListToFirstItemQuantityConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <ItemsPanelTemplate x:Key="HorizontalPanelTemplate">
             <StackPanel Orientation="Horizontal"/>

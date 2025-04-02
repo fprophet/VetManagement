@@ -128,7 +128,7 @@ namespace VetManagement.ViewModels
                 (new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore))); 
 
             NavigateUsersCommand = new NavigateCommand<UsersViewModel>
-                (new NavigationService<UsersViewModel>(_navigationStore, (id) => new UsersViewModel(_navigationStore)));
+                (new NavigationService<UsersViewModel>(_navigationStore, (id) => new UsersViewModel(_navigationStore)), SessionManager.Instance.HighLevelPermission);
             
             NavigateInventoryCommand = new NavigateCommand<InventoryViewModel>
                 (new NavigationService<InventoryViewModel>(_navigationStore, (id) => new InventoryViewModel(_navigationStore)));
@@ -140,7 +140,7 @@ namespace VetManagement.ViewModels
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
 
             NavigateRegistryCommand = new NavigateCommand<RegistryViewModel>
-                (new NavigationService<RegistryViewModel>(_navigationStore, (id) => new RegistryViewModel(_navigationStore)));
+                (new NavigationService<RegistryViewModel>(_navigationStore, (id) => new RegistryViewModel(_navigationStore)), SessionManager.Instance.MediumLevelPermission);
 
             NavigateAppSettingsCommand = new NavigateCommand<AppSettingsViewModel>
                 (new NavigationService<AppSettingsViewModel>(_navigationStore, (id) => new AppSettingsViewModel(_navigationStore)));
@@ -149,10 +149,10 @@ namespace VetManagement.ViewModels
                 (new NavigationService<MedReportsViewModel>(_navigationStore, (id) => new MedReportsViewModel(_navigationStore)));
 
             NavigateRecipeListCommand = new NavigateCommand<RecipeListViewModel>
-                (new NavigationService<RecipeListViewModel>(_navigationStore, (id) => new RecipeListViewModel(_navigationStore)));
+                (new NavigationService<RecipeListViewModel>(_navigationStore, (id) => new RecipeListViewModel(_navigationStore)), SessionManager.Instance.MediumLevelPermission);
 
             NavigateImportedMedsCommand = new NavigateCommand<ImportedMedsViewModel>
-                (new NavigationService<ImportedMedsViewModel>(_navigationStore, (id) => new ImportedMedsViewModel(_navigationStore)));
+                (new NavigationService<ImportedMedsViewModel>(_navigationStore, (id) => new ImportedMedsViewModel(_navigationStore)), SessionManager.Instance.MediumLevelPermission);
 
             NavigateNotificationCommand = new RelayCommand(NavigateNotification);
             ToggleSideMenuCommand = new RelayCommand(ToggleSideMenu);

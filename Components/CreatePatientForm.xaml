@@ -121,8 +121,8 @@
                     <StackPanel Orientation="Vertical" Width="200">
                         <TextBlock Text="Sex: *" VerticalAlignment="Center" Margin="5"/>
                         <ComboBox Text="{Binding Sex}" Name="SexComboBox" Style="{StaticResource ComboBoxStyle}">
-                            <ComboBoxItem Content="Male"/>
-                            <ComboBoxItem Content="Female"/>
+                            <ComboBoxItem Content="Mascul"/>
+                            <ComboBoxItem Content="Femela"/>
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Vertical" Width="300">

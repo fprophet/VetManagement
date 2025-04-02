@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-namespace VetManagement.Services
+namespace VetManagement.Converters
 {
     public class AddPixelConverter : IMultiValueConverter
     {
-        public double PixelsToAdd { get; set; } = 250; 
+        public double PixelsToAdd { get; set; } = 250;
 
         private double _scrollbarWidth = 20;
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-            
+
         {
-            if(values[0] is double totalWidth && values[1] is double sideMenuWidth && values[2] is Thickness mainContentMargins)
+            if (values[0] is double totalWidth && values[1] is double sideMenuWidth && values[2] is Thickness mainContentMargins)
             {
-                return totalWidth - sideMenuWidth - (mainContentMargins.Right * 2) - _scrollbarWidth;
+                return totalWidth - sideMenuWidth - mainContentMargins.Right * 2 - _scrollbarWidth;
             }
 
 

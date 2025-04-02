@@ -8,13 +8,14 @@
         xmlns:services="clr-namespace:VetManagement.Services"
         xmlns:behaviors="clr-namespace:VetManagement.Behaviors"
         xmlns:efcore="clr-namespace:Microsoft.VisualBasic;assembly=Microsoft.VisualBasic.Core"
+        xmlns:converters="clr-namespace:VetManagement.Converters"
         mc:Ignorable="d"
         Title="Formular Creare Tratament" Height="650" Width="1200">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
-        <services:IsObjectToVisibilitConverter x:Key="IsObjectToVisibilitConverter"/>
-        <services:MedQuantityToBackgroundConverter x:Key="MedQuantityToBackgroundConverter"/>
+        <converters:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
+        <converters:IsObjectToVisibilitConverter x:Key="IsObjectToVisibilitConverter"/>
+        <converters:MedQuantityToBackgroundConverter x:Key="MedQuantityToBackgroundConverter"/>
     </Window.Resources>
     <ScrollViewer>
         <Grid Margin="10" Width="900">

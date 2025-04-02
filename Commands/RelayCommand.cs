@@ -16,7 +16,7 @@ namespace VetManagement.Commands
         }
 
         public bool CanExecute(object parameters) => _canExecute == null || _canExecute(parameters);
-        public void Execute(object parameters) => _execute(parameters);
+        public virtual void Execute(object parameters) => _execute(parameters);
 
         public event EventHandler CanExecuteChanged
         {

@@ -7,13 +7,16 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:behaviors="clr-namespace:VetManagement.Behaviors" d:DataContext="{d:DesignInstance Type=viewmodels:CreateMedViewModel}"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:services="clr-namespace:VetManagement.Services"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+        xmlns:services="clr-namespace:VetManagement.Services"
+        xmlns:converters="clr-namespace:VetManagement.Converters"        
         mc:Ignorable="d"
         Title="Formular Creare Medicament" Height="750" Width="1400">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <services:DateToUnixTimestampConverter x:Key="DateToUnixTimestampConverter"/>
-        <services:PieceTypeToReadOnlyConverter x:Key="PieceTypeToReadOnlyConverter"/>
+        <converters:DateToUnixTimestampConverter x:Key="DateToUnixTimestampConverter"/>
+        <converters:PieceTypeToReadOnlyConverter x:Key="PieceTypeToReadOnlyConverter"/>
+        <converters:EmptyToCollapsedConverter x:Key="EmptyToCollapsedConverter"/>
         <Style TargetType="TextBlock" x:Key="InputLabel">
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -22,7 +25,6 @@
             <Setter Property="Height" Value="30"/>
             <Setter Property="Padding" Value="5"/>
         </Style>
-        <services:EmptyToCollapsedConverter x:Key="EmptyToCollapsedConverter"/>
     </Window.Resources>
     <Grid>
         <StackPanel HorizontalAlignment="Stretch" Margin="50">

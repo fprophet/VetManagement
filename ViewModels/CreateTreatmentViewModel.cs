@@ -161,7 +161,7 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public CreateTreatmentViewModel(NavigationStore navigationStore,Action<Treatment> onTreatmentCreateChanged, int? id, string? patientType)
+        public CreateTreatmentViewModel(NavigationStore navigationStore, Action<Treatment> onTreatmentCreateChanged, int? id, string? patientType)
         {
             _navigationStore = navigationStore;
             _onTreatmentCreateChanged = onTreatmentCreateChanged;
@@ -185,7 +185,7 @@ namespace VetManagement.ViewModels
             }
             else
             {
-                _passedId = -1; // Example default value
+                _passedId = -1; 
             }
 
             if( !string.IsNullOrEmpty(patientType))
@@ -195,11 +195,18 @@ namespace VetManagement.ViewModels
 
 
             NavigateCreatePatientWindowCommand = new NavigateWindowCommand<CreatePatientViewModel>
-                (new WindowService<CreatePatientViewModel>(new NavigationStore(), (_passedId) => new CreatePatientViewModel(_navigationStore,OnPatientCreated, _passedId)), () => new CreatePatientWindow());
+                (new WindowService<CreatePatientViewModel>
+                    (new NavigationStore(), (_passedId) => new CreatePatientViewModel(_navigationStore,OnPatientCreated, _passedId)), () => new CreatePatientWindow(),false,false, CanCreatePatient);
            
             NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerViewModel>
-              (new WindowService<CreateOwnerViewModel>(new NavigationStore(), (_passedId) => new CreateOwnerViewModel(_navigationStore,OnOwnerCreated)), () => new CreateOwnerWindow());
+              (new WindowService<CreateOwnerViewModel>
+                (new NavigationStore(), (_passedId) => new CreateOwnerViewModel(_navigationStore,OnOwnerCreated)), () => new CreateOwnerWindow());
 
+        }
+
+        public bool CanCreatePatient(object parameter)
+        {
+            return Owner != null;
         }
 
         private bool CanCreateTreatment(object parameter)

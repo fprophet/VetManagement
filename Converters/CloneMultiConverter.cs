@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace VetManagement.Services
+namespace VetManagement.Converters
 {
     public class CloneMultiConverter : IMultiValueConverter
     {

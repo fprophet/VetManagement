@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-namespace VetManagement.Services
+namespace VetManagement.Converters
 {
     public class CommandParameterToIntConverter : IValueConverter
     {

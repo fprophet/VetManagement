@@ -6,12 +6,13 @@
              xmlns:local="clr-namespace:VetManagement.Views" 
              xmlns:services="clr-namespace:VetManagement.Services" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:converters="clr-namespace:VetManagement.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <services:BoolToTextConverter x:Key="BoolToTextConverter"/>
-        <services:RecipeStatusBoolToStringConverter x:Key="RecipeStatusBoolToStringConverter"/>
-        <services:RecipeStatusToBackgroundColorConverter x:Key="RecipeStatusToBackgroundColorConverter"/>
+        <converters:BoolToTextConverter x:Key="BoolToTextConverter"/>
+        <converters:RecipeStatusBoolToStringConverter x:Key="RecipeStatusBoolToStringConverter"/>
+        <converters:RecipeStatusToBackgroundColorConverter x:Key="RecipeStatusToBackgroundColorConverter"/>
     </UserControl.Resources>
     <Grid>
         <i:Interaction.Triggers>

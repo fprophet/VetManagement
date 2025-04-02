@@ -1,27 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
-using VetManagement.Data;
 
-namespace VetManagement.Services
+namespace VetManagement.Converters
 {
-    public class IsObjectToVisibilitConverter : IValueConverter
+    public class RecipeStatusBoolToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is BaseEntity and not null)
+            if ((bool)value == true)
             {
-                Trace.WriteLine(value);
-                return Visibility.Visible;
+                return "Semnată";
             }
 
-            return Visibility.Collapsed;
+            return "Nesemnată";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

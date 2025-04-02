@@ -4,10 +4,11 @@
              xmlns:local="clr-namespace:VetManagement.Views"
              xmlns:components="clr-namespace:VetManagement.Components"
              xmlns:services="clr-namespace:VetManagement.Services" 
+             xmlns:converters="clr-namespace:VetManagement.Converters" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
+        <converters:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
     </UserControl.Resources>
     
     <Grid Width="1100">

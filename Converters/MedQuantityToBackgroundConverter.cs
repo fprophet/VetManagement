@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace VetManagement.Services
+namespace VetManagement.Converters
 {
     public class MedQuantityToBackgroundConverter : IMultiValueConverter
     {

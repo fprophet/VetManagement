@@ -10,14 +10,15 @@ using VetManagement.ViewModels;
 
 namespace VetManagement.Commands
 {
-    public  class NavigateCommand<TViewModel> : CommandBase where TViewModel : ViewModelBase
+    public  class NavigateCommand<TViewModel> : RelayCommand where TViewModel : ViewModelBase
     {
         private readonly NavigationService<TViewModel> _navigationService;
+        private readonly Predicate<object>? _canExecute;
 
-        public NavigateCommand(NavigationService<TViewModel> navigationService)
+        public NavigateCommand(NavigationService<TViewModel> navigationService, Predicate<object>? canExecute = null) : base(parameter => { }, canExecute)
         {
+            _canExecute = canExecute;
             _navigationService = navigationService;
-
         }
 
         public override void Execute(object parameter)

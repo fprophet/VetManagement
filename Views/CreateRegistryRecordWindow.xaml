@@ -6,12 +6,13 @@
         xmlns:local="clr-namespace:VetManagement.Views"
         xmlns:services="clr-namespace:VetManagement.Services"
         xmlns:components="clr-namespace:VetManagement.Components"
+        xmlns:converters="clr-namespace:VetManagement.Converters"
         mc:Ignorable="d"
         WindowState="Maximized"
         Title="CreateRegistryRecordWindow" Height="450" Width="800">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <services:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
+        <converters:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
     </Window.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
 
