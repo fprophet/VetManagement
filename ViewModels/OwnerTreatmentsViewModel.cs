@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.DataWrappers;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -23,6 +24,33 @@ namespace VetManagement.ViewModels
         public ICommand RepeatTreatmentCommand { get; set; }
 
         public Owner? Owner;
+
+        private object _selectedRow;
+        public object SelectedRow
+        {
+            get => _selectedRow;
+            set
+            {
+                if (value is Treatment)
+                {
+                    SelectedTreatment = (Treatment)value;
+                }
+
+                _selectedRow = value;
+                OnPropertyChanged(nameof(SelectedRow));
+            }
+        }
+
+        private Treatment _selectedTreatment;
+        public Treatment SelectedTreatment
+        {
+            get => _selectedTreatment;
+            set
+            {
+                _selectedTreatment = value;
+                OnPropertyChanged(nameof(SelectedTreatment));
+            }
+        }
 
         public ObservableCollection<Treatment> Treatments { get; private set; } = new ObservableCollection<Treatment>();
 
@@ -48,7 +76,7 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.PassedId = PassedId;
 
-            RepeatTreatmentCommand = new RelayCommand(RepeatTreatment);
+            RepeatTreatmentCommand = new RelayCommand(RepeatTreatment, CanExecuteMedAction);
 
             NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
@@ -58,21 +86,24 @@ namespace VetManagement.ViewModels
 
         }
 
+        public bool CanExecuteMedAction(object parameter) => _selectedTreatment != null && _selectedTreatment.Id is int;
+
         private async void RepeatTreatment(object parameter)
         {
-            if (parameter is not int)
+            if (_selectedTreatment.Id == null)
             {
                 Boxes.InfoBox("Tratamentul nu a putut fi repetat!");
                 return;
             }
-            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa repetați tratementul cu numărul: " + parameter + "?");
+
+            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa repetați tratementul cu numărul: " + _selectedTreatment.Id + "?");
 
             if (result == System.Windows.MessageBoxResult.No)
             {
                 return;
             }
 
-            Treatment? treatment = Treatments.FirstOrDefault(t => t.Id == (int)parameter);
+            Treatment? treatment = Treatments.FirstOrDefault(t => t.Id == _selectedTreatment.Id);
 
             try
             {
@@ -81,6 +112,8 @@ namespace VetManagement.ViewModels
             }
             catch (Exception e)
             {
+                Boxes.InfoBox("Tratamentul nu a putut fi repetat!\n" + e.ToString());
+
                 Logger.LogError("Error", e.ToString());
             }
         }

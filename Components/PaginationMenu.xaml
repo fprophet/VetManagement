@@ -15,11 +15,11 @@
 
     <Grid >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10" Grid.Column="1" 
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10" Grid.Column="0" 
                     Visibility="{Binding PaginationService.ShowPagination, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Button Content="◀" Command="{Binding PaginationService.PreviousPageCommand}" 
             IsEnabled="{Binding PaginationService.CanGoPrevious}" Style="{StaticResource PaginationButtonStyle}"/>
@@ -45,7 +45,12 @@
                 IsEnabled="{Binding PaginationService.CanGoNext}" Style="{StaticResource PaginationButtonStyle}"/>
         </StackPanel>
 
-        <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,30,0">
+
+            <StackPanel Margin="20,0" VerticalAlignment="Center">
+                <TextBlock Text="{Binding PaginationService.TotalFound, StringFormat='Total: {0}'}" />
+            </StackPanel>
+            
             <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Left">
                 <TextBlock Text="Per Pagină" />
                 <ComboBox Text="{Binding PaginationService.PerPage}" >
@@ -59,9 +64,6 @@
                 </ComboBox>
             </StackPanel>
         
-            <StackPanel Margin="20,0" VerticalAlignment="Center">
-                <TextBlock Text="{Binding PaginationService.TotalFound, StringFormat='Total: {0}'}" />
-            </StackPanel>
         </StackPanel>
         
     </Grid>

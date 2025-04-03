@@ -6,6 +6,7 @@
         xmlns:viewmodels="clr-namespace:VetManagement.ViewModels" 
         xmlns:views="clr-namespace:VetManagement.Views"
         xmlns:components="clr-namespace:VetManagement.Components"
+        xmlns:menus="clr-namespace:VetManagement.Components.Menus"
         xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf" 
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         WindowState="Maximized"
@@ -52,6 +53,10 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <Style x:Key="ViewStyle">
+            <Setter Property="Control.Margin" Value="20"/>
         </Style>
 
     </Window.Resources>
@@ -158,56 +163,133 @@
 
                 <components:Header/>
 
-                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" x:Name="MainScroller" Margin="20,0,20,20">
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" x:Name="MainScroller" >
                     <ContentControl Content="{Binding CurrentViewModel}">
                         <ContentControl.Resources>
                             <DataTemplate DataType="{x:Type viewmodels:HomeViewModel}">
-                                <views:HomeView/>
+                                <views:HomeView Style="{StaticResource ViewStyle}"/>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:UsersViewModel}">
-                                <views:UsersView/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:UsersMenu Grid.Row="0"/>
+                                    <views:UsersView Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:InventoryViewModel}">
-                                <views:InventoryView/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:InventoryMenu Grid.Row="0"/>
+                                    <views:InventoryView Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:MedViewModel}">
-                                <views:MedView/>
+                                <views:MedView Style="{StaticResource ViewStyle}"/>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:OwnerTreatmentsViewModel}">
-                                <views:OwnerTreatmentsView/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:OwnerTreatmentsMenu Grid.Row="0"/>
+                                    <views:OwnerTreatmentsView Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:OwnersViewModel}">
-                                <views:OwnersView/>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <menus:OwnersMenu Grid.Row="0"/>
+                                    <views:OwnersView Grid.Row="1" Style="{StaticResource ViewStyle}" />
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:TreatmentsViewModel}">
-                                <views:TreatmentsView />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:TreatmentsMenu Grid.Row="0"/>
+                                    <views:TreatmentsView Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:OwnerPatientsViewModel}">
-                                <views:OwnerPatientsView />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:OwnerPatientsMenu Grid.Row="0"/>
+                                    <views:OwnerPatientsView Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:RegistryViewModel}">
-                                <views:RegistryView />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:RegistryMenu Grid.Row="0"/>
+                                    <views:RegistryView  Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:MedReportsViewModel}">
-                                <views:MedReportsView />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:MedReportsMenu Grid.Row="0"/>
+                                    <views:MedReportsView Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:AppSettingsViewModel}" >
-                                <views:AppSettingsView />
+                                <views:AppSettingsView  Style="{StaticResource ViewStyle}"/>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:RecipeListViewModel}" >
-                                <views:RecipeListView />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:RecipeListMenu Grid.Row="0"/>
+                                    <views:RecipeListView Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:RecipeViewModel}" >
-                                <views:RecipeView />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:RecipeMenu Grid.Row="0"/>
+                                    <views:RecipeView Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:ImportedMedsViewModel}" >
-                                <views:ImportedMedsView />
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <menus:ImportedMedsMenu Grid.Row="0"/>
+                                    <views:ImportedMedsView  Grid.Row="1" Style="{StaticResource ViewStyle}"/>
+                                </Grid>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:RegistryRecordViewModel}" >
-                                <views:RegistryRecordView />
+                                <views:RegistryRecordView  Style="{StaticResource ViewStyle}"/>
                             </DataTemplate>
                             <DataTemplate DataType="{x:Type viewmodels:TreatmentViewModel}" >
-                                <views:TreatmentView />
+                                <views:TreatmentView  Style="{StaticResource ViewStyle}"/>
                             </DataTemplate>
                         </ContentControl.Resources>
                     </ContentControl>

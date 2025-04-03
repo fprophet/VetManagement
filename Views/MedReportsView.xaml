@@ -18,44 +18,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
-            <StackPanel Orientation="Horizontal">
-
-                <StackPanel>
-                    <TextBlock Text="Introduceți numele medicamentului" FontSize="15"/>
-                    <TextBox Text="{Binding MedName, UpdateSourceTrigger=PropertyChanged}"
-                         Width="250"
-                         HorizontalAlignment="Left"
-                        Padding="5"/>
-                </StackPanel>
-
-                <StackPanel  Margin="20,0,0,0">
-                    <TextBlock Text="Nume stăpân" FontSize="15"/>
-                    <TextBox Text="{Binding OwnerName, UpdateSourceTrigger=PropertyChanged}"
-                         Width="250"
-                         HorizontalAlignment="Left"
-                        Padding="5"/>
-                </StackPanel>
-                
-                <StackPanel Margin="20,0,0,0">
-                    <TextBlock Text="Alegeți o dată" FontSize="15"/>
-                    <DatePicker Padding="5" SelectedDate="{Binding Date,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-                
-            </StackPanel>
-            <Border x:Name="ResultsContainer"
-                    Background="White"
-                    BorderBrush="Gray"
-                    BorderThickness="1"
-                    Visibility="Collapsed"
-                    Width="250">
-                <ListBox ItemsSource="{Binding Meds}"   
-                
-                 Background="White"/>
-            </Border>
-        </StackPanel>
-
-        <DataGrid Style="{StaticResource DataGridExpanded}" Grid.Row="1" Margin="0,20" MaxHeight="700" ItemsSource="{Binding Treatments}">
+        <DataGrid Style="{StaticResource DataGridExpanded}" Grid.Row="0" ItemsSource="{Binding Treatments}">
             <DataGrid.Columns>
                 <DataGridTemplateColumn  Width="150">
                     <DataGridTemplateColumn.Header>

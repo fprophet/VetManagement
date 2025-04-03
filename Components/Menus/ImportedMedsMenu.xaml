@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="VetManagement.Components.Menus.ImportedMedsMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VetManagement.Components.Menus"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border  Grid.Row="0" Style="{StaticResource ButtonMenuSection}">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <TextBox Text="{Binding FilePath, Mode=TwoWay}" Width="250" IsReadOnly="True" Margin="0,0,10,0"/>
+                    <Button Content="Selectează fișier..." Command="{Binding BrowseFileCommand}"/>
+                    <Button Margin="20,0"  Content="Importă produse" Command="{Binding ImportMedsCommand}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

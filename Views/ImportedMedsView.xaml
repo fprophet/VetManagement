@@ -19,23 +19,13 @@
         </i:Interaction.Triggers>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="7*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" >
-            <StackPanel Orientation="Horizontal" Margin="10">
-                <TextBox Text="{Binding FilePath, Mode=TwoWay}" Width="250" IsReadOnly="True" Margin="0,0,10,0"/>
-                <Button Content="Selectează fișier..." Command="{Binding BrowseFileCommand}"/>
-                <Button Margin="20,0"  Content="Importă produse" Command="{Binding ImportMedsCommand}"/>
-            </StackPanel>
-            <Expander Header="Filtre" HorizontalAlignment="Left" Width="700">
-            </Expander>
-        </StackPanel>
-
-        <DataGrid  Grid.Row="1" VerticalAlignment="Stretch" MaxHeight="700" Background="White"
+        <DataGrid  Grid.Row="0" VerticalAlignment="Top" Height="700" Background="White"
                     ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
                     Style="{StaticResource StylishDataGrid}" AutoGenerateColumns="True"  ItemsSource="{Binding ImportedMeds}">
             <i:Interaction.Triggers>
@@ -49,10 +39,10 @@
                 
         </DataGrid>
 
-        <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="2" Margin="0,20,0,0"
+        <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="1" Margin="0,20,0,0"
                         Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-        <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Row="3"/>
+        <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Row="2"/>
         
     </Grid>
 </UserControl>

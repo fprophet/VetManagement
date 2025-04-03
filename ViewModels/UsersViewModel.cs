@@ -26,7 +26,7 @@ namespace VetManagement.ViewModels
 
         public ObservableCollection<User> Users { get; set; }
 
-        public ObservableCollection<string> Roles { get; private set; } = new ObservableCollection<string> { "admin", "user" };
+        public ObservableCollection<string> Roles { get; private set; } = new ObservableCollection<string> { "manager", "faramcist", "asistent" };
 
         public ICommand NavigateHomeCommand { get; }
 

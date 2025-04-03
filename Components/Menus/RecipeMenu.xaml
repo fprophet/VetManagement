@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="VetManagement.Components.Menus.RecipeMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VetManagement.Components.Menus"
+             xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf" 
+             xmlns:converters="clr-namespace:VetManagement.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:BoolToTextConverter x:Key="BoolToTextConverter"/>
+        <converters:RecipeStatusBoolToStringConverter x:Key="RecipeStatusBoolToStringConverter"/>
+        <converters:RecipeStatusToBackgroundColorConverter x:Key="RecipeStatusToBackgroundColorConverter"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border  Grid.Row="0" Style="{StaticResource ButtonMenuSection}">
+            <DockPanel>
+
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Row="1" Orientation="Horizontal" >
+                    <TextBlock Text="Status: " Background="#007ACC" FontSize="14" Foreground="White" Padding="10,5" Style="{StaticResource HeaderStyle}"/>
+
+                    <TextBlock Text="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusBoolToStringConverter}}"
+                    Background="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusToBackgroundColorConverter}}"
+                    Foreground="White" Padding="10,5" FontSize="14"/>
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <Button  Style="{StaticResource BasicButton}" Command="{Binding SignRecipeCommand}" >
+                        <emoji:TextBlock Text="Semnează ✏" />
+                    </Button>
+                    <Button Style="{StaticResource BasicButton}" Command="{Binding PrintRecipeCommand}" Margin="10,0,0,0">
+                        <emoji:TextBlock Text="Printează 📃" />
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

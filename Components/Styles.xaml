@@ -196,8 +196,8 @@
 
     <Style TargetType="TextBlock" x:Key="CenterTextBlock">
         <Setter Property="TextAlignment" Value="Center"/>
-        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
     <Style TargetType="TextBlock" x:Key="WrapTextBlock">
@@ -219,6 +219,7 @@
         <Setter Property="HorizontalAlignment" Value="Left"/>
         <Setter Property="Padding" Value="10,5"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Height" Value="30"/>
     </Style>
     
     <Style TargetType="Button" x:Key="CreateButtonStyle">
@@ -287,7 +288,7 @@
     <Style x:Key="DataBorder" TargetType="Border">
         <Setter Property="BorderBrush" Value="LightGray"/>
         <Setter Property="BorderThickness" Value="0,0,1,0"/>
-        <Setter Property="Padding" Value="10"/>
+        <Setter Property="Padding" Value="0"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
     </Style>
 
@@ -570,5 +571,26 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style TargetType="Border" x:Key="ButtonMenuSection">
+        <Setter Property="Background" Value="#E2E3E3"/>
+        <Setter Property="Width" Value="700"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="CornerRadius" Value="0,0,3,3"/>
+        <Setter Property="BorderBrush" Value="LightSlateGray"/>
+        <Setter Property="BorderThickness" Value="0.8"/>
+
+    </Style>
+    
+    <Style TargetType="Border" x:Key="FilterMenuSection">
+        <Setter Property="Background" Value="#E2E3E3"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="CornerRadius" Value="0,0,3,3"/>
+        <Setter Property="BorderThickness" Value="0.8,1,0.8,0.8"/>
+        <Setter Property="BorderBrush" Value="LightSlateGray"/>
+        
     </Style>
 </ResourceDictionary>

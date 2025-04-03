@@ -37,6 +37,36 @@ namespace VetManagement.ViewModels
         public PaginationService PaginationService { get; set; }
 
         private readonly FilterService _filterService;
+        public FilterHelper FilterHelper { get; set; } = new FilterHelper();
+
+
+        private object _selectedRow;
+
+        public object SelectedRow
+        {
+            get => _selectedRow;
+            set
+            {
+                if( value is Owner)
+                {
+                    SelectedOwner = (Owner)value;
+                }
+
+                _selectedRow = value;
+                OnPropertyChanged(nameof(SelectedRow));
+            }
+        }
+
+        private Owner _selectedOwner;
+        public Owner SelectedOwner
+        {
+            get => _selectedOwner;
+            set
+            {
+                _selectedOwner = value;
+                OnPropertyChanged(nameof(SelectedOwner));
+            }
+        }
 
         private bool _isLoading = true;
         public bool isLoading
@@ -105,23 +135,25 @@ namespace VetManagement.ViewModels
                 await LoadOwners();
             });
 
-            _filterService = new FilterService(() => LoadOwners());
+            _filterService = new FilterService(LoadOwners);
 
-            PaginationService = new PaginationService(() => LoadOwners(), () => LoadOwners(),20);
+            PaginationService = new PaginationService(LoadOwners, LoadOwners,20);
 
-            NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerAndPatientViewModel>
+            NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerAndPatientViewModel>    
                 (new WindowService<CreateOwnerAndPatientViewModel>(_navigationStore, (id) => new CreateOwnerAndPatientViewModel(_navigationStore, UpdateOwners)), () => new CreateOwnerAndPatientWindow());
 
             NavigateTreatmentsListCommand = new NavigateCommand<OwnerTreatmentsViewModel>
-                (new NavigationService<OwnerTreatmentsViewModel>(_navigationStore, (id) => new OwnerTreatmentsViewModel(_navigationStore, id)));
+                (new NavigationService<OwnerTreatmentsViewModel>(_navigationStore, (id) => new OwnerTreatmentsViewModel(_navigationStore, _selectedOwner.Id)), CanExecuteUserAction);
 
             NavigatePatientsListCommand = new NavigateCommand<OwnerPatientsViewModel>
-                (new NavigationService<OwnerPatientsViewModel>(_navigationStore, (id) => new OwnerPatientsViewModel(_navigationStore, id)));
+                (new NavigationService<OwnerPatientsViewModel>(_navigationStore, (id) => new OwnerPatientsViewModel(_navigationStore, _selectedOwner.Id)), CanExecuteUserAction) ;
 
-            DeleteOwnerCommand = new RelayCommand(DeleteOwner);
-            UpdateOwnerCommand = new RelayCommand(UpdateOwner);
+            DeleteOwnerCommand = new RelayCommand(DeleteOwner, CanExecuteUserAction);
+            UpdateOwnerCommand = new RelayCommand(UpdateOwner, CanExecuteUserAction);
 
         }
+
+        public bool CanExecuteUserAction(object parameter) => _selectedOwner != null && _selectedOwner.Id is int;
 
         public async Task LoadOwners()
         {
@@ -173,15 +205,15 @@ namespace VetManagement.ViewModels
 
         private async void UpdateOwner(object parameter)
         {
+            if (_selectedOwner == null)
+            {
+                return;
+            }
             try
             {
-                if (parameter != null && parameter is Owner)
-                { 
-                    Owner owner = (Owner)parameter;
-                    await new OwnerRepository().Update(owner);
-                    Boxes.InfoBox("Proprietarul a fost actualizat!");
+                await new OwnerRepository().Update(_selectedOwner);
+                Boxes.InfoBox("Proprietarul a fost actualizat!");
 
-                }
             }
             catch(Exception e)
             {
@@ -191,6 +223,10 @@ namespace VetManagement.ViewModels
 
         private async void DeleteOwner(object parameter)
         {
+            if(_selectedOwner == null)
+            {
+                return;
+            }
             try 
             {
                 var result = Boxes.ConfirmBox("Doriți să ștergeți proprietarul?");

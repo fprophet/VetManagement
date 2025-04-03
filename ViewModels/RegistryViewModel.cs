@@ -90,9 +90,38 @@ namespace VetManagement.ViewModels
             }
         }
 
+
+        private object _selectedRow;
+        public object SelectedRow
+        {
+            get => _selectedRow;
+            set
+            {
+                if (value is RegistryRecord)
+                {
+                    _selectedRegistryRecord = (RegistryRecord)value;
+                }
+
+                _selectedRow = value;
+                OnPropertyChanged(nameof(SelectedRow));
+            }
+        }
+
+        private RegistryRecord _selectedRegistryRecord;
+        public RegistryRecord SelectedRegistryRecord
+        {
+            get => _selectedRegistryRecord;
+            set
+            {
+                _selectedRegistryRecord = value;
+                OnPropertyChanged(nameof(SelectedRegistryRecord));
+            }
+        }
+
         public PaginationService PaginationService { get; set; }
 
         private readonly FilterService _filterService;
+        public FilterHelper FilterHelper { get; set; } = new FilterHelper();
 
         public ICommand NavigateCreateRegisterRecordWindowCommand { get; set; }
 
@@ -104,17 +133,20 @@ namespace VetManagement.ViewModels
 
             OnLoadedCommand = new RelayCommand(async (object parameter) => await LoadRegistryRecords());
 
-            _filterService = new FilterService(() => LoadRegistryRecords());
+            _filterService = new FilterService(LoadRegistryRecords);
 
-            PaginationService = new PaginationService(() => LoadRegistryRecords(), () => LoadRegistryRecords());
+            PaginationService = new PaginationService(LoadRegistryRecords, LoadRegistryRecords);
 
             NavigateRegistryRecordViewCommand = new NavigateCommand<RegistryRecordViewModel>
-                (new NavigationService<RegistryRecordViewModel>(_navigationStore, (id) => new RegistryRecordViewModel(navigationStore, id)));
+                (new NavigationService<RegistryRecordViewModel>(_navigationStore, (id) => new RegistryRecordViewModel(navigationStore, _selectedRegistryRecord.Id)), CanExecuteRegistryRecordAction);
 
             NavigateCreateRegisterRecordWindowCommand = new NavigateWindowCommand<CreateRegistryRecordViewModel>
                 (new WindowService<CreateRegistryRecordViewModel>
                     (_navigationStore, (id) => new CreateRegistryRecordViewModel(_navigationStore, UpdateRegistryRecords)), () => new CreateRegistryRecordWindow());
         }
+
+        public bool CanExecuteRegistryRecordAction(object parameter) => _selectedRegistryRecord != null && _selectedRegistryRecord.Id is int;
+
 
         private void UpdateRegistryRecords(RegistryRecord registryRecord)
         {

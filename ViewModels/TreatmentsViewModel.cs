@@ -23,8 +23,6 @@ namespace VetManagement.ViewModels
     {
         public string _pageTitle = "💊 Registru animale mici";
 
-        public ICommand NavigateOwnersCommand { get; set; }
-
         public ICommand NavigateCreateTreatmentWindowCommand { get; set; }
         
         public ICommand NavigateTreatmentViewCommand { get; set; }
@@ -32,6 +30,8 @@ namespace VetManagement.ViewModels
         public PaginationService PaginationService { get; set; }
 
         private readonly FilterService _filterService;
+        public FilterHelper FilterHelper { get; set; } = new FilterHelper();
+
 
         private bool _isLoading = true;
         public bool isLoading
@@ -89,6 +89,33 @@ namespace VetManagement.ViewModels
             }
         }
 
+        private object _selectedRow;
+        public object SelectedRow
+        {
+            get => _selectedRow;
+            set
+            {
+                if (value is Treatment)
+                {
+                    _selectedTreatment = (Treatment)value;
+                }
+
+                _selectedRow = value;
+                OnPropertyChanged(nameof(SelectedRow));
+            }
+        }
+
+        private Treatment _selectedTreatment;
+        public Treatment SelectedTreatment
+        {
+            get => _selectedTreatment;
+            set
+            {
+                _selectedTreatment = value;
+                OnPropertyChanged(nameof(SelectedTreatment));
+            }
+        }
+
         public ObservableCollection<Treatment> Treatments { get; private set; } = new ObservableCollection<Treatment>();
 
         public TreatmentsViewModel(NavigationStore navigationStore)
@@ -102,14 +129,14 @@ namespace VetManagement.ViewModels
 
             PaginationService = new PaginationService(() => LoadTreatments(), () => LoadTreatments());
 
-            NavigateOwnersCommand = new NavigateCommand<HomeViewModel>(new NavigationService<HomeViewModel>(_navigationStore, (id) => new HomeViewModel(_navigationStore)));
-
             NavigateTreatmentViewCommand = new NavigateCommand<TreatmentViewModel>
-                (new NavigationService<TreatmentViewModel>(_navigationStore, (id) => new TreatmentViewModel(navigationStore, id)));
+                (new NavigationService<TreatmentViewModel>(_navigationStore, (id) => new TreatmentViewModel(navigationStore, SelectedTreatment.Id)), CanExecuteTreatmentAction);
 
             NavigateCreateTreatmentWindowCommand = new NavigateWindowCommand<CreateTreatmentViewModel>
                 (new WindowService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(_navigationStore, OnTreatmentCreated, null, null)), () => new CreateTreatmentWindow());
         }
+
+        public bool CanExecuteTreatmentAction(object parameter) => SelectedTreatment != null && SelectedTreatment.Id is int;
 
         private void OnTreatmentCreated(Treatment treatment)
         {

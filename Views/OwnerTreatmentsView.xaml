@@ -29,33 +29,13 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-
-        <Button Grid.Row="0" Style="{StaticResource BackButton}"  Command="{Binding NavigateOwnersCommand}" />
-
-        <Button Grid.Row="1" Content="➕ Adaugă tratament" Style="{StaticResource CreateButtonStyle}" Command="{Binding NavigateCreateTreatment}" Margin="0,10" />
-
         <DataGrid  Grid.Row="2" Margin="0,10,0,0" ItemsSource="{Binding Treatments}"
                 Style="{StaticResource DataGridExpanded}" 
+                   SelectedItem="{Binding SelectedRow}"
                 MaxHeight="700">
                 
             <DataGrid.Columns>
-                <DataGridTemplateColumn Width="100">
-                    <DataGridTemplateColumn.Header>
-                        <TextBlock Text="" Style="{StaticResource CenterTextBlock}"/>
-                    </DataGridTemplateColumn.Header>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button  Height="25" Margin="10,0" 
-                                    CommandParameter="{Binding Id}"
-                                    Command="{Binding DataContext.RepeatTreatmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}">
-                            <TextBlock Text="Repetă"
-                                TextWrapping="Wrap"
-                                TextAlignment="Center"/>
-                            </Button>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
+      
                 <DataGridTextColumn Header="Număr" Binding="{Binding Id}" Width="70"/>
 
                 <DataGridTemplateColumn  Width="150">

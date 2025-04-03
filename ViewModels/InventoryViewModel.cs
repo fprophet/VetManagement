@@ -48,6 +48,8 @@ namespace VetManagement.ViewModels
 
         private readonly FilterService _filterService;
 
+        public FilterHelper FilterHelper { get; set; } = new FilterHelper();
+
 
         private bool _isLoading = true;
         public bool isLoading
@@ -131,6 +133,33 @@ namespace VetManagement.ViewModels
             }
         }
 
+        private object _selectedRow;
+        public object SelectedRow
+        {
+            get => _selectedRow;
+            set
+            {
+                if (value is MedWrapper)
+                {
+                    SelectedMed = ((MedWrapper)value).Med;
+                }
+
+                _selectedRow = value;
+                OnPropertyChanged(nameof(SelectedRow));
+            }
+        }
+
+        private Med _selectedMed;
+        public Med SelectedMed
+        {
+            get => _selectedMed;
+            set
+            {
+                _selectedMed = value;
+                OnPropertyChanged(nameof(SelectedMed));
+            }
+        }
+
         public InventoryViewModel(NavigationStore navigationStore) 
         {
             _navigationStore = navigationStore;
@@ -142,15 +171,16 @@ namespace VetManagement.ViewModels
 
             PaginationService = new PaginationService(LoadMeds,LoadMeds,20);
 
-            DeleteMedCommand = new RelayCommand(DeleteMed);
-            EditItemCommand = new RelayCommand(UpdateMed);
+            DeleteMedCommand = new RelayCommand(DeleteMed, CanExecuteMedAction);
+            EditItemCommand = new RelayCommand(UpdateMed, CanExecuteMedAction);
             NavigateViewMedCommand = new NavigateCommand<MedViewModel>
-                (new NavigationService<MedViewModel>(_navigationStore, (id) => new MedViewModel(_navigationStore,id)));
+                (new NavigationService<MedViewModel>(_navigationStore, (id) => new MedViewModel(_navigationStore, _selectedMed.Id)), CanExecuteMedAction);
             
             OpenCreateMedWindowCommand = new NavigateWindowCommand<CreateMedViewModel>
                 (new WindowService<CreateMedViewModel>(_navigationStore, (id) => new CreateMedViewModel(_navigationStore, UpdateMedList)), () => new CreateMedWindow());
         }
 
+        public bool CanExecuteMedAction(object parameter) => _selectedMed != null && _selectedMed.Id is int;
 
         private void UpdateMedList(Med med)
         {
@@ -173,13 +203,12 @@ namespace VetManagement.ViewModels
         {
             try 
             {
-                if( parameter != null && parameter is Med)
+                if( _selectedMed != null)
                 {
-                    Med med = (Med)parameter;
 
-                    med.TotalAmount = med.Pieces * med.PerPiece;
+                    _selectedMed.TotalAmount = _selectedMed.Pieces * _selectedMed.PerPiece;
 
-                    await new BaseRepository<Med>().Update(med);
+                    await new BaseRepository<Med>().Update(_selectedMed);
 
                     Boxes.InfoBox("Medicamentul  a fost actualizat!");
 
@@ -197,11 +226,11 @@ namespace VetManagement.ViewModels
         {
             var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa ștergeți acest medicament?");
 
-            if (parameter is int && result == MessageBoxResult.Yes)
+            if (_selectedMed != null && result == MessageBoxResult.Yes)
             {
                 try
                 {
-                    await new BaseRepository<Med>().Delete((int)parameter);
+                    await new BaseRepository<Med>().Delete(_selectedMed.Id);
                 }
                 catch (Exception e)
                 { 
@@ -209,7 +238,7 @@ namespace VetManagement.ViewModels
                     return;
                 }
 
-                var med = Meds.FirstOrDefault(p => p.Id == (int)parameter);
+                var med = Meds.FirstOrDefault(p => p.Id == _selectedMed.Id);
                 if (med != null) 
                 { 
                     Meds.Remove(med);

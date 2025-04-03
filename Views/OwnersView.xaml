@@ -32,33 +32,9 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
-                <Button Content="➕ Crează proprietar nou" HorizontalAlignment="Left"
-                    Style="{StaticResource CreateButtonStyle}" Command="{Binding NavigateCreateOwnerWindowCommand}"  />
-                <Expander Header="Filtre" HorizontalAlignment="Left" Width="700">
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                            <TextBlock Text="Nume" FontSize="15"/>
-                            <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
-                        </StackPanel>
-
-                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                            <TextBlock Text="Animal" FontSize="15"/>
-                            <TextBox Text="{Binding PatientNameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
-                        </StackPanel>
-
-                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                            <TextBlock Text="Detalii" FontSize="15"/>
-                            <TextBox Text="{Binding DetailsFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="15"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Expander>
-        </StackPanel>
-
-
-        <DataGrid MaxHeight="700"  Grid.Row="1"
-                ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}" 
-                ItemsSource="{Binding Owners}" Style="{StaticResource StylishDataGrid}" HorizontalAlignment="Left">
+        <DataGrid MaxHeight="700"  Grid.Row="0"
+                ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}" SelectedItem="{Binding SelectedRow}"
+                ItemsSource="{Binding Owners}" Style="{StaticResource StylishDataGrid}" HorizontalAlignment="Center">
             <DataGrid.Columns>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data Înscriere" Binding="{Binding DateAdded, Mode=OneWay, StringFormat='yyyy-MM-dd'}" Width="150"/>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume" Binding="{Binding Name}" Width="200"/>
@@ -66,35 +42,13 @@
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Telefon" Binding="{Binding Phone}" Width="100"/>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Email" Binding="{Binding Email}" Width="250"/>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Detalii" Binding="{Binding Details}" Width="300"/>
-
-                <DataGridTemplateColumn Header="">
-
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="✏ Edit" Style="{StaticResource EditButtonStyle}"
-                                        Command="{Binding DataContext.UpdateOwnerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding}" />
-                                <!--<Button Content="Delete" Style="{StaticResource DeleteButtonStyle}"
-                                        Command="{Binding DataContext.DeleteOwnerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />-->
-                                <Button Content="Listă tratamente" Style="{StaticResource DetailsButtonStyle}"
-                                        Command="{Binding DataContext.NavigateTreatmentsListCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                                <Button Content="Listă animale" Style="{StaticResource DetailsButtonStyle}"
-                                        Command="{Binding DataContext.NavigatePatientsListCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding Id, Converter={StaticResource CommandParameterToIntConverter}}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-        <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="2" Margin="0,20,0,0"
+        <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="1" Margin="0,20,0,0"
                         Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-        <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Row="3" Margin="0,10"/>
+        <components:PaginationMenu HorizontalAlignment="Stretch" Grid.Row="2" Margin="0,10"/>
 
         <!-- Create Owner Button -->
         

@@ -28,27 +28,8 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Margin="0,0,0,20">
-                <Expander Header="Filtre" HorizontalAlignment="Left" Width="700" >
-                    <StackPanel Orientation="Horizontal">
-                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                            <TextBlock Text="Proprietar" FontSize="15"/>
-                            <TextBox Text="{Binding OwnerNameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
-                        </StackPanel>
-
-                        <StackPanel Width="200" HorizontalAlignment="Left" Margin="0,0,20,0">
-                            <TextBlock Text="Număr" FontSize="15"/>
-                            <TextBox Text="{Binding RecipeNumberFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="15"/>
-                        </StackPanel>
-
-                        <StackPanel Width="200" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,20,0">
-                            <CheckBox Content="Doar neridicate" VerticalAlignment="Bottom" IsChecked="{Binding OnlyUnsingedFilter,UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Expander>
-            </StackPanel>
-
-            <DataGrid Grid.Row="1" Style="{StaticResource DataGridExpanded}" ColumnHeaderStyle="{StaticResource ExpandedColumnHeaderRecipeList}" ItemsSource="{Binding Recipes}">
+            <DataGrid Grid.Row="1" Style="{StaticResource DataGridExpanded}" HorizontalAlignment="Center" VerticalAlignment="Stretch"  
+                      ColumnHeaderStyle="{StaticResource ExpandedColumnHeaderRecipeList}" ItemsSource="{Binding Recipes}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Data"  Binding="{Binding Date}" Width="200"/>
                     <DataGridTextColumn Header="Numărul"  Binding="{Binding Id}" Width="130"/>
@@ -68,7 +49,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Ridicată" Width="100">
+                    <DataGridTemplateColumn Header="" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel>

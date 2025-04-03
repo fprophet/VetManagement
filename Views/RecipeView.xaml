@@ -107,27 +107,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0"  Margin="0,10,0,10">
-
-            <!--<Button  Style="{StaticResource BackButton}"  Command="{Binding NavigateBackCommand}" Height="30" />-->
-
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Row="1" Orientation="Horizontal" >
-                <TextBlock Text="Status: " Background="#007ACC" FontSize="14" Foreground="White" Padding="10,5" Style="{StaticResource HeaderStyle}"/>
-
-                <TextBlock Text="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusBoolToStringConverter}}"
-                    Background="{Binding RecipeWrapper.Signed, Converter={StaticResource RecipeStatusToBackgroundColorConverter}}"
-                    Foreground="White" Padding="10,5" FontSize="14"/>
-            </StackPanel>
-            
-            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
-                <Button  Style="{StaticResource BasicButton}" Command="{Binding SignRecipeCommand}" >
-                    <emoji:TextBlock Text="Semnează ✏" />
-                </Button>
-                <Button Style="{StaticResource BasicButton}" Command="{Binding PrintRecipeCommand}" Margin="10,0,0,0">
-                    <emoji:TextBlock Text="Printează 📃" />
-                </Button>
-            </StackPanel>
-        </Grid>
 
         <Border BorderThickness="1" Grid.Row="2" BorderBrush="LightGray" Width="800" Padding="0,20">
 

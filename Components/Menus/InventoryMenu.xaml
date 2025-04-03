@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="VetManagement.Components.Menus.InventoryMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VetManagement.Components.Menus"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Border  Grid.Row="0" Style="{StaticResource ButtonMenuSection}">
+            <DockPanel>
+                <Button Content="➕ Adaugă medicamente" Style="{StaticResource BasicButton}" HorizontalAlignment="Left" Background="#FF4CAF50" Command="{Binding OpenCreateMedWindowCommand}" />
+
+                <Button HorizontalAlignment="Center" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Filtre"/>
+                            <TextBlock Text="{Binding FilterHelper.FilterToggleSymbol}" HorizontalAlignment="Center" Margin="3,0,0,0"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Detalii" Style="{StaticResource BasicButton}" 
+                    Command="{Binding NavigateViewMedCommand}" />
+                    <Button Content="✏ Modifică" Style="{StaticResource BasicButton}" Background="#CCA135" Margin="10,0" 
+                    Command="{Binding EditItemCommand}" />
+                    <Button Content="🚮 Șterge" Style="{StaticResource BasicButton}" Background="#E13654"
+                    Command="{Binding DeleteMedCommand}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="1"
+                Visibility="{Binding FilterHelper.AreFiltersVisible, Converter={StaticResource BoolToVisibilityConverter}}" >
+
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">
+                    <TextBlock Text="Tipul medicamentului" FontSize="13"/>
+                    <ComboBox Width="150" HorizontalAlignment="Left" ItemsSource="{Binding MedTypeList}" DisplayMemberPath="Name" 
+                        SelectedValuePath="Value" SelectedValue="{Binding TypeFilter, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">
+                    <TextBlock Text="Nume" FontSize="13"/>
+                    <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
+                </StackPanel>
+
+                <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">
+                    <TextBlock Text="Lot" FontSize="13"/>
+                    <TextBox Text="{Binding LotFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="13"/>
+                </StackPanel>
+
+                <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">
+                    <TextBlock Text="Valabilitate" FontSize="13"/>
+                    <DatePicker SelectedDate="{Binding ValabilityFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  DisplayDateStart="2025-01-01" />
+                </StackPanel>
+
+                <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">
+                    <TextBlock Text="Data adăugare" FontSize="13"/>
+                    <DatePicker SelectedDate="{Binding DateAddedFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  DisplayDateStart="2024-01-01" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

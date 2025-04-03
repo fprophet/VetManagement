@@ -16,12 +16,14 @@ namespace VetManagement.Converters
 
         private double _scrollbarWidth = 20;
 
+        private double _viewMargins = 40;
+
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 
         {
             if (values[0] is double totalWidth && values[1] is double sideMenuWidth && values[2] is Thickness mainContentMargins)
             {
-                return totalWidth - sideMenuWidth - mainContentMargins.Right * 2 - _scrollbarWidth;
+                return totalWidth - sideMenuWidth - mainContentMargins.Right * 2 - _scrollbarWidth  - _viewMargins;
             }
 
 

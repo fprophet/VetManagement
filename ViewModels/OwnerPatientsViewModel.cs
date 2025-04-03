@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.DataWrappers;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -30,6 +31,33 @@ namespace VetManagement.ViewModels
         public Owner? Owner;
 
         public ObservableCollection<Patient> Patients{ get; private set; } = new ObservableCollection<Patient>();
+
+        private object _selectedRow;
+        public object SelectedRow
+        {
+            get => _selectedRow;
+            set
+            {
+                if (value is Patient)
+                {
+                    SelectedPatient = (Patient)value;
+                }
+
+                _selectedRow = value;
+                OnPropertyChanged(nameof(SelectedRow));
+            }
+        }
+
+        private Patient _selectedPatient;
+        public Patient SelectedPatient
+        {
+            get => _selectedPatient;
+            set
+            {
+                _selectedPatient = value;
+                OnPropertyChanged(nameof(SelectedPatient));
+            }
+        }
 
         public OwnerPatientsViewModel(NavigationStore navigationStore,int? id)
         {
@@ -58,19 +86,19 @@ namespace VetManagement.ViewModels
             NavigateCreatePatientWindowCommand = new NavigateWindowCommand<CreatePatientViewModel>
                 (new WindowService<CreatePatientViewModel>(_navigationStore, (id) => new CreatePatientViewModel(_navigationStore,OnPatientCreated, id)), () => new CreatePatientWindow());
 
-            UpdatePatientCommand = new RelayCommand(UpdatePatient);
-            DeletePatientCommand = new RelayCommand(DeletePatient);
+            UpdatePatientCommand = new RelayCommand(UpdatePatient, CanExecutePatientAction);
+            DeletePatientCommand = new RelayCommand(DeletePatient, CanExecutePatientAction);
         }
-
+        public bool CanExecutePatientAction(object parameter) => _selectedPatient != null && _selectedPatient.Id is int;
 
         private async void UpdatePatient(object parameter)
         {
             try
             {
-                if (parameter != null && parameter is Patient)
+                if (_selectedPatient != null)
                 {
-                    Patient patient = (Patient)parameter;
-                    await new BaseRepository<Patient>().Update(patient);
+
+                    await new BaseRepository<Patient>().Update(_selectedPatient);
                     Boxes.InfoBox("Pacientul a fost actualizat!");
 
                 }
@@ -86,11 +114,11 @@ namespace VetManagement.ViewModels
         {
             var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa ștergeți acest pacientul?");
 
-            if (parameter is int && result == MessageBoxResult.Yes)
+            if (_selectedPatient.Id is int && result == MessageBoxResult.Yes)
             {
                 try
                 {
-                    await new BaseRepository<Patient>().Delete((int)parameter);
+                    await new BaseRepository<Patient>().Delete(_selectedPatient.Id);
                 }
                 catch (Exception e)
                 {
@@ -98,7 +126,7 @@ namespace VetManagement.ViewModels
                     return;
                 }
 
-                var med = Patients.FirstOrDefault(p => p.Id == (int)parameter);
+                var med = Patients.FirstOrDefault(p => p.Id == _selectedPatient.Id );
                 if (med != null)
                 {
                     Patients.Remove(med);
