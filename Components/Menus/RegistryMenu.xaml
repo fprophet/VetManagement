@@ -14,7 +14,7 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border  Grid.Row="0" Style="{StaticResource ButtonMenuSection}">
+        <Border  Grid.Row="1" Style="{StaticResource ButtonMenuSection}">
             <DockPanel>
                 <Button  Content="➕ Adaugă în registru" Style="{StaticResource BasicButton}" HorizontalAlignment="Left" Background="#FF4CAF50"
                  Command="{Binding  NavigateCreateRegisterRecordWindowCommand}"  />
@@ -34,7 +34,7 @@
             </DockPanel>
         </Border>
         
-        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="1"
+        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="0"
             Visibility="{Binding FilterHelper.AreFiltersVisible, Converter={StaticResource BoolToVisibilityConverter}}" >
             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
                 <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">

@@ -4,20 +4,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VetManagement.Components.Menus"
+             xmlns:converters="clr-namespace:VetManagement.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:UserRoleToVisibilityConverter x:Key="UserRoleToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
+        <Button Grid.Row="0" Style="{StaticResource BackButton}"  Command="{Binding NavigateOwnersCommand}" Margin="20,0,0,0" />
         <Border  Grid.Row="0" Style="{StaticResource ButtonMenuSection}">
             <DockPanel>
 
-                <Button Grid.Row="0" Style="{StaticResource BackButton}"  Command="{Binding NavigateOwnersCommand}" Margin="0,0,10,0" />
 
                 <Button Grid.Row="1" Content="➕ Adaugă tratament" HorizontalAlignment="Left" Style="{StaticResource BasicButton}" Background="#FF4CAF50" />
 
@@ -26,6 +29,16 @@
                         Command="{Binding RepeatTreatmentCommand}"/>
                 </StackPanel>
             </DockPanel>
+        </Border>
+        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="1" HorizontalAlignment="Left" Margin="510,0,0,0"
+                Visibility="{Binding ., Converter={StaticResource UserRoleToVisibilityConverter}}" >
+            <StackPanel Orientation="Horizontal" >
+                <StackPanel>
+                    <TextBlock Text="Tipul Tratamentului" FontSize="13"/>
+                    <ComboBox Width="150" HorizontalAlignment="Left" ItemsSource="{Binding TreatmentTypeList}" DisplayMemberPath="Name" 
+                            SelectedValuePath="Value" SelectedValue="{Binding TreatmentTypeFilter, Mode=TwoWay}" />
+                </StackPanel>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

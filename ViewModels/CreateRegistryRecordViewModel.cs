@@ -59,6 +59,7 @@ namespace VetManagement.ViewModels
             }
         }
 
+
         private string _medName;
         public string MedName
         {
@@ -107,10 +108,9 @@ namespace VetManagement.ViewModels
             CreateRegistryRecordTreatmentViewModel = new CreateRegistryRecordTreatmentViewModel(_navigationStore,OnTreatmentCreated, null);
 
             CreateRegistryRecordCommand = new RelayCommand(CreateRegistryRecord);
-
         }
 
-
+  
         private void OnTreatmentCreated(Treatment treatment)
         {
             _treatment = treatment;

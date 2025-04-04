@@ -14,10 +14,10 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border  Grid.Row="0" Style="{StaticResource ButtonMenuSection}">
-            <DockPanel Grid.Row="0">
+        <Border  Grid.Row="1" Style="{StaticResource ButtonMenuSection}">
+            <DockPanel>
 
-                <Button Grid.Row="0" VerticalAlignment="Center" Content="➕ Adaugă în registru" HorizontalAlignment="Left"
+                <Button VerticalAlignment="Center" Content="➕ Adaugă în registru" HorizontalAlignment="Left"
                   Style="{StaticResource BasicButton}" Background="#FF4CAF50" Command="{Binding  NavigateCreateTreatmentWindowCommand}"/>
 
                 <Button HorizontalAlignment="Center" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
@@ -35,7 +35,7 @@
             </DockPanel>
         </Border>
         
-        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="1"
+        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="0"
             Visibility="{Binding FilterHelper.AreFiltersVisible, Converter={StaticResource BoolToVisibilityConverter}}" >
             <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
                 <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">

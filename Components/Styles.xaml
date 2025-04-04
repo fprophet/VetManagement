@@ -573,6 +573,20 @@
         </Setter>
     </Style>
 
+    <Style x:Key="BasicMenuItem" TargetType="MenuItem">
+        <Setter Property="Background" Value="LightGray"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="15,5"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="DarkGray"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Width" Value="Auto"/>
+        <Setter Property="Height" Value="35"/>
+    </Style>
+
     <Style TargetType="Border" x:Key="ButtonMenuSection">
         <Setter Property="Background" Value="#E2E3E3"/>
         <Setter Property="Width" Value="700"/>
@@ -588,9 +602,8 @@
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="Padding" Value="5"/>
-        <Setter Property="CornerRadius" Value="0,0,3,3"/>
+        <Setter Property="CornerRadius" Value="0"/>
         <Setter Property="BorderThickness" Value="0.8,1,0.8,0.8"/>
         <Setter Property="BorderBrush" Value="LightSlateGray"/>
-        
     </Style>
 </ResourceDictionary>

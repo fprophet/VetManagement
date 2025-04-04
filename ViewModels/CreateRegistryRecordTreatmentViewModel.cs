@@ -161,6 +161,18 @@ namespace VetManagement.ViewModels
             }
         }
 
+        private string _newMedName;
+        public string NewMedName
+        {
+            get => _newMedName;
+            set
+            {
+                _newMedName = value;
+                OnPropertyChanged(nameof(NewMedName));
+            }
+        }
+        public ICommand CreateNewMedCommand { get; }
+
         public CreateRegistryRecordTreatmentViewModel(NavigationStore navigationStore,Action<Treatment> onTreatmentCreateChanged, int? id)
         {
             _navigationStore = navigationStore;
@@ -188,6 +200,7 @@ namespace VetManagement.ViewModels
                 _passedId = -1; // Example default value
             }
 
+            CreateNewMedCommand = new RelayCommand(CreateNewMed);
 
 
             NavigateCreatePatientWindowCommand = new NavigateWindowCommand<CreatePatientViewModel>
@@ -196,6 +209,29 @@ namespace VetManagement.ViewModels
 
             NavigateCreateOwnerWindowCommand = new NavigateWindowCommand<CreateOwnerViewModel>
               (new WindowService<CreateOwnerViewModel>(new NavigationStore(), (_passedId) => new CreateOwnerViewModel(_navigationStore,OnOwnerCreated)), () => new CreateOwnerWindow());
+
+        }
+
+        private async void CreateNewMed(object parameter)
+        {
+            ImportedMed importedMed = new ImportedMed();
+
+            importedMed.Denumire = NewMedName;
+            importedMed.Id = GuidGenerator.GenerateBase32Guid();
+
+            try 
+            {
+                await new ImportedMedRepository().Add(importedMed);
+            }
+            catch(Exception e)
+            {
+                Logger.LogError("Error", e.ToString());
+                Boxes.ErrorBox("Eroare! Încercați din nou!");
+                return;
+            }
+
+            ImportedMedWrapper importedMedWrapper = new(importedMed);
+            ImportedMedWrappers.Add(importedMedWrapper);
 
         }
 
@@ -462,8 +498,7 @@ namespace VetManagement.ViewModels
                         treatment.TreatmentImportedMeds.Add(tmm);
                         treatmentImportedMed = null;
                     }
-                    treatment.Patient = Patient;
-                    treatment.Owner = Owner;
+            
 
                     _onTreatmentCreateChanged?.Invoke(treatment);
                     var res = Boxes.InfoBox("Tratamentul a fost adăugat!");

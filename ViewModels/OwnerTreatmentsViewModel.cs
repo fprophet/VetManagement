@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Org.BouncyCastle.Asn1.X509;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
@@ -52,7 +53,25 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public ObservableCollection<Treatment> Treatments { get; private set; } = new ObservableCollection<Treatment>();
+        private string _treatmentTypeFilter = "pet";
+        public string TreatmentTypeFilter
+        {
+            get => _treatmentTypeFilter;
+            set
+            {
+                _treatmentTypeFilter = value;
+
+                _filterService.DebouncePropertyChanged(nameof(TreatmentTypeFilter));
+
+            }
+        }
+
+        public ObservableCollection<object> TreatmentTypeList { get; set; } =
+            new ObservableCollection<object> { new { Name = "Toate", Value = "" }, new { Name = "Animale mici", Value = "pet" }, new { Name = "Animale mari", Value = "livestock" } };
+
+        private readonly FilterService _filterService;
+
+        public ObservableCollection<TreatmentWrapper> TreatmentWrappers { get; private set; } = new ObservableCollection<TreatmentWrapper>();
 
 
         public OwnerTreatmentsViewModel( NavigationStore navigationStore, int? id) 
@@ -72,6 +91,9 @@ namespace VetManagement.ViewModels
                 await LoadOwner();
                 await LoadTreatments();
             });
+
+            _filterService = new FilterService(LoadTreatments);
+
 
             _navigationStore = navigationStore;
             _navigationStore.PassedId = PassedId;
@@ -103,7 +125,8 @@ namespace VetManagement.ViewModels
                 return;
             }
 
-            Treatment? treatment = Treatments.FirstOrDefault(t => t.Id == _selectedTreatment.Id);
+            TreatmentWrapper treatmentWrapper = TreatmentWrappers.FirstOrDefault(t => t.Treatment.Id == _selectedTreatment.Id);
+            Treatment? treatment = treatmentWrapper.Treatment;
 
             try
             {
@@ -124,14 +147,14 @@ namespace VetManagement.ViewModels
             {
                 return;
             }
-                Treatments.Add(treatment);
-            var sortedTreatments = Treatments.OrderByDescending(t => t.DateAdded).ToList();
+            TreatmentWrappers.Add( new TreatmentWrapper(treatment));
+            var sortedTreatments = TreatmentWrappers.OrderByDescending(t => t.DateAdded).ToList();
 
-            Treatments.Clear();
+            TreatmentWrappers.Clear();
 
             foreach (var sorted in sortedTreatments)
             {
-                Treatments.Add(sorted);
+                TreatmentWrappers.Add(sorted);
             }
         }
 
@@ -147,15 +170,31 @@ namespace VetManagement.ViewModels
 
         public async Task LoadTreatments()
         {
-            var treatments = await new TreatmentRepository().GetFullTreatmentsForOwner(PassedId);
+            TreatmentWrappers.Clear();
 
-            var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
-
-            foreach (var treatment in sortedTreatments)
+            try
             {
-                Treatments.Add(treatment);
-            }
+                Dictionary<string, object> filters = new Dictionary<string, object>();
 
+                filters.Add("patientType", TreatmentTypeFilter);
+                filters.Add("ownerName", Owner.Name);
+
+                var (treatments, totalFound) = await new TreatmentRepository().GetFullTreatments(1, -1, filters);
+
+                //var treatments = await new TreatmentRepository().GetFullTreatmentsForOwner(PassedId);
+
+                //var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
+
+                foreach (var treatment in treatments)
+                {
+                    TreatmentWrappers.Add(new TreatmentWrapper(treatment));
+                }
+            }
+            catch(Exception e)
+            {
+                Logger.LogError("Error", e.ToString());
+                Boxes.ErrorBox("Tratamentele nu au putut fi găsite!\n" + e.Message);
+            }
 
         }
     }

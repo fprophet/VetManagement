@@ -6,8 +6,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Mysqlx.Prepare;
+using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.DataWrappers;
 using VetManagement.Services;
 using VetManagement.Stores;
 
@@ -32,7 +36,7 @@ namespace VetManagement.ViewModels
                 IsLoading = true;
                 _filterService.DebouncePropertyChanged(nameof(MedName));
 
-                //GetNewMedList();
+                //GetTreatments();
             }
         }
 
@@ -46,18 +50,57 @@ namespace VetManagement.ViewModels
                 IsLoading = true;
                 _filterService.DebouncePropertyChanged(nameof(OwnerName));
 
-                //GetNewMedList();
+                //GetTreatments();
+            }
+        } 
+        
+        private string _treatmentTypeFilter = "";
+        public string TreatmentTypeFilter
+        {
+            get => _treatmentTypeFilter;
+            set
+            {
+                _treatmentTypeFilter = value;
+
+                if( !string.IsNullOrEmpty(MedName) || !string.IsNullOrEmpty(OwnerName) || FromDate != null)
+                {
+                    IsLoading = true;
+                    _filterService.DebouncePropertyChanged(nameof(TreatmentTypeFilter));
+                }
+
+                //GetTreatments();
             }
         }
 
-        private DateTime? _date = null;
-        public DateTime? Date
+        public ObservableCollection<object> TreatmentTypeList { get; set; } =
+            new ObservableCollection<object> { new { Name = "Toate", Value = "" }, new { Name = "Animale mici", Value = "pet" }, new { Name = "Animale mari", Value = "livestock" } };
+
+        private DateTime? _fromDate = null;
+        public DateTime? FromDate
         {
-            get => _date;
+            get => _fromDate;
             set
             {
-                _date = value;
-                _filterService.DebouncePropertyChanged(nameof(Date));
+                _fromDate = value;
+                _filterService.DebouncePropertyChanged(nameof(FromDate));
+
+            }
+        }
+        
+        private DateTime? _toDate = null;
+        public DateTime? ToDate
+        {
+            get => _toDate;
+            set
+            {
+                _toDate = value;
+                Trace.WriteLine(value);
+
+                if (!string.IsNullOrEmpty(MedName) || !string.IsNullOrEmpty(OwnerName) || FromDate != null)
+                {
+                    IsLoading = true;
+                    _filterService.DebouncePropertyChanged(nameof(ToDate));
+                }
 
             }
         }
@@ -85,30 +128,93 @@ namespace VetManagement.ViewModels
         }
 
         public ObservableCollection<Med> Meds { get; } = new ObservableCollection<Med>();
-        public ObservableCollection<Treatment> Treatments { get; } = new ObservableCollection<Treatment>();
+        public ObservableCollection<TreatmentWrapper> TreatmentWrappers { get; } = new ObservableCollection<TreatmentWrapper>();
 
+        public ICommand ExportToCSVCommand { get; }
+        public ICommand PrintCommand { get; }
 
         public MedReportsViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
             _navigationStore.PageTitle = "📊 Rapoarte medicamente";
-            _filterService = new FilterService(() => GetNewMedList());
+            _filterService = new FilterService(GetTreatments);
 
-            PaginationService = new PaginationService(() => GetNewMedList(), () => GetNewMedList(),100);
+            PaginationService = new PaginationService(GetTreatments, GetTreatments,100);
+
+            ExportToCSVCommand = new RelayCommand(ExportToCSV, CanExportToCsv);
+            PrintCommand = new RelayCommand(Print);
         }
 
-        private async Task GetNewMedList()
-        {
-            Treatments.Clear();
 
+        private void Print(object parameter)
+        {
+            PrintDialog printDialog = new PrintDialog();
+
+            printDialog.ShowDialog();
+        }
+
+        private bool CanExportToCsv(object parameter)
+        {
+            return PaginationService.TotalFound != null && PaginationService.TotalFound > 0;
+        }
+
+        private async void ExportToCSV(object parameter)
+        {
+            if( parameter is not string)
+            {
+                return;
+            }
+
+            string type = (string)parameter;
+
+            List<Treatment> Treatments = new List<Treatment>();
+
+            if( type == "page")
+            {
+                foreach (TreatmentWrapper treatmentWrapper in TreatmentWrappers)
+                {
+                    Treatments.Add(treatmentWrapper.Treatment);
+                }
+            }
+            else
+            {
+                Dictionary<string, object> filters = new Dictionary<string, object>();
+
+                filters.Add("medName", MedName);
+                filters.Add("fromDateFilter", FromDate);
+                filters.Add("toDateFilter", ToDate);
+                filters.Add("ownerName", OwnerName);
+                filters.Add("patientType", TreatmentTypeFilter);
+                var (treatments, totalFound) = await _treatmentRepository.GetFullTreatments(PaginationService.PageNumber, PaginationService.TotalFound, filters);
+
+                Treatments = treatments;
+            }
+
+            ExportCSVHelper.ExportReports(Treatments);
+            
+        }
+
+        private async Task GetTreatments()
+        {
+            TreatmentWrappers.Clear();
+            IsLoading = true;
             try
             {
+
+                if (string.IsNullOrEmpty(MedName) && FromDate == null && string.IsNullOrEmpty(OwnerName))
+                {
+                    return;
+                }
+
 
                 Dictionary<string, object> filters = new Dictionary<string, object>();
 
                 filters.Add("medName", MedName);
-                filters.Add("dateFilter", Date);
+                filters.Add("fromDateFilter", FromDate);
+                filters.Add("toDateFilter", ToDate);
                 filters.Add("ownerName", OwnerName);
+                filters.Add("patientType", TreatmentTypeFilter);
+                Trace.WriteLine(TreatmentTypeFilter);
 
                 var (treatments, totalFound) = await _treatmentRepository.GetFullTreatments(PaginationService.PageNumber, PaginationService.PerPage, filters);
 
@@ -116,10 +222,12 @@ namespace VetManagement.ViewModels
 
                 foreach (Treatment treatment in treatments)
                 {
-                    Treatments.Add(treatment);
+                    TreatmentWrapper tr = new TreatmentWrapper(treatment);
+                    //Trace.WriteLine(tr.Meds.GetType().GetGenericArguments()[0]);
+                    TreatmentWrappers.Add( tr);
                 }
 
-                if (Treatments.Count() == 0)
+                if (TreatmentWrappers.Count() == 0)
                 {
                     NoResults = true;
                 }
@@ -132,7 +240,7 @@ namespace VetManagement.ViewModels
             finally
             {
                 IsLoading = false;
-                if(Treatments.Count > 0 )
+                if(TreatmentWrappers.Count > 0 )
                 {
                     NoResults = false;
                 }

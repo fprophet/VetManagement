@@ -23,8 +23,6 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="7*"/>
         </Grid.RowDefinitions>
-        
-        
        
 
         <DataGrid ItemsSource="{Binding Users}" Grid.Row="1"

@@ -158,7 +158,6 @@ namespace VetManagement.ViewModels
                 {
                     Users.Add(user);
                 }
-
           
             }
             catch (Exception e) 

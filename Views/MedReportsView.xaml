@@ -3,22 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VetManagement.Views" xmlns:viewmodels="clr-namespace:VetManagement.ViewModels" xmlns:components="clr-namespace:VetManagement.Components" d:DataContext="{d:DesignInstance Type=viewmodels:MedReportsViewModel}"
+             xmlns:local="clr-namespace:VetManagement.Views" 
+             xmlns:viewmodels="clr-namespace:VetManagement.ViewModels"
+             xmlns:components="clr-namespace:VetManagement.Components"
+             xmlns:converters="clr-namespace:VetManagement.Converters"
+             d:DataContext="{d:DesignInstance Type=viewmodels:MedReportsViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:MedOrImportedMedConverter x:Key="MedOrImportedMedConverter"/>
     </UserControl.Resources>
     <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="7*"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <DataGrid Style="{StaticResource DataGridExpanded}" Grid.Row="0" ItemsSource="{Binding Treatments}">
+        <DataGrid Style="{StaticResource DataGridExpanded}" Grid.Row="0" ItemsSource="{Binding TreatmentWrappers}" MaxHeight="700">
             <DataGrid.Columns>
                 <DataGridTemplateColumn  Width="150">
                     <DataGridTemplateColumn.Header>
@@ -131,7 +135,6 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-
                 <DataGridTemplateColumn  Width="700">
 
                     <DataGridTemplateColumn.Header>
@@ -167,14 +170,16 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DataGrid  Width="700" ItemsSource="{Binding TreatmentMeds}" VerticalAlignment="Stretch"
-                Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
+                            <DataGrid  Width="700" ItemsSource="{Binding Meds}" VerticalAlignment="Stretch"
+                                Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
+                                
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn Width="4*">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                    <TextBlock Text="{Binding Med.Name}"/>
+                                                    <TextBlock Style="{StaticResource CenterTextBlock}"
+                                                        Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='Name' }"/>
                                                 </Border>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -185,28 +190,22 @@
                                             <DataTemplate>
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
                                                     <StackPanel>
-                                                        <TextBlock Text="{Binding Med.LotID}"/>
-                                                        <TextBlock Text="{Binding Med.Valability, StringFormat='yyyy-mm-dd'}"/>
+                                                        <TextBlock Style="{StaticResource CenterTextBlock}"
+                                                            Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='Lot' }"/>
+                                                        <TextBlock Style="{StaticResource CenterTextBlock}"
+                                                            Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='Valability' }"/>
                                                     </StackPanel>
                                                 </Border>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
 
-
                                     <DataGridTemplateColumn Width="2*">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-
-                                                    <TextBlock>
-                                                        <TextBlock.Text>
-                                                            <MultiBinding StringFormat="{}{0} {1}">
-                                                                <Binding Path="Quantity"/>
-                                                                <Binding Path="Med.MeasurmentUnit"/>
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
+                                                    <TextBlock Style="{StaticResource CenterTextBlock}"
+                                                        Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='Quantity' }"/>
                                                 </Border>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -216,7 +215,8 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                    <TextBlock Text="{Binding Med.WaitingTime}"/>
+                                                    <TextBlock Style="{StaticResource CenterTextBlock}"
+                                                        Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='WaitingTime' }"/>
                                                 </Border>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -228,16 +228,24 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
+                <DataGridTemplateColumn Header="Detalii" Width="250">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
+                                <TextBlock Text="{Binding Details}" Style="{StaticResource CenterTextBlock}"/>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="Detalii" Binding="{Binding Details}" Width="250"/>
             </DataGrid.Columns>
         </DataGrid>
         
-        <StackPanel Grid.Row="2" Visibility="{Binding NoResults, Converter={StaticResource BoolToVisibilityConverter}}">
+        <StackPanel Grid.Row="1" Visibility="{Binding NoResults, Converter={StaticResource BoolToVisibilityConverter}}">
             <TextBlock Text="Nu au fost găsite tratamente!"  FontSize="20" HorizontalAlignment="Center"/>
         </StackPanel>
         
-        <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="3"
+        <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="2"
             Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
         <components:PaginationMenu Grid.Row="4" HorizontalAlignment="Stretch" />
     </Grid>

@@ -5,22 +5,24 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
-using VetManagement.Data;
+using MySqlX.XDevAPI;
+using VetManagement.Services;
 
 namespace VetManagement.Converters
 {
-    public class TreatmentMedListToFirstItemQuantityConverter : IValueConverter
+    public class UserRoleToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is List<TreatmentMed> tmList && tmList.Count > 0)
+            Trace.WriteLine(SessionManager.Instance.Role);
+            if( SessionManager.Instance.Role != "admin" && SessionManager.Instance.Role != "manager" && SessionManager.Instance.Role != "farmacist")
             {
-                Trace.WriteLine(tmList[0]);
-                return tmList[0].Quantity;
+                return Visibility.Collapsed;
             }
 
-            return "N/A";
+            return Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

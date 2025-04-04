@@ -35,7 +35,7 @@ namespace VetManagement.ViewModels
         private string _role;
 
         //to display in the dropdown meny
-        public ObservableCollection<string> Roles { get; private set; } = new ObservableCollection<string> { "manager", "user" };
+        public ObservableCollection<string> Roles { get; private set; } = new ObservableCollection<string> { "manager", "farmacist","asistent" };
 
         public SecureString SecurePassword { private get; set; }
 

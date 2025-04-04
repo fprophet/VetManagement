@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VetManagement.Components.Menus"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -14,29 +15,67 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="1">
+        <Border  Grid.Row="1" Style="{StaticResource ButtonMenuSection}" HorizontalAlignment="Center" Width="Auto">
+            <Menu>
+                <MenuItem  Style="{StaticResource BasicMenuItem}">
+                    <MenuItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Export"/>
+                            <fa:IconBlock Icon="FileCsv" FontSize="17" Margin="10,0,0,0" Foreground="#5D6166"/>
+                        </StackPanel>
+                    </MenuItem.Header>
+                    <MenuItem Header="De pe pagina curentă" Command="{Binding ExportToCSVCommand}" CommandParameter="page"/>
+                    <Separator/>
+                    <MenuItem Header="Toate tratamentele găsite" Command="{Binding ExportToCSVCommand}" CommandParameter="all"/>
+                </MenuItem>
+
+                <MenuItem  Style="{StaticResource BasicMenuItem}" Margin="10,0,0,0">
+                    <MenuItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Printează"/>
+                            <fa:IconBlock Icon="Print" FontSize="17" Margin="10,0,0,0" Foreground="#5D6166"/>
+                        </StackPanel>
+                    </MenuItem.Header>
+                    <MenuItem Header="Pagina curentă" Command="{Binding PrintCommand}" CommandParameter="page"/>
+                    <Separator/>
+                    <MenuItem Header="Toate paginile" Command="{Binding PrintCommand}" CommandParameter="All"/>
+                </MenuItem>
+            </Menu>
+        </Border>
+        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="0">
             <DockPanel >
                 <StackPanel Orientation="Horizontal">
 
                     <StackPanel>
+                        <TextBlock Text="Tipul Tratamentului" FontSize="13"/>
+                        <ComboBox Width="150" HorizontalAlignment="Left" ItemsSource="{Binding TreatmentTypeList}" DisplayMemberPath="Name" 
+                            SelectedValuePath="Value" SelectedValue="{Binding TreatmentTypeFilter, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <StackPanel  Margin="20,0,0,0">
                         <TextBlock Text="Nume medicament" FontSize="13"/>
                         <TextBox Text="{Binding MedName, UpdateSourceTrigger=PropertyChanged}"
-                         Width="200"
-                         HorizontalAlignment="Left"
-                        FontSize="13"/>
+                            Width="200"
+                            HorizontalAlignment="Left"
+                            FontSize="13"/>
                     </StackPanel>
 
                     <StackPanel  Margin="20,0,0,0">
                         <TextBlock Text="Nume stăpân" FontSize="13"/>
                         <TextBox Text="{Binding OwnerName, UpdateSourceTrigger=PropertyChanged}"
-                         Width="200"
-                         FontSize="13"
-                         HorizontalAlignment="Left"/>
+                            Width="200"
+                            FontSize="13"
+                            HorizontalAlignment="Left"/>
                     </StackPanel>
 
                     <StackPanel Margin="20,0,0,0">
-                        <TextBlock Text="Alegeți o dată" FontSize="13"/>
-                        <DatePicker Width="150" SelectedDate="{Binding Date,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="De la..." FontSize="13"/>
+                        <DatePicker Width="150" SelectedDate="{Binding FromDate,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel> 
+                    
+                    <StackPanel Margin="20,0,0,0">
+                        <TextBlock Text="Până la..." FontSize="13"/>
+                        <DatePicker Width="150" SelectedDate="{Binding ToDate,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
                 </StackPanel>

@@ -45,16 +45,16 @@ namespace VetManagement.Services
 
         public void LogUser(int id, string username, string role) 
         { 
-            Id = id;
-            Username = username;
-            Role = role;
+             _id = id;
+            _username = username;
+            _role = role;
         }
 
         public void LogoutUser() 
         {
-            Id = -1;
-            Username = null;
-            Role = "";
+            _id = -1;
+            _username = null;
+            _role = "";
         }
 
         public bool isIsLoggedIn() =>  _id >= 0;

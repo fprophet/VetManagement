@@ -16,7 +16,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Border  Grid.Row="0" Style="{StaticResource ButtonMenuSection}">
+        <Border  Grid.Row="1" Style="{StaticResource ButtonMenuSection}">
             <DockPanel>
                 <Button Content="➕ Adaugă medicamente" Style="{StaticResource BasicButton}" HorizontalAlignment="Left" Background="#FF4CAF50" Command="{Binding OpenCreateMedWindowCommand}" />
 
@@ -39,7 +39,7 @@
                 </StackPanel>
             </DockPanel>
         </Border>
-        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="1"
+        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="0"
                 Visibility="{Binding FilterHelper.AreFiltersVisible, Converter={StaticResource BoolToVisibilityConverter}}" >
 
             <StackPanel Orientation="Horizontal">
