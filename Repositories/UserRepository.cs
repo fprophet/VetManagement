@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using VetManagement.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace VetManagement.Data
+namespace VetManagement.Repositories
 {
     public class UserRepository : BaseRepository<User>
     {

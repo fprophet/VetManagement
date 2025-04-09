@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;

@@ -11,6 +11,7 @@ using System.Windows.Navigation;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -473,8 +474,16 @@ namespace VetManagement.ViewModels
 
             try
             {
-
-                var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = Owner.Id, Details = Details, DateAdded = DateTime.Now };
+                var treatment = new Treatment() 
+                { 
+                    PatientId = Patient.Id,
+                    OwnerId = Owner.Id,
+                    Details = Details,
+                    OwnerAddress = Owner.Address,
+                    PatientAge = Patient.Age,
+                    PatientWeight = Patient.Weight,
+                    DateAdded = DateTime.Now 
+                };
 
                 treatment = await new BaseRepository<Treatment>().Add(treatment);
 
@@ -498,7 +507,9 @@ namespace VetManagement.ViewModels
                         treatment.TreatmentImportedMeds.Add(tmm);
                         treatmentImportedMed = null;
                     }
-            
+
+                    treatment.Owner = Owner;
+                    treatment.Patient = Patient;
 
                     _onTreatmentCreateChanged?.Invoke(treatment);
                     var res = Boxes.InfoBox("Tratamentul a fost adăugat!");
@@ -512,7 +523,8 @@ namespace VetManagement.ViewModels
             }
             catch (Exception e)
             {
-                Boxes.ErrorBox(e.ToString());
+                Logger.LogError("Error", e.ToString());
+                Boxes.ErrorBox("Tratamentul nu a putut fi creat!\n"+ e.Message);
                 return false;
             }
             return true;

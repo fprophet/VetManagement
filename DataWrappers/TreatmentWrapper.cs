@@ -20,6 +20,26 @@ namespace VetManagement.DataWrappers
                 _treatment = value;
                 OnPropertyChanged(nameof(Treatment));
             }
+        }  
+        
+        public Owner Owner
+        {
+            get => _treatment.Owner;
+            set
+            {
+                _treatment.Owner = value;
+                OnPropertyChanged(nameof(Owner));
+            }
+        }   
+        
+        public Patient Patient
+        {
+            get => _treatment.Patient;
+            set
+            {
+                _treatment.Patient = value;
+                OnPropertyChanged(nameof(Patient));
+            }
         }
 
         public TreatmentWrapper(Treatment treatment)
@@ -70,6 +90,39 @@ namespace VetManagement.DataWrappers
             }
         }
 
+        public string OwnerAddress
+        {
+            get => _treatment.OwnerAddress;
+            set
+            {
+                _treatment.OwnerAddress = value;
+                OnPropertyChanged(nameof(OwnerAddress));
+
+            }
+        }
+        
+        public double PatientWeight
+        {
+            get => _treatment.PatientWeight;
+            set
+            {
+                _treatment.PatientWeight = value;
+                OnPropertyChanged(nameof(PatientWeight));
+
+            }
+        }      
+
+        public int PatientAge
+        {
+            get => _treatment.PatientAge;
+            set
+            {
+                _treatment.PatientAge = value;
+                OnPropertyChanged(nameof(PatientAge));
+
+            }
+        }
+        
         public string Details
         {
             get => _treatment.Details;

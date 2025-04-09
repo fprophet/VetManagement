@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "esign-app", "..\esign-app\e
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpServer", "..\TcpServer\TcpServer.csproj", "{7335F725-91E9-41C1-911F-62F819C06AFB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESignApp", "..\ESignApp\ESignApp.csproj", "{944EBE90-FF08-4FF7-8763-04E1012D01E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Management.Shared", "..\Management.Shared\Management.Shared.csproj", "{89F8B27D-702A-43C7-96D3-E8F9213A25A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,15 @@ Global
 		{7335F725-91E9-41C1-911F-62F819C06AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7335F725-91E9-41C1-911F-62F819C06AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7335F725-91E9-41C1-911F-62F819C06AFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{944EBE90-FF08-4FF7-8763-04E1012D01E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{944EBE90-FF08-4FF7-8763-04E1012D01E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{944EBE90-FF08-4FF7-8763-04E1012D01E2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{944EBE90-FF08-4FF7-8763-04E1012D01E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{944EBE90-FF08-4FF7-8763-04E1012D01E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89F8B27D-702A-43C7-96D3-E8F9213A25A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89F8B27D-702A-43C7-96D3-E8F9213A25A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89F8B27D-702A-43C7-96D3-E8F9213A25A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89F8B27D-702A-43C7-96D3-E8F9213A25A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

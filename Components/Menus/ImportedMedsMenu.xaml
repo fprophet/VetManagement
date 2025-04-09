@@ -4,21 +4,60 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VetManagement.Components.Menus"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Border  Grid.Row="0" Style="{StaticResource ButtonMenuSection}">
-            <DockPanel>
-                <StackPanel Orientation="Horizontal" Margin="10">
-                    <TextBox Text="{Binding FilePath, Mode=TwoWay}" Width="250" IsReadOnly="True" Margin="0,0,10,0"/>
-                    <Button Content="Selectează fișier..." Command="{Binding BrowseFileCommand}"/>
-                    <Button Margin="20,0"  Content="Importă produse" Command="{Binding ImportMedsCommand}"/>
+        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="0"
+                Visibility="{Binding FilterHelper.AreFiltersVisible, Converter={StaticResource BoolToVisibilityConverter}}" >
+
+            <StackPanel Orientation="Horizontal">
+
+                <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">
+                    <TextBlock Text="Nume" FontSize="13"/>
+                    <TextBox Text="{Binding NameFilter, UpdateSourceTrigger=PropertyChanged}" FontSize="13"/>
                 </StackPanel>
+
+                <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">
+                    <TextBlock Text="Id" FontSize="13"/>
+                    <TextBox Text="{Binding IdFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="13"/>
+                </StackPanel>
+                
+                <StackPanel Width="150" HorizontalAlignment="Left" Margin="0,0,20,0">
+                    <TextBlock Text="Cod" FontSize="13"/>
+                    <TextBox Text="{Binding CodeFilter, UpdateSourceTrigger=PropertyChanged}"  FontSize="13"/>
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
+        <Border  Grid.Row="1" Style="{StaticResource ButtonMenuSection}">
+            <DockPanel>
+            
+                <Button Style="{StaticResource BasicButton}" Command="{Binding BrowseFileCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconBlock Icon="FileImport" FontSize="18"  Margin="0,0,10,0" Foreground="White"/>
+
+                        <TextBlock Text="Importă Medicamente"/>
+                    </StackPanel>
+                </Button>
+                <Button HorizontalAlignment="Right" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Filtre"/>
+                            <TextBlock Text="{Binding FilterHelper.FilterToggleSymbol}" HorizontalAlignment="Center" Margin="3,0,0,0"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
             </DockPanel>
+            
+            
         </Border>
     </Grid>
 </UserControl>

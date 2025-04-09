@@ -13,7 +13,7 @@ namespace VetManagement.Data
         [Required(ErrorMessage = "Tipul animalului este obligatoriu!"), AllowedValues("pet","livestock")]
         public string Type { get; set; }
 
-        public int? Identifier { get; set; }
+        public string? Identifier { get; set; }
 
         [Required(ErrorMessage = "ID-ul stăpânului este obligatoriu!")]
         public int OwnerId{ get; set; }

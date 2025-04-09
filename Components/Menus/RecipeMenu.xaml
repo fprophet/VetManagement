@@ -19,6 +19,8 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+        <Button Grid.Row="0" Style="{StaticResource BackButton}"  Command="{Binding NavigateBackCommand}" Margin="20,0,0,0" />
+
         <Border  Grid.Row="0" Style="{StaticResource ButtonMenuSection}">
             <DockPanel>
 

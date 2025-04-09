@@ -19,7 +19,7 @@
                 <Button  Content="➕ Adaugă în registru" Style="{StaticResource BasicButton}" HorizontalAlignment="Left" Background="#FF4CAF50"
                  Command="{Binding  NavigateCreateRegisterRecordWindowCommand}"  />
 
-                <Button HorizontalAlignment="Center" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
+                <Button HorizontalAlignment="Right" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Filtre"/>
@@ -27,10 +27,6 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>
-                
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button  Style="{StaticResource BasicButton}" Content="Detallii" Command="{Binding NavigateRegistryRecordViewCommand}"/>
-                </StackPanel>
             </DockPanel>
         </Border>
         

@@ -66,11 +66,29 @@ namespace VetManagement.ViewModels
 
         private readonly string _filePath;
 
+        public string FilePath
+        {
+            get => _filePath;
+            set { }
+        }
+
         private readonly Func<Task>? OnMedsImported;
 
         private CancellationTokenSource _cancellationTokenSource;
 
         public ICommand CancelImportCommand { get; set; }
+        public ICommand StartCommand { get; set; }
+
+        private bool _importingStatus = false;
+        public bool ImportingStatus 
+        {
+            get => _importingStatus; 
+            set
+            {
+                _importingStatus = value;
+                OnPropertyChanged(nameof(ImportingStatus));
+            }
+        }
 
         public ImportedMedsImportingViewModel(NavigationStore navigationStore, string filePath, Func<Task>? onMedsImported) 
         { 
@@ -78,7 +96,7 @@ namespace VetManagement.ViewModels
             _filePath = filePath;
             OnMedsImported = onMedsImported;
 
-            OnLoadedCommand = new RelayCommand(ImportMeds);
+            StartCommand = new RelayCommand(ImportMeds);
             CancelImportCommand = new RelayCommand(StopImporting, (object param) => _isProcessing);
 
             _importedMedsFileHelper = new ImportedMedsFileHelper(UpdateProgress);
@@ -94,7 +112,7 @@ namespace VetManagement.ViewModels
                 Boxes.Warning("Nu a fost găsită calea către fișier!");
                 return;
             }
-
+            ImportingStatus = true;
             _cancellationTokenSource = new CancellationTokenSource();
             CancellationToken token = _cancellationTokenSource.Token;
 

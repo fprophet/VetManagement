@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
-using VetManagement.Views;
 
 namespace VetManagement.ViewModels
 {
@@ -100,6 +96,7 @@ namespace VetManagement.ViewModels
 
         public async Task LoadRecipes()
         {
+            isLoading = true;
             Recipes.Clear();
             try
             {
@@ -109,17 +106,23 @@ namespace VetManagement.ViewModels
                 filters["recipeNumberFilter"] = RecipeNumberFilter;
                 filters["onlyUnsignedFilter"] = OnlyUnsingedFilter;
 
-                //var recipes = await new RecipeRepository().GetAll();
-                var (recipes,totalRecords) = await new RecipeRepository().GetAllFiltered(PaginationService.PageNumber, PaginationService.PerPage, filters);
-
-                PaginationService.TotalFound = totalRecords;
-
-                var sorted = recipes.OrderByDescending(r => r.Date).ToList();
-
-                foreach (Recipe recipe in sorted)
+                await Task.Run(async () =>
                 {
-                    Recipes.Add(recipe);
-                }
+                    var (recipes, totalRecords) = await new RecipeRepository().GetAllFiltered(PaginationService.PageNumber, PaginationService.PerPage, filters);
+
+                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        PaginationService.TotalFound = totalRecords;
+                    }, DispatcherPriority.Background);
+
+                    foreach (Recipe recipe in recipes)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            Recipes.Add(recipe);
+                        }, DispatcherPriority.Background);
+                    }
+                });
 
             }
             catch(Exception e)

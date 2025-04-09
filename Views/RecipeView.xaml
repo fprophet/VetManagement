@@ -233,7 +233,7 @@
                         <Grid Grid.Column="2" Margin="5,0">
                             <TextBlock FontSize="15" Text="greutate. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ."/>
                             <Border Padding="10,0" Background="White" HorizontalAlignment="Center" Margin="70,0,0,0">
-                                <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Patient.Weight}" FontSize="15"/>
+                                <TextBlock Text="{Binding RecipeWrapper.RegistryRecord.Treatment.Weight}" FontSize="15"/>
                             </Border>
                         </Grid>
                     </Grid>

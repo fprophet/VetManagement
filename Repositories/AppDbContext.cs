@@ -9,16 +9,17 @@ using System.Threading.Tasks;
 using System.Windows;
 using K4os.Compression.LZ4.Internal;
 using Microsoft.EntityFrameworkCore;
+using VetManagement.Data;
 using VetManagement.Services;
 
-namespace VetManagement.Data
+namespace VetManagement.Repositories
 {
-    public class AppDbContext: DbContext 
+    public class AppDbContext : DbContext
     {
 
         public DbSet<T> GetDbSet<T>() where T : class
         {
-            return Set<T>();  
+            return Set<T>();
         }
 
         public DbSet<User> Users { get; set; }
@@ -33,6 +34,8 @@ namespace VetManagement.Data
 
         public DbSet<TreatmentMed> TreatmentMed { get; set; }
 
+        public DbSet<TreatmentImportedMed> TreatmentImportedMed { get; set; }
+
         public DbSet<RegistryRecord> RegistryRecords { get; set; }
 
         public DbSet<Invoice> Invoices { get; set; }
@@ -43,25 +46,43 @@ namespace VetManagement.Data
 
         public DbSet<ImportedMed> ImportedMeds { get; set; }
 
+        public DbSet<MedHistory> MedHistory { get; set; }
+        
+        public DbSet<OwnerHistory> OwnerHistory { get; set; }
+
+        public DbSet<PatientHistory> PatientHistory { get; set; }
+
+        public DbSet<TreatmentHistory> TreatmentHistory{ get; set; }
+        
+        public DbSet<RegistryRecordHistory> RegistryRecordHistory{ get; set; }
+        
+        public DbSet<RecipeHistory> RecipeHistory{ get; set; }
+
+        public DbSet<TreatmentMedHistory> TreatmentMedHistory{ get; set; }
+
+
 
         //private readonly string _dbConnectionString = "Server=192.168.100.197;Database=inventar;Uid=root;Password=mysqlserver";
         private string _dbConnectionString;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-        
+
             CreateConnectionString();
             //base.OnConfiguring(optionsBuilder);
-            try { 
+            try
+            {
                 optionsBuilder.UseMySQL(_dbConnectionString);
-            }catch( Exception e) {
+            }
+            catch (Exception e)
+            {
                 MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         public async Task<bool> CheckConnection()
         {
-            bool response = false;  
+            bool response = false;
             await Task.Run(() =>
             {
                 try
@@ -101,6 +122,12 @@ namespace VetManagement.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<TreatmentMedHistory>()
+                .HasOne(tm => tm.TreatmentHistory)
+                .WithMany(th => th.TreatmentMedHistory)
+                .HasForeignKey(tm => tm.TreatmentHistoryId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Treatment>()
                 .HasOne(t => t.Patient)
@@ -147,9 +174,9 @@ namespace VetManagement.Data
                .WithOne(t => t.Owner)
                .HasForeignKey(t => t.OwnerId)
                .OnDelete(DeleteBehavior.Cascade);
-            
+
             modelBuilder.Entity<Owner>()
-                .HasIndex(o => new {o.Name, o.Phone})
+                .HasIndex(o => new { o.Name, o.Phone })
                 .IsUnique();
 
 

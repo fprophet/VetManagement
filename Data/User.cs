@@ -29,8 +29,9 @@ namespace VetManagement.Data
 
         [Required, AllowedValues("admin","manager","user"), StringLength(10)]
         public string Role { get; set; }
+        
 
-     
+
 
     }
 }

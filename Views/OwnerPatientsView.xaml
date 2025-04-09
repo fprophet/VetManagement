@@ -7,6 +7,7 @@
              xmlns:services="clr-namespace:VetManagement.Services" 
              xmlns:converters="clr-namespace:VetManagement.Converters"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -21,18 +22,47 @@
                 <i:InvokeCommandAction Command="{Binding OnLoadedCommand}" />
             </i:EventTrigger>
         </i:Interaction.Triggers>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <DataGrid ItemsSource="{Binding Patients}" Grid.Row="0"
                     Style="{StaticResource StylishDataGrid}"
-                  SelectedItem="{Binding SelectedRow}"
-                    MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Grid}}"
-                    ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
-                    MaxHeight="700"
-                    HorizontalAlignment="Center">
+                    SelectedItem="{Binding SelectedRow}"
+                    ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}">
+            <DataGrid.Resources>
+                <ContextMenu x:Key="RowContextMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Black" Padding="5"/>
+                    <Separator/>
+
+                    <MenuItem Command="{Binding DataContext.StartEdit, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="Pen" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock Text="Modifică"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                    <MenuItem Command="{Binding DataContext.DeletePatientCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="Trash" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock Text="Șterge"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                </ContextMenu>
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
+                </Style>
+            </DataGrid.RowStyle>
+            
             <DataGrid.Columns>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data"  Binding="{Binding DateAdded, StringFormat='yyyy-MM-dd'}" Width="150"/>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume"  Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="150"/>
@@ -47,5 +77,9 @@
           
             </DataGrid.Columns>
         </DataGrid>
+
+
+        <ProgressBar Grid.Row="1" Height="15" Width="200" IsIndeterminate="True"  Margin="0,20"
+            Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
     </Grid>
 </UserControl>

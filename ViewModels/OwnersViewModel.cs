@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Navigation;
+using System.Windows.Threading;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -166,17 +159,29 @@ namespace VetManagement.ViewModels
                 filters["patientNameFilter"] = PatientNameFilter;
                 filters["detailsFIlter"] = DetailsFilter;
 
-                var (owners, totalRecords) = await new OwnerRepository().GetFullInfoFiltered(PaginationService.PageNumber, PaginationService.PerPage, filters);
+                await Task.Run(async () =>
+                {
+                    var (owners, totalFound) = await new OwnerRepository().GetFullInfoFiltered(PaginationService.PageNumber, PaginationService.PerPage, filters);
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        PaginationService.TotalFound = totalFound;
+
+                    });
+
+                    foreach (var owner in owners)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            Owners.Add(owner);
+
+                        }, DispatcherPriority.Background);
+                    }
+
+                });
+
                 //var owners = await new OwnerRepository().GetFullInfo();
 
-                PaginationService.TotalFound = totalRecords;
-
-                var sortedOwners = owners.OrderByDescending(o => o.DateAdded);
-
-                foreach (var owner in sortedOwners)
-                {
-                    Owners.Add(owner);
-                }
 
 
             } catch (Exception ex)
@@ -229,13 +234,24 @@ namespace VetManagement.ViewModels
             }
             try 
             {
-                var result = Boxes.ConfirmBox("Doriți să ștergeți proprietarul?");
-                if (parameter is int && result == MessageBoxResult.Yes) 
+                isLoading = true;
+                var result = Boxes.ConfirmBox("Doriți să ștergeți proprietarul?\n Tratamentele acestuia vor fi arhivate!");
+
+                if(result == MessageBoxResult.No)
                 {
-                    await new OwnerRepository().Delete((int)parameter);
+                    return;
+                }
 
-                    var owner = Owners.FirstOrDefault(o => o.Id == (int)parameter);
+                if (_selectedOwner.Id is int ) 
+                {
+                    await Task.Run(async () =>
+                    {
+                        await OwnerService.Delete(_selectedOwner);
+                    });
 
+                    Owners.Remove(_selectedOwner);
+                    _selectedOwner = null;
+                    Boxes.InfoBox("Proprietarul a fost șters cu succes!");
                 }
                 else 
                 {
@@ -245,6 +261,10 @@ namespace VetManagement.ViewModels
             catch(Exception e)
             {
                 Boxes.ErrorBox("Proprietarul nu a putut fi șters!\n" + e.Message);
+            }
+            finally
+            {
+                isLoading = false;
             }
         }
     }

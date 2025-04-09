@@ -20,7 +20,7 @@
             <DockPanel>
                 <Button Content="➕ Adaugă medicamente" Style="{StaticResource BasicButton}" HorizontalAlignment="Left" Background="#FF4CAF50" Command="{Binding OpenCreateMedWindowCommand}" />
 
-                <Button HorizontalAlignment="Center" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
+                <Button HorizontalAlignment="Right" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Filtre"/>
@@ -29,14 +29,6 @@
                     </Button.Content>
                 </Button>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Detalii" Style="{StaticResource BasicButton}" 
-                    Command="{Binding NavigateViewMedCommand}" />
-                    <Button Content="✏ Modifică" Style="{StaticResource BasicButton}" Background="#CCA135" Margin="10,0" 
-                    Command="{Binding EditItemCommand}" />
-                    <Button Content="🚮 Șterge" Style="{StaticResource BasicButton}" Background="#E13654"
-                    Command="{Binding DeleteMedCommand}" />
-                </StackPanel>
             </DockPanel>
         </Border>
         <Border Style="{StaticResource FilterMenuSection}" Grid.Row="0"

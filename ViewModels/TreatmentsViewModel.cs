@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -26,6 +27,8 @@ namespace VetManagement.ViewModels
         public ICommand NavigateCreateTreatmentWindowCommand { get; set; }
         
         public ICommand NavigateTreatmentViewCommand { get; set; }
+
+        public ICommand NavigateOwnerPageCommand { get; set; }
 
         public PaginationService PaginationService { get; set; }
 
@@ -131,6 +134,9 @@ namespace VetManagement.ViewModels
 
             NavigateTreatmentViewCommand = new NavigateCommand<TreatmentViewModel>
                 (new NavigationService<TreatmentViewModel>(_navigationStore, (id) => new TreatmentViewModel(navigationStore, SelectedTreatment.Id)), CanExecuteTreatmentAction);
+
+            NavigateOwnerPageCommand = new NavigateCommand<OwnerTreatmentsViewModel>
+                (new NavigationService<OwnerTreatmentsViewModel>(_navigationStore, (id) => new OwnerTreatmentsViewModel(navigationStore, SelectedTreatment.Owner.Id)), CanExecuteTreatmentAction);
 
             NavigateCreateTreatmentWindowCommand = new NavigateWindowCommand<CreateTreatmentViewModel>
                 (new WindowService<CreateTreatmentViewModel>(_navigationStore, (id) => new CreateTreatmentViewModel(_navigationStore, OnTreatmentCreated, null, null)), () => new CreateTreatmentWindow());

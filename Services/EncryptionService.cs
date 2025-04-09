@@ -60,7 +60,6 @@ namespace VetManagement.Services
                     encrypted = msEncrypt.ToArray();
                 }
             }
-            Trace.WriteLine("LAM CRIPTAT TOT");
             // Return the encrypted bytes from the memory stream.
             return encrypted;
         }

@@ -10,8 +10,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.DataWrappers;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -56,6 +59,33 @@ namespace VetManagement.ViewModels
             }
         }
 
+        private object _selectedRow;
+        public object SelectedRow
+        {
+            get => _selectedRow;
+            set
+            {
+                if (value is User)
+                {
+                    SelectedUser = (User)value;
+                }
+
+                _selectedRow = value;
+                OnPropertyChanged(nameof(SelectedRow));
+            }
+        }
+
+        private User _selectedUser;
+        public User SelectedUser
+        {
+            get => _selectedUser;
+            set
+            {
+                _selectedUser = value;
+                OnPropertyChanged(nameof(SelectedUser));
+            }
+        }
+
         public UsersViewModel(NavigationStore navigationStore)
         {
 
@@ -68,7 +98,7 @@ namespace VetManagement.ViewModels
             OnLoadedCommand = new RelayCommand(async (object parameter) => await LoadUsers());
 
             ToggleFormVisibilityCommand = new RelayCommand(ToggleFormVisibility);
-            DeleteUserCommand = new RelayCommand(DeleteUser);
+            DeleteUserCommand = new RelayCommand(DeleteUser, CanExecuteUserAction);
             EditUserCommand = new RelayCommand(EditUser);
 
             NavigateHomeCommand = new NavigateCommand<HomeViewModel>
@@ -78,7 +108,10 @@ namespace VetManagement.ViewModels
                 (new WindowService<CreateUserViewModel>(_navigationStore, (id) => new CreateUserViewModel(_navigationStore,OnUserCreated)), () => new CreateUserWindow());
 
             SendNotificationCommand = new RelayCommand(SendNot);
+
         }
+
+        public bool CanExecuteUserAction(object parameter) => _selectedUser != null && _selectedUser.Id is int;
 
         private void SendNot(object parameter)
         {
@@ -124,45 +157,52 @@ namespace VetManagement.ViewModels
 
         private async void DeleteUser(object parameter) 
         {
-
-            if (parameter is int userId)
+            var result = MessageBox.Show($"Sunteti sigur ca doriți să ștergeți acest utilizator?",
+                                         "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.No)
             {
-                var result = MessageBox.Show($"Sunteti sigur ca doriți să ștergeți acest utilizator?",
-                                             "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        await _userRepository.Delete(userId);
-                        Users.Remove(Users.First(u => u.Id == userId));
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show("Utilizatorul nu a putut fi șters!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        Logger.LogError("Database", e.Message);
-                    }
-
-                }
+                return;
             }
+
+            if (_selectedUser == null)
+            {
+                return;
+            }
+            try
+            {
+                await _userRepository.Delete(_selectedUser.Id);
+                Users.Remove(Users.First(u => u.Id == _selectedUser.Id));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Database", ex.ToString());
+                Boxes.ErrorBox("Utilizatorul nu a putut fi șters!\n" + ex.Message);
+            }
+                
         }
 
         public async Task LoadUsers()
         {
+            Users.Clear();
             try
             {
-                var users = await _userRepository.GetAll();
-
-                Users.Clear();
-
-                foreach (var user in users)
+                await Task.Run(async () =>
                 {
-                    Users.Add(user);
-                }
-          
+                    var users = await _userRepository.GetAll();
+
+                    foreach (var user in users)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            Users.Add(user);
+                        }, DispatcherPriority.Background);
+                    }
+                });
             }
-            catch (Exception e) 
+            catch (Exception ex) 
             {
-                MessageBox.Show("Lista de utilizatori este indisponibilă!\n" + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Logger.LogError("Error", ex.ToString());
+                Boxes.ErrorBox("Lista de utilizatori este indisponibilă!\n" + ex.Message);
 
             }
         }

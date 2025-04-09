@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using HandlebarsDotNet;
 using Microsoft.EntityFrameworkCore;
 
-namespace VetManagement.Data
+namespace VetManagement.Repositories
 {
     public class BaseRepository<T> : IRepository<T> where T : class
     {
@@ -34,7 +34,7 @@ namespace VetManagement.Data
 
             return model;
         }
-        
+
 
         public async Task Update(T model)
         {
@@ -63,10 +63,10 @@ namespace VetManagement.Data
             }
 
             return await _context.GetDbSet<T>()
-            .OrderByDescending(x => EF.Property<int>(x, "Id")) 
+            .OrderByDescending(x => EF.Property<int>(x, "Id"))
             .FirstOrDefaultAsync();
         }
 
-      
+
     }
 }

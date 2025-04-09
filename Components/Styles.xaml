@@ -26,6 +26,9 @@
         <Setter Property="TextBox.TextWrapping" Value="Wrap"/>
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+        <Setter Property="Height" Value="700"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
 
         <Setter Property="MaxWidth">
             <Setter.Value>
@@ -106,7 +109,10 @@
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
-
+        <Setter Property="Height" Value="700"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        
         <Setter Property="MaxWidth">
             <Setter.Value>
                 <MultiBinding Converter="{StaticResource AddPixelConverter}">

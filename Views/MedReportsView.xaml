@@ -22,7 +22,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <DataGrid Style="{StaticResource DataGridExpanded}" Grid.Row="0" ItemsSource="{Binding TreatmentWrappers}" MaxHeight="700">
+        <DataGrid Style="{StaticResource DataGridExpanded}" Grid.Row="0" ItemsSource="{Binding TreatmentsDisplay}" >
             <DataGrid.Columns>
                 <DataGridTemplateColumn  Width="150">
                     <DataGridTemplateColumn.Header>
@@ -44,7 +44,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                <TextBlock Text="{Binding Owner.Name}" Style="{StaticResource CenterTextBlock}"/>
+                                <TextBlock Text="{Binding OwnerName}" Style="{StaticResource CenterTextBlock}"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -59,9 +59,8 @@
                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
                                 <TextBlock  Style="{StaticResource CenterTextBlock}">
                                     <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0} &#x0a; {1}">
-                                            <Binding Path="Patient.Name"/>
-                                            <Binding Path="Patient.Identifier"/>
+                                        <MultiBinding StringFormat="{}{0}">
+                                            <Binding Path="PatientIdentifier"/>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
@@ -77,7 +76,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                <TextBlock Text="{Binding Patient.Species}" Style="{StaticResource CenterTextBlock}"/>
+                                <TextBlock Text="{Binding PatientSpecies}" Style="{StaticResource CenterTextBlock}"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -90,7 +89,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                <TextBlock Text="{Binding Patient.Race}" Style="{StaticResource CenterTextBlock}"/>
+                                <TextBlock Text="{Binding PatientRace}" Style="{StaticResource CenterTextBlock}"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -103,7 +102,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                <TextBlock Text="{Binding Patient.Sex}" Style="{StaticResource CenterTextBlock}"/>
+                                <TextBlock Text="{Binding PatientSex}" Style="{StaticResource CenterTextBlock}"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -116,7 +115,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                <TextBlock Text="{Binding Patient.Age}" Style="{StaticResource CenterTextBlock}"/>
+                                <TextBlock Text="{Binding PatientAge}" Style="{StaticResource CenterTextBlock}"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -129,7 +128,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                <TextBlock Text="{Binding Patient.Weight}" Style="{StaticResource CenterTextBlock}"/>
+                                <TextBlock Text="{Binding PatientWeight}" Style="{StaticResource CenterTextBlock}"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -170,7 +169,7 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DataGrid  Width="700" ItemsSource="{Binding Meds}" VerticalAlignment="Stretch"
+                            <DataGrid  Width="700" Height="Auto" ItemsSource="{Binding Meds}" VerticalAlignment="Stretch"
                                 Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
                                 
                                 <DataGrid.Columns>
@@ -179,7 +178,7 @@
                                             <DataTemplate>
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
                                                     <TextBlock Style="{StaticResource CenterTextBlock}"
-                                                        Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='Name' }"/>
+                                                        Text="{Binding Name}"/>
                                                 </Border>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -191,9 +190,9 @@
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
                                                     <StackPanel>
                                                         <TextBlock Style="{StaticResource CenterTextBlock}"
-                                                            Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='Lot' }"/>
+                                                            Text="{Binding LotID}"/>
                                                         <TextBlock Style="{StaticResource CenterTextBlock}"
-                                                            Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='Valability' }"/>
+                                                            Text="{Binding Valability, StringFormat='yyyy-MM-dd'}"/>
                                                     </StackPanel>
                                                 </Border>
                                             </DataTemplate>
@@ -205,7 +204,7 @@
                                             <DataTemplate>
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
                                                     <TextBlock Style="{StaticResource CenterTextBlock}"
-                                                        Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='Quantity' }"/>
+                                                        Text="{Binding Quantity }"/>
                                                 </Border>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -216,7 +215,7 @@
                                             <DataTemplate>
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
                                                     <TextBlock Style="{StaticResource CenterTextBlock}"
-                                                        Text="{Binding ., Converter={StaticResource MedOrImportedMedConverter}, ConverterParameter='WaitingTime' }"/>
+                                                        Text="{Binding WaitingTime }"/>
                                                 </Border>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>

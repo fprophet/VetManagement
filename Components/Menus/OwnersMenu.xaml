@@ -20,7 +20,7 @@
                 <Button Content="➕ Crează proprietar" Style="{StaticResource BasicButton}" HorizontalAlignment="Left" Background="#FF4CAF50"
                Command="{Binding NavigateCreateOwnerWindowCommand}"  />
                 
-                <Button HorizontalAlignment="Center" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
+                <Button HorizontalAlignment="Right" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Filtre"/>
@@ -28,17 +28,6 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>
-
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="✏ Edit" Style="{StaticResource BasicButton}" Background="#CCA135"
-                Command="{Binding UpdateOwnerCommand}"/>
-
-                    <Button Content="Listă tratamente" Style="{StaticResource BasicButton}" Margin="10,0"
-                Command="{Binding NavigateTreatmentsListCommand}"/>
-
-                    <Button Content="Listă animale" Style="{StaticResource BasicButton}"
-                Command="{Binding NavigatePatientsListCommand}" />
-                </StackPanel>
             </DockPanel>
         </Border>
 

@@ -1,4 +1,4 @@
-﻿namespace VetManagement.Data
+﻿namespace VetManagement.Repositories
 {
     public interface IRepository<T> where T : class
     {

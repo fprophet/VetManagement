@@ -23,22 +23,15 @@
 
 
                 <Button Grid.Row="1" Content="➕ Adaugă tratament" HorizontalAlignment="Left" Style="{StaticResource BasicButton}" Background="#FF4CAF50" />
-
-                <StackPanel HorizontalAlignment="Right">
-                    <Button   Content="Repetă tratament" Style="{StaticResource BasicButton}"
-                        Command="{Binding RepeatTreatmentCommand}"/>
+                <StackPanel Orientation="Horizontal"  HorizontalAlignment="Right" Visibility="{Binding ., Converter={StaticResource UserRoleToVisibilityConverter}}">
+                    <StackPanel>
+                        <TextBlock Text="Tipul Tratamentului" FontSize="13"/>
+                        <ComboBox Width="150" HorizontalAlignment="Left" ItemsSource="{Binding TreatmentTypeList}" DisplayMemberPath="Name" 
+                  SelectedValuePath="Value" SelectedValue="{Binding TreatmentTypeFilter, Mode=TwoWay}" />
+                    </StackPanel>
                 </StackPanel>
             </DockPanel>
         </Border>
-        <Border Style="{StaticResource FilterMenuSection}" Grid.Row="1" HorizontalAlignment="Left" Margin="510,0,0,0"
-                Visibility="{Binding ., Converter={StaticResource UserRoleToVisibilityConverter}}" >
-            <StackPanel Orientation="Horizontal" >
-                <StackPanel>
-                    <TextBlock Text="Tipul Tratamentului" FontSize="13"/>
-                    <ComboBox Width="150" HorizontalAlignment="Left" ItemsSource="{Binding TreatmentTypeList}" DisplayMemberPath="Name" 
-                            SelectedValuePath="Value" SelectedValue="{Binding TreatmentTypeFilter, Mode=TwoWay}" />
-                </StackPanel>
-            </StackPanel>
-        </Border>
+     
     </Grid>
 </UserControl>

@@ -5,11 +5,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Org.BouncyCastle.Asn1.X509;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -32,9 +35,9 @@ namespace VetManagement.ViewModels
             get => _selectedRow;
             set
             {
-                if (value is Treatment)
+                if (value is TreatmentWrapper)
                 {
-                    SelectedTreatment = (Treatment)value;
+                    SelectedTreatment = ((TreatmentWrapper)value).Treatment;
                 }
 
                 _selectedRow = value;
@@ -53,7 +56,18 @@ namespace VetManagement.ViewModels
             }
         }
 
-        private string _treatmentTypeFilter = "pet";
+        private bool _isLoading = false;
+        public bool isLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(isLoading));
+            }
+        }
+
+        private string _treatmentTypeFilter =  SessionManager.Instance.Role == "farmacist" ?  "pet" : "";
         public string TreatmentTypeFilter
         {
             get => _treatmentTypeFilter;
@@ -98,7 +112,7 @@ namespace VetManagement.ViewModels
             _navigationStore = navigationStore;
             _navigationStore.PassedId = PassedId;
 
-            RepeatTreatmentCommand = new RelayCommand(RepeatTreatment, CanExecuteMedAction);
+            RepeatTreatmentCommand = new RelayCommand(RepeatTreatment, CanExecuteTreatmentAction);
 
             NavigateOwnersCommand = new NavigateCommand<OwnersViewModel>
                 (new NavigationService<OwnersViewModel>(_navigationStore, (id) => new OwnersViewModel(_navigationStore)));
@@ -108,16 +122,11 @@ namespace VetManagement.ViewModels
 
         }
 
-        public bool CanExecuteMedAction(object parameter) => _selectedTreatment != null && _selectedTreatment.Id is int;
+        public bool CanExecuteTreatmentAction(object parameter) => _selectedTreatment != null && _selectedTreatment.Id is int;
 
         private async void RepeatTreatment(object parameter)
         {
-            if (_selectedTreatment.Id == null)
-            {
-                Boxes.InfoBox("Tratamentul nu a putut fi repetat!");
-                return;
-            }
-
+            
             var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa repetați tratementul cu numărul: " + _selectedTreatment.Id + "?");
 
             if (result == System.Windows.MessageBoxResult.No)
@@ -135,9 +144,7 @@ namespace VetManagement.ViewModels
             }
             catch (Exception e)
             {
-                Boxes.InfoBox("Tratamentul nu a putut fi repetat!\n" + e.ToString());
-
-                Logger.LogError("Error", e.ToString());
+                Boxes.InfoBox("Tratamentul nu a putut fi repetat!\n" + e.Message);
             }
         }
 
@@ -170,6 +177,7 @@ namespace VetManagement.ViewModels
 
         public async Task LoadTreatments()
         {
+            isLoading = true;
             TreatmentWrappers.Clear();
 
             try
@@ -178,22 +186,29 @@ namespace VetManagement.ViewModels
 
                 filters.Add("patientType", TreatmentTypeFilter);
                 filters.Add("ownerName", Owner.Name);
-
-                var (treatments, totalFound) = await new TreatmentRepository().GetFullTreatments(1, -1, filters);
-
-                //var treatments = await new TreatmentRepository().GetFullTreatmentsForOwner(PassedId);
-
-                //var sortedTreatments = treatments.OrderByDescending(t => t.DateAdded);
-
-                foreach (var treatment in treatments)
+           
+                await Task.Run(async () =>
                 {
-                    TreatmentWrappers.Add(new TreatmentWrapper(treatment));
-                }
+                    var (treatments, totalFound) = await new TreatmentRepository().GetFullTreatments(1, -1, filters);
+                    foreach (var treatment in treatments)
+
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            TreatmentWrappers.Add(new TreatmentWrapper(treatment));
+
+                        }, DispatcherPriority.Background);
+                    }
+                });
             }
             catch(Exception e)
             {
                 Logger.LogError("Error", e.ToString());
                 Boxes.ErrorBox("Tratamentele nu au putut fi găsite!\n" + e.Message);
+            }
+            finally
+            {
+                isLoading = false;
             }
 
         }

@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 
@@ -22,7 +23,7 @@ namespace VetManagement.ViewModels
 
         private string _type = "pet";
 
-        private int? _identifier;
+        private string? _identifier;
 
         private string _species;
 
@@ -57,7 +58,7 @@ namespace VetManagement.ViewModels
             }
         }
 
-        public int? Identifier
+        public string? Identifier
         {
             get => _identifier;
             set

@@ -8,6 +8,7 @@
              xmlns:services="clr-namespace:VetManagement.Services"
              xmlns:converters="clr-namespace:VetManagement.Converters"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -26,16 +27,35 @@
         </i:Interaction.Triggers>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <DataGrid  Grid.Row="2" ItemsSource="{Binding TreatmentWrappers}"
-                Style="{StaticResource DataGridExpanded}" 
-                   SelectedItem="{Binding SelectedRow}"
-                Height="700">
-                
+        <DataGrid  Grid.Row="0" ItemsSource="{Binding TreatmentWrappers}"
+                   Style="{StaticResource DataGridExpanded}" 
+                   SelectedItem="{Binding SelectedRow}">
+            <DataGrid.Resources>
+                <ContextMenu x:Key="RowContextMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding Treatment.Id}" FontWeight="Bold" Foreground="Black" Padding="5"/>
+                    <Separator/>
+
+                    <MenuItem Command="{Binding DataContext.RepeatTreatmentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="Repeat" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock Text="Repetă "/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                </ContextMenu>
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
+                </Style>
+            </DataGrid.RowStyle>
+            
             <DataGrid.Columns>
 
                 <DataGridTemplateColumn  Width="70">
@@ -123,7 +143,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                <TextBlock Text="{Binding Patient.Age}" Style="{StaticResource CenterTextBlock}"/>
+                                <TextBlock Text="{Binding PatientAge}" Style="{StaticResource CenterTextBlock}"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -136,7 +156,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                <TextBlock Text="{Binding Patient.Weight}" Style="{StaticResource CenterTextBlock}"/>
+                                <TextBlock Text="{Binding PatientWeight}" Style="{StaticResource CenterTextBlock}"/>
                             </Border>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -176,8 +196,8 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DataGrid  Width="700" ItemsSource="{Binding Meds}" VerticalAlignment="Stretch"
-                Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
+                            <DataGrid  Width="700" Height="Auto" ItemsSource="{Binding Meds}" VerticalAlignment="Stretch"
+                                    Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
 
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn Width="4*">
@@ -245,5 +265,11 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+
+        <ProgressBar Grid.Row="1" Height="15" Width="200" IsIndeterminate="True"  Margin="0,20"
+            Visibility="{Binding isLoading, Converter={StaticResource BoolToVisibilityConverter}}" />
+        
     </Grid>
+    
+    
 </UserControl>

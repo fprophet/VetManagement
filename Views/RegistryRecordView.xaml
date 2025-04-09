@@ -118,7 +118,7 @@
                     <TextBlock Text="{Binding RegistryRecord.Treatment.Patient.Sex}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="200,10,0,2"/>
 
                     <TextBlock Text="Greutate:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="2"/>
-                    <TextBlock Text="{Binding RegistryRecord.Treatment.Patient.Weight}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="200,10,0,2"/>
+                    <TextBlock Text="{Binding RegistryRecord.Treatment.Weight}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="200,10,0,2"/>
 
                     <TextBlock Text="Număr registru consultație:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="3"/>
                     <TextBlock Text="{Binding RegistryRecord.Treatment.Patient.Identifier}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="200,10,0,2"/>
@@ -169,7 +169,7 @@
 
                                         <TextBlock Text="{Binding Med.Name}" Grid.Column="0" Foreground="#444" FontSize="14"/>
                                         <TextBlock Text="{Binding Med.PieceType}" Grid.Column="1" Foreground="#444" FontSize="14"/>
-                                        <TextBlock Text="{Binding Med.Valability}" Grid.Column="2" Foreground="#444" FontSize="14"/>
+                                        <TextBlock Text="{Binding Valability}" Grid.Column="2" Foreground="#444" FontSize="14"/>
 
                                         <TextBlock Text="{Binding Med.LotID}" Grid.Column="3" Foreground="#444" FontSize="14"/>
 

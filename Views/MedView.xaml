@@ -50,20 +50,20 @@
                         </Grid.RowDefinitions>
                         <TextBlock Text="{Binding CurrentMedWrapper.Name}" FontSize="22" FontWeight="Bold" Foreground="#333" Grid.Row="0"/>
 
-                        <TextBlock Text="Lot:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="1"/>
-                        <TextBlock Text="{Binding  CurrentMedWrapper.LotID}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="140,10,0,2"/>
+                        <TextBlock Text="Lot:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="1" />
+                        <TextBlock Text="{Binding  CurrentMedWrapper.LotID}" Style="{StaticResource ValueStyle}" Grid.Row="1" Margin="200,10,0,2"/>
 
                         <TextBlock Text="Valabilitate:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="2"/>
-                        <TextBlock Text="{Binding CurrentMedWrapper.Valability}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="140,10,0,2"/>
+                        <TextBlock Text="{Binding CurrentMedWrapper.Valability}" Style="{StaticResource ValueStyle}" Grid.Row="2" Margin="200,10,0,2"/>
 
                         <TextBlock Text="Număr factura:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="3"/>
-                        <TextBlock Text="{Binding CurrentMedWrapper.InvoiceNumber}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="140,10,0,2"/>
+                        <TextBlock Text="{Binding CurrentMedWrapper.InvoiceNumber}" Style="{StaticResource ValueStyle}" Grid.Row="3" Margin="200,10,0,2"/>
 
                         <TextBlock Text="Furnizor:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="4"/>
-                        <TextBlock Text="{Binding CurrentMedWrapper.Provider}" Style="{StaticResource ValueStyle}" Grid.Row="4" Margin="140,10,0,2"/>
+                        <TextBlock Text="{Binding CurrentMedWrapper.Provider}" Style="{StaticResource ValueStyle}" Grid.Row="4" Margin="200,10,0,2"/>
                         
                         <TextBlock Text="Bucăți:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="5"/>
-                        <TextBlock  Style="{StaticResource ValueStyle}" Grid.Row="5" Margin="140,10,0,2">
+                        <TextBlock  Style="{StaticResource ValueStyle}" Grid.Row="5" Margin="200,10,0,2">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0} {1}">
                                     <Binding Path="CurrentMedWrapper.Pieces" />
@@ -73,10 +73,10 @@
                         </TextBlock>
 
                         <TextBlock Text="Per bucată:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="6"/>
-                        <TextBlock Text="{Binding CurrentMedWrapper.PerPieceAndUnit}" Style="{StaticResource ValueStyle}" Grid.Row="6" Margin="140,10,0,2"/>
+                        <TextBlock Text="{Binding CurrentMedWrapper.PerPieceAndUnit}" Style="{StaticResource ValueStyle}" Grid.Row="6" Margin="200,10,0,2"/>
 
                         <TextBlock Text="Cantitate totală:" Style="{StaticResource TreatmentLabelStyle}" Grid.Row="7"/>
-                        <TextBlock Grid.Row="7" Style="{StaticResource ValueStyle}" Margin="140,10,0,2">
+                        <TextBlock Grid.Row="7" Style="{StaticResource ValueStyle}" Margin="200,10,0,2">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0} {1}">
                                     <Binding Path="CurrentMedWrapper.TotalAmount" />
@@ -89,7 +89,7 @@
                         <TextBlock Text="{Binding CurrentMedWrapper.SingularPieceType, StringFormat='Un {0} început:'}" Foreground="Red"
                                    Visibility="{Binding HasStartedPiece, Converter={StaticResource BoolToVisibilityConverter}}"
                                    Style="{StaticResource TreatmentLabelStyle}" Grid.Row="8"/>
-                        <TextBlock Grid.Row="8" Style="{StaticResource ValueStyle}" Margin="140,10,0,2" Foreground="Red" 
+                        <TextBlock Grid.Row="8" Style="{StaticResource ValueStyle}" Margin="200,10,0,2" Foreground="Red" 
                                    Visibility="{Binding HasStartedPiece, Converter={StaticResource BoolToVisibilityConverter}}">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0} {1}">

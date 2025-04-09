@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 using System.Windows.Input;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
-using VetManagement.Migrations;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
-using VetManagement.ViewModels;
 
 namespace VetManagement.ViewModels
 {

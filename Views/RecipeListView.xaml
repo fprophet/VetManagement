@@ -23,12 +23,12 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="7*"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <DataGrid Grid.Row="1" Style="{StaticResource DataGridExpanded}" HorizontalAlignment="Center" VerticalAlignment="Stretch"  
+            <DataGrid Grid.Row="1" Style="{StaticResource DataGridExpanded}" 
                       ColumnHeaderStyle="{StaticResource ExpandedColumnHeaderRecipeList}" ItemsSource="{Binding Recipes}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Data"  Binding="{Binding Date}" Width="200"/>

@@ -6,12 +6,15 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Mysqlx.Prepare;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 
@@ -129,6 +132,7 @@ namespace VetManagement.ViewModels
 
         public ObservableCollection<Med> Meds { get; } = new ObservableCollection<Med>();
         public ObservableCollection<TreatmentWrapper> TreatmentWrappers { get; } = new ObservableCollection<TreatmentWrapper>();
+        public ObservableCollection<TreatmentDisplay> TreatmentsDisplay { get; } = new ObservableCollection<TreatmentDisplay>();
 
         public ICommand ExportToCSVCommand { get; }
         public ICommand PrintCommand { get; }
@@ -167,13 +171,13 @@ namespace VetManagement.ViewModels
 
             string type = (string)parameter;
 
-            List<Treatment> Treatments = new List<Treatment>();
+            List<TreatmentDisplay> toExport = new List<TreatmentDisplay>();
 
-            if( type == "page")
+            if ( type == "page")
             {
-                foreach (TreatmentWrapper treatmentWrapper in TreatmentWrappers)
+                foreach (TreatmentDisplay treatmentDisplate in TreatmentsDisplay)
                 {
-                    Treatments.Add(treatmentWrapper.Treatment);
+                    toExport.Add(treatmentDisplate);
                 }
             }
             else
@@ -185,18 +189,19 @@ namespace VetManagement.ViewModels
                 filters.Add("toDateFilter", ToDate);
                 filters.Add("ownerName", OwnerName);
                 filters.Add("patientType", TreatmentTypeFilter);
-                var (treatments, totalFound) = await _treatmentRepository.GetFullTreatments(PaginationService.PageNumber, PaginationService.TotalFound, filters);
+                var (treatments, totalFound) = await _treatmentRepository.GetCurrentAndHistoryTreatments(PaginationService.PageNumber, PaginationService.PerPage, filters);
 
-                Treatments = treatments;
+
+                toExport = treatments;
             }
 
-            ExportCSVHelper.ExportReports(Treatments);
+            ExportCSVHelper.ExportReports(toExport);
             
         }
 
         private async Task GetTreatments()
         {
-            TreatmentWrappers.Clear();
+            TreatmentsDisplay.Clear();
             IsLoading = true;
             try
             {
@@ -216,21 +221,37 @@ namespace VetManagement.ViewModels
                 filters.Add("patientType", TreatmentTypeFilter);
                 Trace.WriteLine(TreatmentTypeFilter);
 
-                var (treatments, totalFound) = await _treatmentRepository.GetFullTreatments(PaginationService.PageNumber, PaginationService.PerPage, filters);
 
-                PaginationService.TotalFound = totalFound;
-
-                foreach (Treatment treatment in treatments)
+                await Task.Run(async () =>
                 {
-                    TreatmentWrapper tr = new TreatmentWrapper(treatment);
-                    //Trace.WriteLine(tr.Meds.GetType().GetGenericArguments()[0]);
-                    TreatmentWrappers.Add( tr);
-                }
+                    var (treatments, totalFound) = await _treatmentRepository.GetCurrentAndHistoryTreatments(PaginationService.PageNumber, PaginationService.PerPage, filters);
 
-                if (TreatmentWrappers.Count() == 0)
-                {
-                    NoResults = true;
-                }
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        PaginationService.TotalFound = totalFound;
+                        if (PaginationService.TotalFound > 0)
+                        {
+                            NoResults = false;
+                        }
+                        else
+                        {
+                            NoResults = true;
+
+                        }
+
+                    });
+
+                    foreach (TreatmentDisplay treatment in treatments)
+                    {
+
+                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            TreatmentsDisplay.Add(treatment);
+                        }, DispatcherPriority.Background);
+                    }
+
+                });
+
             }
             catch(Exception e)
             {
@@ -239,16 +260,9 @@ namespace VetManagement.ViewModels
             }
             finally
             {
+                Trace.WriteLine(TreatmentsDisplay.Count);
                 IsLoading = false;
-                if(TreatmentWrappers.Count > 0 )
-                {
-                    NoResults = false;
-                }
-                else
-                {
-                    NoResults = true;
-
-                }
+           
 
             }
 

@@ -16,6 +16,7 @@ using System.Windows;
 using NPOI.SS.Formula.Functions;
 using VetManagement.Views;
 using NPOI.POIFS.Crypt;
+using VetManagement.Repositories;
 
 namespace VetManagement.ViewModels
 {
@@ -106,8 +107,8 @@ namespace VetManagement.ViewModels
 
             OnLoadedCommand = new RelayCommand(async (object p) =>
             {
-                //TcpConnection.Instance.SetRecieveCallBack(HandleNotification);
-                //TcpConnection.Instance.ConnectToServer();
+                TcpConnection.Instance.SetRecieveCallBack(HandleNotification);
+                TcpConnection.Instance.ConnectToServer();
 
                 await LoadNotifications();
             });
@@ -273,15 +274,16 @@ namespace VetManagement.ViewModels
 
         private void HandleNotification(string result)
         {
-            SoundService.PlayNotificationSound();
 
             Notification? notification;
 
             try
             {
                 notification = JsonSerializer.Deserialize<Notification>(result);
+                SoundService.PlayNotificationSound();
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.LogError("Error", e.ToString());
                 return;

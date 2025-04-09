@@ -10,12 +10,14 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 using Google.Protobuf.WellKnownTypes;
 using Mysqlx;
 using Mysqlx.Crud;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -224,39 +226,54 @@ namespace VetManagement.ViewModels
 
         private async void  DeleteMed(object parameter)
         {
-            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa ștergeți acest medicament?");
+            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa ștergeți acest medicament: " + _selectedMed.Name + "?\n Tratamentele aferente acestui medicament vor fi arhivate!");
 
-            if (_selectedMed != null && result == MessageBoxResult.Yes)
+            if(result != MessageBoxResult.Yes)
             {
-                try
+                return;
+            }
+
+            if (_selectedMed == null)
+            {
+                Boxes.ErrorBox("Probleme în ștergerea medicamentului!");
+                return;
+      
+            }
+            isLoading = true;
+
+            try
+            {
+                await Task.Run(async () =>
                 {
-                    await new BaseRepository<Med>().Delete(_selectedMed.Id);
-                }
-                catch (Exception e)
-                { 
-                    Boxes.ErrorBox("Probleme în ștergerea medicamentului!\n" + e.Message);
-                    return;
-                }
+                    await MedService.Delete(_selectedMed);
+                });
 
-                var med = Meds.FirstOrDefault(p => p.Id == _selectedMed.Id);
-                if (med != null) 
-                { 
-                    Meds.Remove(med);
-                }
+                //await new BaseRepository<Med>().Delete(_selectedMed.Id);
+                Boxes.InfoBox("Medicamentul a fost șters!");
             }
-            else
+            catch (Exception e)
             {
-                Boxes.ErrorBox("Probleme în ștergerea medicamentului! No ID found!");
+                Boxes.ErrorBox("Probleme în ștergerea medicamentului!\n" + e.Message);
+                return;
             }
+            finally
+            {
+                isLoading = false;
+            }
+
+            var med = Meds.FirstOrDefault(p => p.Id == _selectedMed.Id);
+            if (med != null)
+            {
+                Meds.Remove(med);
+            }
+            _selectedMed = null;
         }
 
         public async Task LoadMeds() 
         {
-
             Meds.Clear();
             try
             {
-
                 Dictionary<string, object> filters = new Dictionary<string, object>();
 
                 filters["typeFilter"] = TypeFilter;
@@ -265,19 +282,24 @@ namespace VetManagement.ViewModels
                 filters["valabilityFilter"] = ValabilityFilter;
                 filters["dateAddedFilter"] = DateAddedFilter;
 
-                var (meds,totalRecords) = await new MedRepository().GetAllFiltered(PaginationService.PageNumber, PaginationService.PerPage, filters);
-
-                PaginationService.TotalFound = totalRecords;
-
-                var sorted = meds.OrderByDescending(m => m.Id).ToList();
-
-                Meds.Clear();
-
-                foreach (var med in sorted)
+                await Task.Run(async () =>
                 {
-                    Meds.Add( new MedWrapper(med));
-                }
-              
+                    var (meds, totalRecords) = await new MedRepository().GetAllFiltered(PaginationService.PageNumber, PaginationService.PerPage, filters);
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        PaginationService.TotalFound = totalRecords;
+                    });
+                    foreach (var med in meds)
+                    {
+                        Application.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            Meds.Add(new MedWrapper(med));
+
+                        }, DispatcherPriority.Background);
+                    }
+                });
+
             }
            
             catch (Exception e)

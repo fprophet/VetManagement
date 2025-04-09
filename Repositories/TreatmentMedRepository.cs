@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VetManagement.Data;
 
-namespace VetManagement.Data
+namespace VetManagement.Repositories
 {
     public class TreatmentMedRepository : BaseRepository<TreatmentMed>
     {

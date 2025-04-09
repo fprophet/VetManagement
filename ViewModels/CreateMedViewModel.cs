@@ -1,24 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
-using K4os.Compression.LZ4.Internal;
-using Mysqlx;
-using Mysqlx.Crud;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VetManagement.ViewModels
 {

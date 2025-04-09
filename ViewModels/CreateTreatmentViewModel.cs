@@ -11,6 +11,7 @@ using System.Windows.Navigation;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -467,7 +468,16 @@ namespace VetManagement.ViewModels
             try
             {
 
-                var treatment = new Treatment() { PatientId = Patient.Id, OwnerId = Owner.Id, Details = Details, DateAdded = DateTime.Now };
+                var treatment = new Treatment()
+                {
+                    PatientId = Patient.Id,
+                    OwnerId = Owner.Id,
+                    OwnerAddress = Owner.Address,
+                    PatientWeight = Patient.Weight,
+                    PatientAge = Patient.Age,
+                    Details = Details,
+                    DateAdded = DateTime.Now
+                };
 
                 treatment = await new BaseRepository<Treatment>().Add(treatment);
                 if (treatment != null)
@@ -488,8 +498,7 @@ namespace VetManagement.ViewModels
                             MedId = medWrapper.Id,
                             TreatmentId = treatment.Id,
                             Quantity = medWrapper.TreatmentQuantity,
-                            Pieces = 1,//decimal.Round(medWrapper.TreatmentQuantity / medWrapper.PerPiece,2),
-                            Administration = "",
+                            Valability = medWrapper.Valability,
                         };
 
                         var tm = await new BaseRepository<TreatmentMed>().Add(treatmentMed);

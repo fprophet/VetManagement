@@ -18,7 +18,7 @@ namespace VetManagement.Services
     public class ExportCSVHelper
     {
 
-        public static void ExportReports(List<Treatment> List)
+        public static void ExportReports(List<TreatmentDisplay> List)
         {
             string FullPath = GetFilePath();
 
@@ -44,7 +44,7 @@ namespace VetManagement.Services
 
         }
 
-        private static void PopulateReprotsCSVFile(string Path, List<Treatment> Items, List<string> Columns)
+        private static void PopulateReprotsCSVFile(string Path, List<TreatmentDisplay> Items, List<string> Columns)
         {
             var workbook = new HSSFWorkbook();
             var sheet = workbook.CreateSheet("Tratamente");
@@ -55,70 +55,43 @@ namespace VetManagement.Services
             foreach (string colName in Columns)
             {
                 headerRow.CreateCell(colIdx).SetCellValue(colName);
-                Trace.WriteLine(colName);
                 colIdx++;
             }
 
             int rowCount = 1;
-            foreach (Treatment treatment in Items)
+            foreach (TreatmentDisplay treatment in Items)
             {
 
-                if (treatment.TreatmentMeds != null && treatment.TreatmentMeds.Count > 0)
+                if (treatment.Meds != null && treatment.Meds.Count > 0)
                 {
-                    foreach (var med in treatment.TreatmentMeds)
+                    foreach (var med in treatment.Meds)
                     {
                         IRow row = sheet.CreateRow(rowCount);
 
                         row.CreateCell(0).SetCellValue(treatment.DateAdded.Date.ToString("yyyy-MM-dd"));
-                        row.CreateCell(1).SetCellValue(treatment.Owner.Name);
-                        row.CreateCell(2).SetCellValue(treatment.Owner.Address);
-                        row.CreateCell(3).SetCellValue(Convert.ToString(treatment.Patient.Identifier));
-                        row.CreateCell(4).SetCellValue(treatment.Patient.Species);
-                        row.CreateCell(5).SetCellValue(treatment.Patient.Race);
-                        row.CreateCell(6).SetCellValue(treatment.Patient.Sex);
-                        row.CreateCell(7).SetCellValue(treatment.Patient.Age);
-                        row.CreateCell(8).SetCellValue(treatment.Patient.Weight);
+                        row.CreateCell(1).SetCellValue(treatment.OwnerName);
+                        row.CreateCell(2).SetCellValue(treatment.OwnerAddress);
+                        row.CreateCell(3).SetCellValue(Convert.ToString(treatment.PatientIdentifier));
+                        row.CreateCell(4).SetCellValue(treatment.PatientSpecies);
+                        row.CreateCell(5).SetCellValue(treatment.PatientRace);
+                        row.CreateCell(6).SetCellValue(treatment.PatientSex);
+                        row.CreateCell(7).SetCellValue(treatment.PatientAge);
+                        row.CreateCell(8).SetCellValue(treatment.PatientWeight);
 
-                        TreatmentMed tm = (TreatmentMed)med;
-                        row.CreateCell(9).SetCellValue(tm.Med.Name);
-                        row.CreateCell(10).SetCellValue(tm.Med.LotID);
-                        row.CreateCell(11).SetCellValue(tm.Med.Valability);
-                        row.CreateCell(12).SetCellValue(Convert.ToString(tm.Quantity));
+                        row.CreateCell(9).SetCellValue(med.Name);
+                        row.CreateCell(10).SetCellValue(med.LotID);
+                        row.CreateCell(11).SetCellValue(med.Valability.HasValue ? med.Valability.Value.ToString("yyyy-MM-dd") : string.Empty);
+                        row.CreateCell(12).SetCellValue(Convert.ToString(med.Quantity));
                         rowCount++;
                     }
                 }
-                else if (treatment.TreatmentImportedMeds != null && treatment.TreatmentImportedMeds.Count > 0)
+
+                using (FileStream fs = new FileStream(Path, FileMode.Create, FileAccess.Write))
                 {
-                    foreach (var med in treatment.TreatmentImportedMeds)
-                    {
-                        IRow row = sheet.CreateRow(rowCount);
-
-                        row.CreateCell(0).SetCellValue(treatment.DateAdded.Date.ToString("yyyy-MM-dd"));
-                        row.CreateCell(1).SetCellValue(treatment.Owner.Name);
-                        row.CreateCell(2).SetCellValue(treatment.Owner.Address);
-                        row.CreateCell(3).SetCellValue(Convert.ToString(treatment.Patient.Identifier));
-                        row.CreateCell(4).SetCellValue(treatment.Patient.Species);
-                        row.CreateCell(5).SetCellValue(treatment.Patient.Race);
-                        row.CreateCell(6).SetCellValue(treatment.Patient.Sex);
-                        row.CreateCell(7).SetCellValue(treatment.Patient.Age);
-                        row.CreateCell(8).SetCellValue(treatment.Patient.Weight);
-
-                        TreatmentImportedMed tim = (TreatmentImportedMed)med;
-                        row.CreateCell(9).SetCellValue(tim.ImportedMed.Denumire);
-                        row.CreateCell(10).SetCellValue("");
-                        row.CreateCell(11).SetCellValue("");
-                        row.CreateCell(12).SetCellValue(tim.Quantity );
-                        rowCount++;
-                    }
+                    workbook.Write(fs);
                 }
-            }
-
-            using (FileStream fs = new FileStream(Path, FileMode.Create, FileAccess.Write))
-            {
-                workbook.Write(fs);
             }
         }
-
 
         private static string GetFilePath()
         {
@@ -137,7 +110,7 @@ namespace VetManagement.Services
         {
             List<string> Columns = new List<string>();
 
-            if( Item.GetType().Name == "Treatment")
+            if( Item.GetType().Name == "TreatmentDisplay")
             {
                 return ["Data","Proprietar","Adresa","Nume Animal/Numar Identificare","Specie","Rasa","Sex","Varsta","Greutate","Medicament","Serie","Valabiliate","Dozaj","Timp asteptare"];
             }

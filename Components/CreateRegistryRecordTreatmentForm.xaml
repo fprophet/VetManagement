@@ -16,6 +16,7 @@
 
         <Style TargetType="DataGridCell" x:Key="EditingCell">
             <Setter Property="Background" Value="#EEEEEE" />
+            <Setter Property="Foreground" Value="Black" />
             <Setter Property="BorderThickness" Value="0.5" />
             <Setter Property="BorderBrush" Value="Black" />
             <Setter Property="Margin" Value="1,0" />
@@ -295,7 +296,7 @@
                                 Binding="{Binding Denumire, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <DataGridTextColumn Header="Cantitate" Width="3*"
-                                Binding="{Binding Dosage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CellStyle="{StaticResource EditingCell}"/>
+                                Binding="{Binding TreatmentQuantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CellStyle="{StaticResource EditingCell}"/>
 
 
 

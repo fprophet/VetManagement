@@ -1,11 +1,13 @@
 ﻿
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -205,7 +207,6 @@ namespace VetManagement.ViewModels
                 OnCreateRegistryRecord?.Invoke(registryRecord);
                 var res = Boxes.InfoBox("Tratamentul a fost adăugat în registru cu success!");
 
-                SendRecipeNotification(recipe.Id);
               
                 if (res == MessageBoxResult.OK)
                 {
@@ -216,7 +217,8 @@ namespace VetManagement.ViewModels
             }
             catch(Exception e)
             {
-                Boxes.ErrorBox("Tratamentul nu a putut fi creat!\n" + e.ToString());
+                Logger.LogError("Error", e.ToString());
+                Boxes.ErrorBox("Tratamentul nu a putut fi creat!\n" + e.Message);
             }
 
         }

@@ -38,7 +38,7 @@ namespace VetManagement.Services
         {
             try
             {
-                client = new TcpClient("192.168.1.12", 5000); // Change to your Linux server IP
+                client = new TcpClient("192.168.100.197", 5000); // Change to your Linux server IP
                 stream = client.GetStream();
 
                 if (AuthenticateWithServer())
@@ -86,61 +86,62 @@ namespace VetManagement.Services
         {
             while (true)
             {
-                Trace.WriteLine("reading message");
-
-                string? clientIpAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
-                //Trace.WriteLine(clientIpAddress);
 
                 byte[] lengthBuffer = new byte[4];
                 int bytesRead = 0;
+
+                // Read message length
                 while (bytesRead < 4)
                 {
                     int read = await stream.ReadAsync(lengthBuffer, bytesRead, 4 - bytesRead);
                     if (read == 0)
                     {
-                        Trace.WriteLine("Stream closed.");
+                        Trace.WriteLine("Client disconnected.");
                         return;
                     }
                     bytesRead += read;
                 }
-         
-                int messageLength = BitConverter.ToInt32(lengthBuffer);
 
-                Trace.WriteLine("LUNIGME: " + messageLength);
-                Trace.WriteLine("STRING: " + Encoding.UTF8.GetString(lengthBuffer));
+                int messageLength = BitConverter.ToInt32(lengthBuffer, 0);
 
-                if ( messageLength <= 0  || messageLength > 30000)
+                if (messageLength <= 0 || messageLength > 30000)
                 {
                     continue;
                 }
-                //Trace.WriteLine("Message length: " + messageLength);
 
                 byte[] buffer = new byte[messageLength];
-
                 int totalRead = 0;
 
+                Trace.WriteLine("lungime: " + messageLength);
+                // Read full message
                 while (totalRead < messageLength)
                 {
-                    Trace.Write("Read: ");
                     int read = await stream.ReadAsync(buffer, totalRead, messageLength - totalRead);
-                    Trace.WriteLine(read);
                     if (read == 0)
                     {
-                        break;
+                        return;
                     }
                     totalRead += read;
                 }
 
-                if ( buffer.Length > 0 )
+                // Verify complete read
+                if (totalRead == messageLength)
                 {
-                    Trace.WriteLine("lungime: " + buffer.Length);
-                    await stream.FlushAsync();
                     HandleRecievedMessage(buffer);
                 }
-                Trace.WriteLine("waiting for next messages");
 
+                else
+                {
+                    return;
+                }
+
+                byte[] leftoverBuffer = new byte[2048];
+                int leftover = await stream.ReadAsync(leftoverBuffer, 0, leftoverBuffer.Length);
+
+                //Trace.WriteLine("Waiting for next message...");
             }
         }
+
 
         private void HandleRecievedMessage(byte[] buffer)
         {
@@ -153,14 +154,15 @@ namespace VetManagement.Services
             Array.Copy(buffer, 0, IV, 0, 16);
 
             Array.Copy(buffer, 16, messageBuffer, 0, buffer.Length - 16);
-            //Trace.WriteLine(buffer.Length);
-            //Trace.WriteLine(messageBuffer.Length);
             string encrypted = Encoding.UTF8.GetString(buffer);
 
             //string encrypted = EncryptionService.Decrypt(messageBuffer, EncryptionService.Key, IV);
 
             Trace.WriteLine(encrypted);
-            _onMessageRecieved?.Invoke(encrypted);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _onMessageRecieved?.Invoke(encrypted);
+            });
         }
 
         private byte[] PrepareForBroadcast(byte[] buffer)

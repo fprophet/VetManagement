@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VetManagement.Data;
 using Microsoft.EntityFrameworkCore;
+using VetManagement.Data;
 
-namespace VetManagement.Data
+namespace VetManagement.Repositories
 {
     public class OwnerRepository : BaseRepository<Owner>
     {
@@ -20,7 +20,7 @@ namespace VetManagement.Data
 
         }
 
-        public async Task<(List<Owner>,int)> GetFullInfoFiltered(int pageNumber, int perPage, Dictionary<string,string>? filters)
+        public async Task<(List<Owner>, int)> GetFullInfoFiltered(int pageNumber, int perPage, Dictionary<string, string>? filters)
         {
             if (!await _context.CheckConnection())
             {
@@ -31,14 +31,14 @@ namespace VetManagement.Data
             string detailsFilter = filters.ContainsKey("detailsFilter") ? Convert.ToString(filters["detailsFilter"]).ToString() : string.Empty;
 
             var query = _context.Owners
-                 .Where(o => ((string.IsNullOrEmpty(nameFilter) || o.Name.ToLower().StartsWith(nameFilter))
+                 .Where(o =>  (string.IsNullOrEmpty(nameFilter) || o.Name.ToLower().StartsWith(nameFilter))
                     && (string.IsNullOrEmpty(patientNameFilter) || o.Patients.Any(p => p.Name.ToLower().StartsWith(patientNameFilter))
-                    && (string.IsNullOrEmpty(detailsFilter) || o.Details.ToLower().StartsWith(detailsFilter)))))
+                    && (string.IsNullOrEmpty(detailsFilter) || o.Details.ToLower().StartsWith(detailsFilter))))
                 .OrderByDescending(t => t.Id)
                 .Include(o => o.Patients)
                 .Skip(perPage * (pageNumber - 1));
 
-            if(perPage >= 0)
+            if (perPage >= 0)
             {
                 query = query.Take(perPage);
             }
@@ -46,9 +46,9 @@ namespace VetManagement.Data
             List<Owner> list = await query.ToListAsync();
 
             int totalRecords = await _context.Owners
-                 .Where(o => ((string.IsNullOrEmpty(nameFilter) || o.Name.StartsWith(nameFilter))
+                 .Where(o => (string.IsNullOrEmpty(nameFilter) || o.Name.StartsWith(nameFilter))
                     && (string.IsNullOrEmpty(patientNameFilter) || o.Patients.Any(p => p.Name.StartsWith(patientNameFilter))
-                    && (string.IsNullOrEmpty(detailsFilter) || o.Details.StartsWith(detailsFilter)))))
+                    && (string.IsNullOrEmpty(detailsFilter) || o.Details.StartsWith(detailsFilter))))
                 .CountAsync();
 
             return (list, totalRecords);

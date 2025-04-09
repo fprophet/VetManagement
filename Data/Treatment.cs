@@ -21,6 +21,14 @@ namespace VetManagement.Data
 
         public DateTime DateUpdated { get; set; }
 
+        // <-- for historically purposes
+        public double PatientWeight { get; set; }
+        
+        public int PatientAge { get; set; }
+
+        public string OwnerAddress { get; set; }
+        // -->
+
         public string? Details { get; set; }
 
         public List<TreatmentMed> TreatmentMeds{ get; set; } = new List<TreatmentMed>();

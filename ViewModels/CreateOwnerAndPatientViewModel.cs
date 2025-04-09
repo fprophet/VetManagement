@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Org.BouncyCastle.Utilities.Encoders;
 using VetManagement.Commands;
 using VetManagement.Data;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 

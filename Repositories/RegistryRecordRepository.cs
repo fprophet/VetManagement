@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VetManagement.Data;
 
-namespace VetManagement.Data
+namespace VetManagement.Repositories
 {
     public class RegistryRecordRepository : BaseRepository<RegistryRecord>
     {
@@ -28,7 +29,7 @@ namespace VetManagement.Data
                 .ToListAsync();
         }
 
-        public async Task<RegistryRecord> GetRegistryRecordById( int id)
+        public async Task<RegistryRecord> GetRegistryRecordById(int id)
         {
             if (!await _context.CheckConnection())
             {
@@ -43,6 +44,26 @@ namespace VetManagement.Data
                     .ThenInclude(t => t.TreatmentImportedMeds)
                     .ThenInclude(tm => tm.ImportedMed)
                 .Where(rr => rr.Id == id)
+             
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<RegistryRecord> GetByTreatmentId(int id)
+        {
+            if (!await _context.CheckConnection())
+            {
+                throw new InvalidOperationException("Cannot connect to the database.");
+            }
+            return await _context.RegistryRecords
+                .Include(rr => rr.Treatment)
+                    .ThenInclude(t => t.Owner)
+                .Include(rr => rr.Treatment)
+                    .ThenInclude(t => t.Patient)
+                .Include(rr => rr.Treatment)
+                    .ThenInclude(t => t.TreatmentImportedMeds)
+                    .ThenInclude(tm => tm.ImportedMed)
+                .Where(rr => rr.TreatmentId == id)
+
                 .FirstOrDefaultAsync();
         }
 
@@ -99,7 +120,7 @@ namespace VetManagement.Data
             }
             return await _context.RegistryRecords
               .Where(rr => rr.Date.Date == DateTime.Now.Date && rr.Treatment.Patient.Type == "livestock")
-              .Include( rr => rr.Treatment)
+              .Include(rr => rr.Treatment)
                 .ThenInclude(t => t.Patient)
               .Include(rr => rr.Treatment)
                 .ThenInclude(t => t.Owner)

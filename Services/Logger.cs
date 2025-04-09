@@ -18,23 +18,17 @@ namespace VetManagement.Services
 
             string fullPath = LogDirectory + "/" + logName + ".txt";
 
-            Trace.WriteLine("VERIFICAM LOGU");
-            Trace.WriteLine(fullPath);
             if (!Directory.Exists(LogDirectory))
             {
-                Trace.WriteLine("NARE DIR");
 
                 Directory.CreateDirectory(LogDirectory);
             }
-            Trace.WriteLine("AMU ARE DIR");
 
             if (!File.Exists(fullPath))
             {
-                Trace.WriteLine("NUI FISIER");
 
                 File.Create(fullPath).Dispose();
             }
-            Trace.WriteLine("AMU ARE FISIER");
 
             using (StreamWriter writeStream = new StreamWriter(fullPath, true))
             {

@@ -8,6 +8,7 @@
              xmlns:services="clr-namespace:VetManagement.Services"
              xmlns:converters="clr-namespace:VetManagement.Converters"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -32,10 +33,27 @@
         <DataGrid Grid.Row="0" ItemsSource="{Binding RegistryRecords}"
                 Style="{StaticResource DataGridExpanded}" 
                 SelectedItem="{Binding SelectedRegistryRecord}"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" 
-                Background="White"
-                Height="700" >
+                HorizontalAlignment="Left" >
+
+            <DataGrid.Resources>
+                <ContextMenu x:Key="RowContextMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding Id}" FontWeight="Bold" Foreground="Black" Padding="5"/>
+                    <Separator/>
+                    <MenuItem Command="{Binding DataContext.NavigateRegistryRecordViewCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="BookMedical" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock Text="Vezi Detalii"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+                </ContextMenu>
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Număr" Width="70">
                     <DataGridTemplateColumn.CellTemplate>
@@ -101,7 +119,7 @@
                                     <TextBlock Style="{StaticResource CenterTextBlock}">
                                         <TextBlock.Text >
                                             <MultiBinding StringFormat="{}{0}">
-                                                <Binding Path="Treatment.Owner.Address" />
+                                                <Binding Path="Treatment.OwnerAddress" />
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
@@ -176,7 +194,7 @@
                                     <TextBlock Style="{StaticResource CenterTextBlock}">
                                         <TextBlock.Text >
                                             <MultiBinding StringFormat="{}{0}">
-                                                <Binding Path="Treatment.Patient.Age" />
+                                                <Binding Path="Treatment.PatientAge" />
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
@@ -239,7 +257,7 @@
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DataGrid Width="700" ItemsSource="{Binding Treatment.TreatmentImportedMeds}" VerticalAlignment="Stretch"
+                            <DataGrid Width="700" Height="Auto" ItemsSource="{Binding Treatment.TreatmentImportedMeds}" VerticalAlignment="Stretch"
                                         Style="{StaticResource StylishDataGrid}" HeadersVisibility="None" AutoGenerateColumns="False">
                                 <DataGrid.Columns>
                                     <DataGridTemplateColumn Width="4*">
@@ -257,8 +275,8 @@
                                             <DataTemplate>
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
                                                     <StackPanel>
-                                                        <TextBlock Text="{Binding Med.LotID}" Style="{StaticResource CenterTextBlock}"/>
-                                                        <TextBlock Text="{Binding Med.Valability, StringFormat='yyyy-mm-dd'}" Style="{StaticResource CenterTextBlock}"/>
+                                                        <TextBlock Text="" Style="{StaticResource CenterTextBlock}"/>
+                                                        <TextBlock Text="" Style="{StaticResource CenterTextBlock}"/>
                                                     </StackPanel>
                                                 </Border>
                                             </DataTemplate>
@@ -282,7 +300,7 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <Border Grid.Column="0" Style="{StaticResource DataBorder}" HorizontalAlignment="Stretch">
-                                                    <TextBlock Text="{Binding Med.WaitingTime}" Style="{StaticResource CenterTextBlock}"/>
+                                                    <TextBlock Text="" Style="{StaticResource CenterTextBlock}"/>
                                                 </Border>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>

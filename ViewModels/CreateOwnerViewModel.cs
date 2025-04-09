@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows;
 using VetManagement.Commands;
 using VetManagement.Stores;
+using VetManagement.Repositories;
 
 namespace VetManagement.ViewModels
 {

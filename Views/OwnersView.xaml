@@ -8,6 +8,7 @@
             xmlns:components="clr-namespace:VetManagement.Components" 
             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
             xmlns:converters="clr-namespace:VetManagement.Converters"
+            xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
             mc:Ignorable="d" 
             d:DesignHeight="450" d:DesignWidth="800">
 
@@ -15,9 +16,10 @@
         <UserControl.Resources>
             <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <converters:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
+            <converters:EnableEditingConverter x:Key="EnableEditingConverter"/>
         </UserControl.Resources>
 
-    <Grid>
+        <Grid>
 
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="Loaded">
@@ -32,16 +34,83 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-        <DataGrid MaxHeight="700"  Grid.Row="0"
+            <DataGrid  Grid.Row="0"
                 ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}" SelectedItem="{Binding SelectedRow}"
-                ItemsSource="{Binding Owners}" Style="{StaticResource StylishDataGrid}" HorizontalAlignment="Center">
+                ItemsSource="{Binding Owners}" Style="{StaticResource StylishDataGrid}">
+            <DataGrid.Resources>
+                <ContextMenu x:Key="RowContextMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Black" Padding="5"/>
+                    <Separator/>
+                    
+                    <MenuItem Command="{Binding DataContext.NavigateTreatmentsListCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                                <fa:IconBlock Icon="BookMedical" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                                <TextBlock Text="Vezi tratamente"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                    <MenuItem Command="{Binding DataContext.NavigatePatientsListCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="Dog" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                                <TextBlock Text="Vezi animale"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    
+                    <MenuItem Command="{Binding DataContext.StartEdit, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="Pen" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                                <TextBlock Text="Modifică"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                    <MenuItem Command="{Binding DataContext.DeleteOwnerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="Trash" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock Text="Șterge"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                </ContextMenu>
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data Înscriere" Binding="{Binding DateAdded, Mode=OneWay, StringFormat='yyyy-MM-dd'}" Width="150"/>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Nume" Binding="{Binding Name}" Width="200"/>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Adresă" Binding="{Binding Address}" Width="300"/>
-                <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Telefon" Binding="{Binding Phone}" Width="100"/>
+                
+                <DataGridTextColumn Header="Telefon" Binding="{Binding Phone}" Width="100">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="IsEnabled" >
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource EnableEditingConverter}">
+                                        <Binding Path="SelectedOwner"/>
+                                        <Binding Path=""/>
+                                        <Binding RelativeSource="{RelativeSource AncestorType=DataGridRow}" Path="(ItemsControl.AlternationIndex)" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+                        
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Email" Binding="{Binding Email}" Width="250"/>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Detalii" Binding="{Binding Details}" Width="300"/>
+
+                
             </DataGrid.Columns>
         </DataGrid>
 

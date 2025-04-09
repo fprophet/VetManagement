@@ -16,10 +16,8 @@ namespace VetManagement.Data
         [Required]
         public decimal Quantity { get; set; }
 
-        [Required]
-        public decimal Pieces { get; set; }
-
-        public string Administration { get; set; }
+        //for historically purposes
+        public DateTime Valability { get; set; }
 
         public Treatment Treatment { get; set; }
 

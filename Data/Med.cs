@@ -40,6 +40,8 @@ namespace VetManagement.Data
 
         public string WaitingTime { get; set; }
 
+        public string Administration { get; set; }
+
         public decimal TotalAmount { get; set; }
 
         public string? LotID { get; set; }

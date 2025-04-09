@@ -7,9 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using VetManagement.Commands;
 using VetManagement.Data;
 using VetManagement.DataWrappers;
+using VetManagement.Repositories;
 using VetManagement.Services;
 using VetManagement.Stores;
 using VetManagement.Views;
@@ -58,6 +60,18 @@ namespace VetManagement.ViewModels
                 OnPropertyChanged(nameof(SelectedPatient));
             }
         }
+
+        private bool _isLoading = false;
+        public bool isLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(isLoading));
+            }
+        }
+
 
         public OwnerPatientsViewModel(NavigationStore navigationStore,int? id)
         {
@@ -112,18 +126,35 @@ namespace VetManagement.ViewModels
 
         private async void DeletePatient(object parameter)
         {
-            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa ștergeți acest pacientul?");
-
-            if (_selectedPatient.Id is int && result == MessageBoxResult.Yes)
+            var result = Boxes.ConfirmBox("Sunteți sigur ca doriți sa ștergeți acest pacient?\n Tratamentele acestui pacient vor fi arhivate!");
+            if(result != MessageBoxResult.Yes)
             {
+                return;
+            }
+
+            if (_selectedPatient.Id is int )
+            {
+                isLoading = true;
+
                 try
                 {
-                    await new BaseRepository<Patient>().Delete(_selectedPatient.Id);
+                    await Task.Run(async () =>
+                    {
+                        await PatientService.Delete(_selectedPatient);
+                    });
+
+                    Patients.Remove(_selectedPatient);
+                    _selectedPatient = null;
+                    Boxes.InfoBox("Pacientul a fost șters cu succes!");
                 }
                 catch (Exception e)
                 {
                     Boxes.ErrorBox("Probleme în ștergerea medicamentului!\n" + e.Message);
                     return;
+                }
+                finally
+                {
+                    isLoading = false;
                 }
 
                 var med = Patients.FirstOrDefault(p => p.Id == _selectedPatient.Id );
@@ -165,16 +196,35 @@ namespace VetManagement.ViewModels
 
         public async Task LoadPatients()
         {
-            var patients = await new PatientRepository().GetForOwner(PassedId);
-
-            var sortedPatients = patients.OrderByDescending(t => t.DateAdded);
-
-            foreach (var patient in sortedPatients)
+            isLoading = true;
+            try
             {
-                Patients.Add(patient);
+
+            await Task.Run(async () =>
+            {
+                var patients = await new PatientRepository().GetForOwner(PassedId);
+
+                var sortedPatients = patients.OrderByDescending(t => t.DateAdded);
+
+                foreach (var patient in sortedPatients)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        Patients.Add(patient);
+
+                    }, DispatcherPriority.Background);
+                }
+            });
             }
-
-
+            catch (Exception ex)
+            {
+                Logger.LogError("Error", ex.ToString());
+                Boxes.ErrorBox("Lista de pacienți nu a putut fi redată.\n" + ex.Message);
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
     }
 }

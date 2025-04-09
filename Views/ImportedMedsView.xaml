@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:VetManagement.Views" 
              xmlns:components="clr-namespace:VetManagement.Components"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -27,16 +28,38 @@
 
         <DataGrid  Grid.Row="0" VerticalAlignment="Top" Height="700" Background="White"
                     ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
+                   SelectedItem="{Binding SelectedRow}"
                     Style="{StaticResource StylishDataGrid}" AutoGenerateColumns="True"  ItemsSource="{Binding ImportedMeds}">
+
+            <DataGrid.Resources>
+                <ContextMenu x:Key="RowContextMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding Denumire}" FontWeight="Bold" Foreground="Black" Padding="5"/>
+                    <Separator/>
+
+                    <MenuItem Command="{Binding DataContext.DeleteImportedMedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="Trash" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock Text="Șterge"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                </ContextMenu>
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
+                </Style>
+            </DataGrid.RowStyle>
             <i:Interaction.Triggers>
-                <i:EventTrigger EventName="AutoGeneratingColumn">
-                    <i:InvokeCommandAction Command="{Binding OnGenerateColumnsCommand}" />
-                </i:EventTrigger>
-                <i:EventTrigger EventName="LoadingRow">
-                    <i:InvokeCommandAction Command="{Binding OnLayoutUpdatedCommand}" PassEventArgsToCommand="True"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-                
+                    <i:EventTrigger EventName="AutoGeneratingColumn">
+                        <i:InvokeCommandAction Command="{Binding OnGenerateColumnsCommand}" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="LoadingRow">
+                        <i:InvokeCommandAction Command="{Binding OnLayoutUpdatedCommand}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
         </DataGrid>
 
         <ProgressBar Height="15" Width="200" IsIndeterminate="True" Grid.Row="1" Margin="0,20,0,0"

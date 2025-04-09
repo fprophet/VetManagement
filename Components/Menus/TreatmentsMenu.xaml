@@ -20,7 +20,7 @@
                 <Button VerticalAlignment="Center" Content="➕ Adaugă în registru" HorizontalAlignment="Left"
                   Style="{StaticResource BasicButton}" Background="#FF4CAF50" Command="{Binding  NavigateCreateTreatmentWindowCommand}"/>
 
-                <Button HorizontalAlignment="Center" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
+                <Button HorizontalAlignment="Right" Background="Gray" Style="{StaticResource BasicButton}" Command="{Binding FilterHelper.ToggleVisibilityCommand}" Margin="10,0">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Filtre"/>
@@ -28,10 +28,6 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>
-                
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button  Style="{StaticResource BasicButton}" Content="Detallii" Command="{Binding NavigateTreatmentViewCommand}"/>
-                </StackPanel>
             </DockPanel>
         </Border>
         

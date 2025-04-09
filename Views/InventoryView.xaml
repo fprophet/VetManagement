@@ -9,12 +9,13 @@
              xmlns:viewmodels="clr-namespace:VetManagement.ViewModels"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:converters="clr-namespace:VetManagement.Converters"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <converters:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
+            <converters:CommandParameterToIntConverter x:Key="CommandParameterToIntConverter"/>
     </UserControl.Resources>
     
     <Grid>
@@ -33,9 +34,47 @@
     
         <DataGrid Grid.Row="0" ItemsSource="{Binding Meds}"
                     ColumnHeaderStyle="{StaticResource ExpandedColumnHeader}"
-                    MaxHeight="700" SelectedItem="{Binding SelectedRow}"
-                    Style="{StaticResource DataGridExpanded}" BorderThickness="1"  HorizontalAlignment="Center">
-                
+                    SelectedItem="{Binding SelectedRow}"
+                    Style="{StaticResource DataGridExpanded}"  >
+            <DataGrid.Resources>
+                <ContextMenu x:Key="RowContextMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Black" Padding="5"/>
+                    <Separator/>
+
+                    <MenuItem Command="{Binding DataContext.NavigateViewMedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="BookMedical" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock Text="Vezi Detalii"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                    <MenuItem Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="Pen" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock Text="Modifică"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                    <MenuItem Command="{Binding DataContext.DeleteMedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                        <MenuItem.Icon>
+                            <fa:IconBlock Icon="Trash" FontSize="14"  Foreground="#5D6166"/>
+                        </MenuItem.Icon>
+                        <MenuItem.Header>
+                            <TextBlock Text="Șterge"/>
+                        </MenuItem.Header>
+                    </MenuItem>
+
+                </ContextMenu>
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+            <Style TargetType="DataGridRow">
+                <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
+            </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Data" Binding="{Binding DateAdded, Mode=OneWay, StringFormat='yyyy-MM-dd'}" Width="150"/>
                 <DataGridTextColumn ElementStyle="{StaticResource CenterTextBlock}" Header="Valabilitate" Binding="{Binding Valability, Mode=OneWay,StringFormat='yyyy-MM-dd'}" Width="150"/>

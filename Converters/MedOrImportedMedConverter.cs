@@ -21,38 +21,54 @@ namespace VetManagement.Converters
                 return "";
             }
 
+            if(value is null)
+            {
+                return "";
+            }
 
+            TreatmentMed? treatmentMed = value is TreatmentMed ? (TreatmentMed)value : null; 
+            TreatmentImportedMed? treatmentImportedMed = value is TreatmentImportedMed ? (TreatmentImportedMed)value : null; 
 
-            switch( toDisplay )
+            if( treatmentMed != null && treatmentMed.Med == null)
+            {
+                return "";
+            }
+
+            if (treatmentImportedMed != null && treatmentImportedMed.ImportedMed == null)
+            {
+                return "";
+            }
+
+            switch ( toDisplay )
             {
                 case "Name":
-                    if( value is TreatmentMed)
+                    if( treatmentMed != null)
                     {
-                        return ((TreatmentMed)value).Med.WaitingTime;
+                        return treatmentMed.Med.Name;
                     }
-                    return ((TreatmentImportedMed)value).ImportedMed.Denumire;
+                    return treatmentImportedMed.ImportedMed.Denumire;
                 case "Lot":
-                    if (value is TreatmentMed)
+                    if (treatmentMed != null)
                     {
-                        return ((TreatmentMed)value).Med.WaitingTime;
+                        return treatmentMed.Med.LotID;
                     }
                     return "";
                 case "Valability":
-                    if (value is TreatmentMed)
+                    if (treatmentMed != null)
                     {
-                        return ((TreatmentMed)value).Med.Valability.Date.ToString("yyyy-MM-dd");
+                        return treatmentMed.Valability.Date.ToString("yyyy-MM-dd");
                     }
                     return "";
                 case "Quantity":
-                    if (value is TreatmentMed)
+                    if (treatmentMed != null)
                     {
-                        return ((TreatmentMed)value).Quantity;
+                        return treatmentMed.Quantity + " " + treatmentMed.Med.MeasurmentUnit;
                     }
-                    return ((TreatmentImportedMed)value).Quantity;
+                    return treatmentImportedMed.Quantity;
                 case "WaitingTime":
-                    if (value is TreatmentMed)
+                    if (treatmentMed != null)
                     {
-                        return ((TreatmentMed)value).Med.WaitingTime;
+                        return treatmentMed.Med.WaitingTime;
                     }
                     return "";
             }
